@@ -69,25 +69,6 @@ function setInitialDirection(position) {
   }
 }
 
-// Draw game map, snake, food
-function draw() {
-  board.innerHTML = "";
-  drawSnake();
-  drawFood();
-  updateScore();
-}
-
-// draw the snake on the board
-function drawSnake() {
-  if (isGameStarted) {
-    snake.forEach(segment => {
-      const snakeElement = createGameElement("div", "snake");
-      setElementPosition(snakeElement, segment);
-      board.appendChild(snakeElement);
-    });
-  }
-}
-
 // Create a snake or food element
 function createGameElement(tag, className) {
   const element = document.createElement(tag);
@@ -110,6 +91,25 @@ function drawFood() {
   }
 }
 
+// draw the snake on the board
+function drawSnake() {
+  if (isGameStarted) {
+    snake.forEach(segment => {
+      const snakeElement = createGameElement("div", "snake");
+      setElementPosition(snakeElement, segment);
+      board.appendChild(snakeElement);
+    });
+  }
+}
+
+// Draw game map, snake, food
+function draw() {
+  board.innerHTML = "";
+  drawSnake();
+  drawFood();
+  updateScore();
+}
+
 // check if the snake head collides with itself or the boundary
 function checkCollision() {
   const head = snake[0];
@@ -123,6 +123,29 @@ function checkCollision() {
       resetGame();
     }
   }
+}
+
+// set the game interval
+function setGameInterval() {
+  gameInterval = setInterval(() => {
+    move();
+    checkCollision();
+    draw();
+  }, gameSpeed);
+}
+
+// start the game
+function startGame() {
+  isGameStarted = true;
+  startPrompt.style.display = "none";
+  setGameInterval();
+}
+
+// stop the game
+function stopGame() {
+  clearInterval(gameInterval);
+  isGameStarted = false;
+  startPrompt.style.display = "block";
 }
 
 // reset the game
@@ -141,6 +164,7 @@ function updateScore() {
   score.textContent = currentScore.toString().padStart(3, "0");
 }
 
+// update the high score
 function updateHighScore() {
   const currentScore = snake.length - initialSnakeLength;
   if (currentScore > highScore) {
@@ -148,20 +172,6 @@ function updateHighScore() {
     highScoreText.textContent = highScore.toString().padStart(3, "0");
   }
   highScoreText.style.display = "block";
-}
-function stopGame() {
-  clearInterval(gameInterval);
-  isGameStarted = false;
-  startPrompt.style.display = "block";
-}
-
-// set the game interval
-function setGameInterval() {
-  gameInterval = setInterval(() => {
-    move();
-    checkCollision();
-    draw();
-  }, gameSpeed);
 }
 
 // moving the snake
@@ -195,14 +205,6 @@ function move() {
     // remove the tail segment of the snake
     snake.pop();
   }
-  // console.log(snakeElements);
-}
-
-// start the game
-function startGame() {
-  isGameStarted = true;
-  startPrompt.style.display = "none";
-  setGameInterval();
 }
 
 // keypress event handler
@@ -230,6 +232,9 @@ function handleKeyPress(event) {
   }
 }
 
+// Listen for keypress
+document.addEventListener("keydown", handleKeyPress);
+
 // function setDirection(newDirection) {
 //   switch (direction) {
 //     case "up":
@@ -242,9 +247,6 @@ function handleKeyPress(event) {
 //     // and now left, rotate -90deg
 
 // }
-
-// Listen for keypress
-document.addEventListener("keydown", handleKeyPress);
 
 /*
 Server side snakes:
