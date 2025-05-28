@@ -9,16 +9,22 @@ const snakeElements = document.getElementsByClassName("snake");
 const gridSize = 20; // amount of rows and columns
 const initialSnakeLength = 5; // amount of segments that snakes begin with
 const initialSpeed = 200; // interval length in ms
+let initialOrientation = randomOrientation();
 let initialSnakeSegments = generateSnakeSegments();
 let snake = {
   segments: initialSnakeSegments,
-  direction: setInitialDirection(initialSnakeSegments[0]),
+  direction: setInitialDirection(initialSnakeSegments[0], initialOrientation),
   speed: initialSpeed,
 };
 let food = randomPosition();
 let highScore = 0;
 let isGameStarted = false;
 let gameInterval;
+
+// randomly pick an orientation for a new snake
+function randomOrientation() {
+  return Math.round(Math.random()) ? "vertical" : "horizontal";
+}
 
 // generate a random position on the grid
 function randomPosition() {
@@ -31,30 +37,30 @@ function randomPosition() {
 function generateSnakeSegments() {
   const head = randomPosition();
   let segments = [head];
-  // if head is on the right side of the grid then body is trailing left
-  if (head.x >= gridSize / 2) {
-    for (let i = 1; i < initialSnakeLength; i++) {
-      segments.push({ x: head.x - i, y: head.y });
-    }
-  }
-  // if head is on the left side of the grid then body is trailing right
-  else {
-    for (let i = 1; i < initialSnakeLength; i++) {
-      segments.push({ x: head.x + i, y: head.y });
-    }
+  const isVertical = initialOrientation === "vertical";
+  const linearAxis = isVertical ? "y" : "x"; // the axis along which the snake extends
+  const perpendicularAxis = isVertical ? "x" : "y"; // orthogonal to the linear axis
+  const headLinear = head[linearAxis];
+  /* the segments trail in either the positive or negative direction of the linear access
+      depending on which side of the board the head is placed on. */
+  const trailingDirection = headLinear >= gridSize / 2 ? -1 : 1;
+  for (let i = 1; i < initialSnakeLength; i++) {
+    const segment = {
+      [linearAxis]: head[linearAxis] + i * trailingDirection,
+      [perpendicularAxis]: head[perpendicularAxis],
+    };
+    segments.push(segment);
   }
   return segments;
 }
 
 // Set the initial direction of movement (away from the nearest boundary)
-function setInitialDirection(position) {
-  // if position is in the bottom half of the grid then initial direction is up
-  if (position.y >= gridSize / 2) {
-    return "up";
-  }
-  // if position is in the top half of the grid then initial direction is down
-  else {
-    return "down";
+function setInitialDirection(position, orientation) {
+  // move away from the nearest boundary
+  if (orientation === "horizontal") {
+    return position.y >= gridSize / 2 ? "up" : "down";
+  } else {
+    return position.x >= gridSize / 2 ? "left" : "right";
   }
 }
 
@@ -144,11 +150,15 @@ function resetGame() {
   updateScore();
   updateHighScore();
   stopGame();
-  const newSnakeSegments = generateSnakeSegments();
-  snake.segments = newSnakeSegments;
-  snake.direction = setInitialDirection(newSnakeSegments[0]);
-  snake.speed = initialSpeed;
   food = randomPosition();
+  initialOrientation = randomOrientation();
+  initialSnakeSegments = generateSnakeSegments();
+  snake.segments = initialSnakeSegments;
+  snake.direction = setInitialDirection(
+    initialSnakeSegments[0],
+    initialOrientation
+  );
+  snake.speed = initialSpeed;
 }
 
 // update the score
