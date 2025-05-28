@@ -81,10 +81,12 @@ body {
 }
 
 .food {
-  background-color: lime;
-  background-size: contain;
-  background-image: url("/images/mouse-icon.svg");
-  border: 1px solid limegreen;
+  /* border: 1px solid limegreen; */
+  /* background-color: lime; */
+  /* background-size: contain; */
+  background-image: url("/images/mouse.png");
+  background-size: cover;
+  z-index: 9999;
 }
 
 .scores {
