@@ -9,7 +9,6 @@ Initial direction should be horizontal if trail is vertical. (see setInitialDire
 Snake's shape should be changed to an object with props:  
   segments, speed, score, direction
 
-
 */
 
 // Define HTML elements
@@ -130,6 +129,7 @@ function setGameInterval() {
     move();
     checkCollision();
     draw();
+    setClassNames();
   }, gameSpeed);
 }
 
@@ -171,6 +171,33 @@ function updateHighScore() {
     highScoreText.textContent = highScore.toString().padStart(3, "0");
   }
   highScoreText.style.display = "block";
+}
+
+// Apply classNames for head/tail/body segments and their current direction
+function setClassNames() {
+  if (isGameStarted) {
+    // the first/head segment is moving in the current movement direction
+    snakeElements[0].className = `snake head ${direction}`;
+    // add a className for each segment's direction
+    for (let i = 1; i < snake.length; i++) {
+      const prevSegment = snake[i - 1];
+      const currentSegment = snake[i];
+      let segmentDirection = "";
+      if (currentSegment.x < prevSegment.x) segmentDirection = "right";
+      else if (currentSegment.x > prevSegment.x) segmentDirection = "left";
+      else if (currentSegment.y < prevSegment.y) segmentDirection = "down";
+      else if (currentSegment.y > prevSegment.y) segmentDirection = "up";
+
+      // also add the 'tail' className to the final segment
+      if (i === snake.length - 1)
+        snakeElements[i].className = `snake tail ${segmentDirection}`;
+      else snakeElements[i].className = `snake ${segmentDirection}`;
+    }
+
+    // console.log(snakeElements[0].className);                         // debugging
+    // console.log(snakeElements[snakeElements.length - 2].className);  // debugging
+    // console.log(snakeElements[snakeElements.length - 1].className);  // debugging
+  }
 }
 
 // moving the snake

@@ -33,9 +33,33 @@ body {
 }
 
 .snake {
-  /* background-image: url("/assets/snake-body.png"); */
-  background: #bc6c25;
-  border: 1px dotted #dda15e;
+  background-image: url("/assets/snake-body.png");
+  /* background: #bc6c25;
+  border: 1px dotted #dda15e; */
+}
+
+.snake.head {
+  background-image: url("/assets/snake-head.png");
+}
+
+.snake.tail {
+  background-image: url("/assets/snake-tail.png");
+}
+
+.snake.up {
+  transform: rotate(0deg);
+}
+
+.snake.right {
+  transform: rotate(90deg);
+}
+
+.snake.down {
+  transform: rotate(180deg);
+}
+
+.snake.left {
+  transform: rotate(270deg);
 }
 
 .food {
