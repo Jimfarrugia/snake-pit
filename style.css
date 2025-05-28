@@ -45,7 +45,7 @@ body {
 }
 
 .snake.corner {
-  background-image: url("/assets/snake-corner-1.png");
+  background-image: url("/assets/snake-corner.png");
 }
 
 .snake.up {
@@ -81,10 +81,10 @@ body {
 }
 
 .food {
-  background-color: yellow;
+  /* background-color: yellow; */
   background-size: contain;
-  background-image: url("mouse.svg");
-  border: 1px solid limegreen;
+  background-image: url("assets/speed-boost.png");
+  /* border: 1px solid limegreen; */
 }
 
 .scores {
