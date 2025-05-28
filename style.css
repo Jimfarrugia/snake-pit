@@ -1,0 +1,63 @@
+:root {
+  --grid-size: 20; /* number of rows and columns */
+  --cell-size: 20px; /* size of each grid cell */
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+  font-family: "VT323", monospace;
+  background: black;
+}
+
+#game-board {
+  border-radius: 5px;
+  display: grid;
+  grid-template-columns: repeat(var(--grid-size), var(--cell-size));
+  grid-template-rows: repeat(var(--grid-size), var(--cell-size));
+  margin: 5px;
+  border: 5px solid #aaa;
+  background: #fefae0;
+}
+#start-prompt {
+  position: absolute;
+  top: 48%;
+  color: #333;
+  width: 300px;
+  text-align: center;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.snake {
+  /* background-image: url("/assets/snake-body.png"); */
+  background: #bc6c25;
+  border: 1px dotted #dda15e;
+}
+
+.food {
+  background-color: yellow;
+  background-size: contain;
+  background-image: url("mouse.svg");
+  border: 1px solid limegreen;
+}
+
+.scores {
+  display: flex;
+  justify-content: space-between;
+  color: #fefae0;
+}
+
+#score,
+#high-score {
+  font-size: 40px;
+  font-weight: bolder;
+  margin: 5px 0;
+}
+
+#high-score {
+  display: none;
+}
