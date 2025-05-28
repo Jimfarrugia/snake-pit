@@ -37,8 +37,7 @@ function randomPosition() {
   return { x, y };
 }
 
-// assign the snake a random position on the board,
-// moving away from the nearest border
+// assign the snake a random position on the board
 function generateSnake() {
   const head = randomPosition();
   let segments = [head];
@@ -57,7 +56,7 @@ function generateSnake() {
   return segments;
 }
 
-// Set the initial direction of movement based on the nearest boundary
+// Set the initial direction of movement (away from the nearest boundary)
 function setInitialDirection(position) {
   // if position is in the bottom half of the grid then initial direction is up
   if (position.y >= gridSize / 2) {
