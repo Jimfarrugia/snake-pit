@@ -8,10 +8,14 @@ const snakeElements = document.getElementsByClassName("snake");
 // Define game variables
 const gridSize = 20; // amount of rows and columns
 const initialSnakeLength = 5; // amount of segments that snakes begin with
-let gameSpeed = 200; // interval length in ms
-let snake = generateSnake();
+const initialSpeed = 200; // interval length in ms
+let initialSnakeSegments = generateSnakeSegments();
+let snake = {
+  segments: initialSnakeSegments,
+  direction: setInitialDirection(initialSnakeSegments[0]),
+  speed: initialSpeed,
+};
 let food = randomPosition();
-let direction = setInitialDirection(snake[0]);
 let highScore = 0;
 let isGameStarted = false;
 let gameInterval;
@@ -24,7 +28,7 @@ function randomPosition() {
 }
 
 // assign the snake a random position on the board
-function generateSnake() {
+function generateSnakeSegments() {
   const head = randomPosition();
   let segments = [head];
   // if head is on the right side of the grid then body is trailing left
@@ -79,7 +83,7 @@ function drawFood() {
 // draw the snake on the board
 function drawSnake() {
   if (isGameStarted) {
-    snake.forEach(segment => {
+    snake.segments.forEach(segment => {
       const snakeElement = createGameElement("div", "snake");
       setElementPosition(snakeElement, segment);
       board.appendChild(snakeElement);
@@ -97,14 +101,15 @@ function draw() {
 
 // check if the snake head collides with itself or the boundary
 function checkCollision() {
-  const head = snake[0];
+  const { segments } = snake;
+  const head = segments[0];
   // reset game if snake head collides with the game boundary
   if (head.x < 1 || head.x > gridSize || head.y < 1 || head.y > gridSize) {
     resetGame();
   }
   // reset game if snake head collides with one of it's body segments
-  for (let i = 1; i < snake.length; i++) {
-    if (snake[i].x === head.x && snake[i].y === head.y) {
+  for (let i = 1; i < segments.length; i++) {
+    if (segments[i].x === head.x && segments[i].y === head.y) {
       resetGame();
     }
   }
@@ -117,7 +122,7 @@ function setGameInterval() {
     checkCollision();
     draw();
     setClassNames();
-  }, gameSpeed);
+  }, snake.speed);
 }
 
 // start the game
@@ -139,20 +144,22 @@ function resetGame() {
   updateScore();
   updateHighScore();
   stopGame();
-  snake = generateSnake();
-  direction = setInitialDirection(snake[0]);
+  const newSnakeSegments = generateSnakeSegments();
+  snake.segments = newSnakeSegments;
+  snake.direction = setInitialDirection(newSnakeSegments[0]);
+  snake.speed = initialSpeed;
   food = randomPosition();
 }
 
 // update the score
 function updateScore() {
-  const currentScore = snake.length - initialSnakeLength;
+  const currentScore = snake.segments.length - initialSnakeLength;
   score.textContent = currentScore.toString().padStart(3, "0");
 }
 
 // update the high score
 function updateHighScore() {
-  const currentScore = snake.length - initialSnakeLength;
+  const currentScore = snake.segments.length - initialSnakeLength;
   if (currentScore > highScore) {
     highScore = currentScore;
     highScoreText.textContent = highScore.toString().padStart(3, "0");
@@ -202,19 +209,20 @@ function getBodySegmentType(currentSegment, nextSegment, segmentDirection) {
 // Apply classNames to snake segment elements for appropriate styling
 function setClassNames() {
   if (isGameStarted) {
+    const { segments, direction } = snake;
     // the first/head segment's direction is the same as the current movement direction
     snakeElements[0].className = `snake head ${direction}`;
     // set classNames for the direction and body type of the remaining segments
-    for (let i = 1; i < snake.length; i++) {
-      const prevSegment = snake[i - 1];
-      const currentSegment = snake[i];
+    for (let i = 1; i < segments.length; i++) {
+      const prevSegment = segments[i - 1];
+      const currentSegment = segments[i];
       const segmentDirection = getSegmentDirection(currentSegment, prevSegment);
       // if the currentSegment is the tail, give it the appropriate classNames
-      if (i === snake.length - 1) {
+      if (i === segments.length - 1) {
         snakeElements[i].className = `snake tail ${segmentDirection}`;
       } else {
         // check whether the current segment should be a corner, give it the appropriate classNames
-        const nextSegment = snake[i + 1];
+        const nextSegment = segments[i + 1];
         const bodySegmentType = getBodySegmentType(
           currentSegment,
           nextSegment,
@@ -230,8 +238,9 @@ function setClassNames() {
 
 // moving the snake
 function move() {
+  const { segments, direction } = snake;
   // set the new position of the snake head
-  const head = { ...snake[0] }; // shallow copy
+  const head = { ...segments[0] }; // shallow copy
   switch (direction) {
     case "up":
       head.y--;
@@ -247,7 +256,7 @@ function move() {
       break;
   }
   // add a new (head) segment to the snake
-  snake.unshift(head);
+  segments.unshift(head);
   // if snake head collides with food
   if (head.x === food.x && head.y === food.y) {
     // respawn food
@@ -257,7 +266,7 @@ function move() {
     setGameInterval();
   } else {
     // remove the tail segment of the snake
-    snake.pop();
+    segments.pop();
   }
 }
 
@@ -271,16 +280,16 @@ function handleKeyPress(event) {
   } else {
     switch (event.key) {
       case "ArrowUp":
-        if (direction !== "down") direction = "up";
+        if (snake.direction !== "down") snake.direction = "up";
         break;
       case "ArrowDown":
-        if (direction !== "up") direction = "down";
+        if (snake.direction !== "up") snake.direction = "down";
         break;
       case "ArrowLeft":
-        if (direction !== "right") direction = "left";
+        if (snake.direction !== "right") snake.direction = "left";
         break;
       case "ArrowRight":
-        if (direction !== "left") direction = "right";
+        if (snake.direction !== "left") snake.direction = "right";
         break;
     }
   }
