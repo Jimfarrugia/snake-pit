@@ -1,16 +1,3 @@
-/*
-
-Direction should not changeable to opposite.
-
-Snakes should randomly trail either horizontal or vertical.
-Currently only horizontal. (see generateSnake)
-Initial direction should be horizontal if trail is vertical. (see setInitialDirection)
-
-Snake's shape should be changed to an object with props:  
-  segments, speed, score, direction
-
-*/
-
 // Define HTML elements
 const board = document.getElementById("game-board");
 const startPrompt = document.getElementById("start-prompt");
@@ -173,30 +160,71 @@ function updateHighScore() {
   highScoreText.style.display = "block";
 }
 
-// Apply classNames for head/tail/body segments and their current direction
+// get the current direction of a snake segment
+function getSegmentDirection(currentSegment, prevSegment) {
+  if (currentSegment.x < prevSegment.x) return "right";
+  else if (currentSegment.x > prevSegment.x) return "left";
+  else if (currentSegment.y < prevSegment.y) return "down";
+  else if (currentSegment.y > prevSegment.y) return "up";
+}
+
+// determine whether a snake body segment is a corner and if so, which type of corner
+function getBodySegmentType(currentSegment, nextSegment, segmentDirection) {
+  let isCorner = false;
+  let cornerType = "";
+  if (segmentDirection === "left" && nextSegment.y !== currentSegment.y) {
+    isCorner = true;
+    nextSegment.y < currentSegment.y
+      ? (cornerType = "left-up")
+      : (cornerType = "left-down");
+  }
+  if (segmentDirection === "right" && nextSegment.y !== currentSegment.y) {
+    isCorner = true;
+    nextSegment.y < currentSegment.y
+      ? (cornerType = "right-up")
+      : (cornerType = "right-down");
+  }
+  if (segmentDirection === "up" && nextSegment.x !== currentSegment.x) {
+    isCorner = true;
+    nextSegment.x < currentSegment.x
+      ? (cornerType = "left-up")
+      : (cornerType = "right-up");
+  }
+  if (segmentDirection === "down" && nextSegment.x !== currentSegment.x) {
+    isCorner = true;
+    nextSegment.x < currentSegment.x
+      ? (cornerType = "left-down")
+      : (cornerType = "right-down");
+  }
+  return isCorner ? cornerType : "body";
+}
+
+// Apply classNames to snake segment elements for appropriate styling
 function setClassNames() {
   if (isGameStarted) {
-    // the first/head segment is moving in the current movement direction
+    // the first/head segment's direction is the same as the current movement direction
     snakeElements[0].className = `snake head ${direction}`;
-    // add a className for each segment's direction
+    // set classNames for the direction and body type of the remaining segments
     for (let i = 1; i < snake.length; i++) {
       const prevSegment = snake[i - 1];
       const currentSegment = snake[i];
-      let segmentDirection = "";
-      if (currentSegment.x < prevSegment.x) segmentDirection = "right";
-      else if (currentSegment.x > prevSegment.x) segmentDirection = "left";
-      else if (currentSegment.y < prevSegment.y) segmentDirection = "down";
-      else if (currentSegment.y > prevSegment.y) segmentDirection = "up";
-
-      // also add the 'tail' className to the final segment
-      if (i === snake.length - 1)
+      const segmentDirection = getSegmentDirection(currentSegment, prevSegment);
+      // if the currentSegment is the tail, give it the appropriate classNames
+      if (i === snake.length - 1) {
         snakeElements[i].className = `snake tail ${segmentDirection}`;
-      else snakeElements[i].className = `snake ${segmentDirection}`;
+      } else {
+        // check whether the current segment should be a corner, give it the appropriate classNames
+        const nextSegment = snake[i + 1];
+        const bodySegmentType = getBodySegmentType(
+          currentSegment,
+          nextSegment,
+          segmentDirection
+        );
+        snakeElements[i].className = `snake ${
+          bodySegmentType !== "body" ? "corner" : ""
+        } ${bodySegmentType} ${segmentDirection}`;
+      }
     }
-
-    // console.log(snakeElements[0].className);                         // debugging
-    // console.log(snakeElements[snakeElements.length - 2].className);  // debugging
-    // console.log(snakeElements[snakeElements.length - 1].className);  // debugging
   }
 }
 
@@ -260,34 +288,3 @@ function handleKeyPress(event) {
 
 // Listen for keypress
 document.addEventListener("keydown", handleKeyPress);
-
-// function setDirection(newDirection) {
-//   switch (direction) {
-//     case "up":
-//       (newDirection === "right") ? sn: ;
-//       break;
-//   }
-//   direction = newDirection;
-//   // if direction was up
-//     // and now right, rotate 90deg
-//     // and now left, rotate -90deg
-
-// }
-
-/*
-Server side snakes:
-[
-  {
-    ? id: UUID,
-    speed: Number,
-    score: Number,
-    direction: String ("up" | "down" | "left" | "right"),
-    segments: [
-      {
-        x: Number, y: Number
-      }
-    ]
-  }
-]
-
-*/

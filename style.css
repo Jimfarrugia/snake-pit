@@ -32,18 +32,20 @@ body {
   margin: 0;
 }
 
-.snake {
-  background-image: url("/assets/snake-body.png");
-  /* background: #bc6c25;
-  border: 1px dotted #dda15e; */
-}
-
 .snake.head {
   background-image: url("/assets/snake-head.png");
 }
 
+.snake.body {
+  background-image: url("/assets/snake-body.png");
+}
+
 .snake.tail {
   background-image: url("/assets/snake-tail.png");
+}
+
+.snake.corner {
+  background-image: url("/assets/snake-corner-1.png");
 }
 
 .snake.up {
@@ -59,6 +61,22 @@ body {
 }
 
 .snake.left {
+  transform: rotate(270deg);
+}
+
+.snake.corner.left-down {
+  transform: rotate(0deg);
+}
+
+.snake.corner.left-up {
+  transform: rotate(90deg);
+}
+
+.snake.corner.right-up {
+  transform: rotate(180deg);
+}
+
+.snake.corner.right-down {
   transform: rotate(270deg);
 }
 
