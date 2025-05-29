@@ -10,7 +10,7 @@ body {
   height: 100vh;
   margin: 0;
   font-family: "VT323", monospace;
-  background: black;
+  background: #283618;
 }
 
 #game-board {
@@ -19,13 +19,13 @@ body {
   grid-template-columns: repeat(var(--grid-size), var(--cell-size));
   grid-template-rows: repeat(var(--grid-size), var(--cell-size));
   margin: 5px;
-  border: 5px solid #aaa;
+  border: 5px solid #606c38;
   background: #fefae0;
 }
 #start-prompt {
   position: absolute;
   top: 48%;
-  color: #333;
+  color: #283618;
   width: 300px;
   text-align: center;
   text-transform: uppercase;
@@ -92,7 +92,7 @@ body {
 .scores {
   display: flex;
   justify-content: space-between;
-  color: #fefae0;
+  color: #606c38;
 }
 
 #score,
