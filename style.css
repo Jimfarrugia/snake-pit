@@ -89,6 +89,12 @@ body {
   z-index: 9999;
 }
 
+.speed-boost {
+  background-image: url("/images/speed-boost.png");
+  background-size: cover;
+  z-index: 9999;
+}
+
 .scores {
   display: flex;
   justify-content: space-between;
