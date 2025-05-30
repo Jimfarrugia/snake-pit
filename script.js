@@ -18,13 +18,13 @@ let snake = {
   segments: initialSnakeSegments,
   direction: setInitialDirection(initialSnakeSegments[0], initialOrientation),
   speed: initialSpeed,
+  moveInterval: null,
 };
 let food = randomPosition();
 let speedBoost = randomPosition();
 let speedBoostTimeout;
 let highScore = 0;
 let isGameStarted = false;
-let gameInterval;
 
 // randomly pick an orientation for a new snake
 function randomOrientation() {
@@ -136,13 +136,13 @@ function checkCollision() {
   }
 }
 
-// set the game interval
-function setGameInterval() {
-  gameInterval = setInterval(() => {
-    move();
+// set a snake's movement interval
+function setSnakeMoveInterval() {
+  snake.moveInterval = setInterval(() => {
+    moveSnake();
     checkCollision();
     draw();
-    setClassNames();
+    setSnakeClassNames();
   }, snake.speed);
 }
 
@@ -150,12 +150,12 @@ function setGameInterval() {
 function startGame() {
   isGameStarted = true;
   startPrompt.style.display = "none";
-  setGameInterval();
+  setSnakeMoveInterval();
 }
 
 // stop the game
 function stopGame() {
-  clearInterval(gameInterval);
+  clearInterval(snake.moveInterval);
   isGameStarted = false;
   startPrompt.style.display = "block";
 }
@@ -232,7 +232,7 @@ function getBodySegmentType(currentSegment, nextSegment, segmentDirection) {
 }
 
 // Apply CSS classes to snake segment elements for appropriate styling
-function setClassNames() {
+function setSnakeClassNames() {
   if (isGameStarted) {
     const { segments, direction } = snake;
     // set the classes for the head segment
@@ -266,7 +266,7 @@ function setClassNames() {
 }
 
 // apply the speed boost effect to the snake
-function setSpeedBoost() {
+function setSnakeSpeedBoost() {
   // clear existing speed boost timeout (if any)
   if (speedBoostTimeout) clearTimeout(speedBoostTimeout);
   // respawn speed boost on the board
@@ -274,20 +274,20 @@ function setSpeedBoost() {
   // increase snake speed (lower value = faster)
   snake.speed = snake.speed * speedBoostMultiplier;
   // reset the game interval (to apply the speed change)
-  clearInterval(gameInterval);
-  setGameInterval();
+  clearInterval(snake.moveInterval);
+  setSnakeMoveInterval();
   // set the speed boost timeout
   speedBoostTimeout = setTimeout(() => {
     // reset snake speed
     snake.speed = initialSpeed;
     // reset the game interval (to apply to speed change)
-    clearInterval(gameInterval);
-    setGameInterval();
+    clearInterval(snake.moveInterval);
+    setSnakeMoveInterval();
   }, speedBoostDuration);
 }
 
-// move the snake
-function move() {
+// move a snake
+function moveSnake() {
   const { segments, direction } = snake;
   const head = { ...segments[0] }; // shallow copy
   const isFoodCollision = head.x === food.x && head.y === food.y;
@@ -319,7 +319,7 @@ function move() {
   }
   if (isSpeedBoostCollision) {
     // apply the speed boost effect to the snake
-    setSpeedBoost();
+    setSnakeSpeedBoost();
   }
 }
 
