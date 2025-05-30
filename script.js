@@ -11,6 +11,7 @@ const initialSnakeLength = 5; // amount of segments that snakes begin with
 const initialSpeed = 200; // game interval duration in ms
 const speedBoostDuration = 5000; // duration of speed boost effect in ms
 const speedBoostMultiplier = 0.75; // lower value = higher speed
+const snakeTargetSize = 3; // amount of trailing snake segments that are vulnerable to attack
 let initialOrientation = randomOrientation(); // orientation of the snake when it spawns ("horizontal" or "vertical")
 let initialSnakeSegments = generateSnakeSegments();
 let snake = {
@@ -230,31 +231,35 @@ function getBodySegmentType(currentSegment, nextSegment, segmentDirection) {
   return isCorner ? cornerType : "body";
 }
 
-// Apply classNames to snake segment elements for appropriate styling
+// Apply CSS classes to snake segment elements for appropriate styling
 function setClassNames() {
   if (isGameStarted) {
     const { segments, direction } = snake;
-    // the first/head segment's direction is the same as the current movement direction
+    // set the classes for the head segment
     snakeElements[0].className = `snake head ${direction}`;
-    // set classNames for the direction and body type of the remaining segments
+    // determine which classes are needed for the remaining segments
     for (let i = 1; i < segments.length; i++) {
       const prevSegment = segments[i - 1];
       const currentSegment = segments[i];
       const segmentDirection = getSegmentDirection(currentSegment, prevSegment);
-      // if the currentSegment is the tail, give it the appropriate classNames
       if (i === segments.length - 1) {
+        // set the classes for the tail segment
         snakeElements[i].className = `snake tail ${segmentDirection}`;
       } else {
-        // check whether the current segment should be a corner, give it the appropriate classNames
+        // determine if the current segment is a corner and/or a target segment
         const nextSegment = segments[i + 1];
         const bodySegmentType = getBodySegmentType(
           currentSegment,
           nextSegment,
           segmentDirection
         );
-        snakeElements[i].className = `snake ${
-          bodySegmentType !== "body" ? "corner" : ""
-        } ${bodySegmentType} ${segmentDirection}`;
+        const isCorner = bodySegmentType !== "body";
+        // set the classes for the body segments
+        const isTarget = i > segments.length - 1 - snakeTargetSize;
+        const classNames = `${isCorner ? "corner" : ""} ${bodySegmentType} ${
+          isTarget ? "target" : ""
+        } ${segmentDirection}`;
+        snakeElements[i].className = `snake ${classNames}`;
       }
     }
   }
