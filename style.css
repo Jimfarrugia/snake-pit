@@ -33,19 +33,27 @@ body {
 }
 
 .snake.head {
-  background-image: url("/images/snake-head.png");
+  background-image: url("/images/snake-head-brown.png");
 }
 
 .snake.body {
-  background-image: url("/images/snake-body.png");
+  background-image: url("/images/snake-body-brown.png");
+}
+
+.snake.body.target {
+  background-image: url("/images/snake-body-target-brown.png");
 }
 
 .snake.tail {
-  background-image: url("/images/snake-tail.png");
+  background-image: url("/images/snake-tail-target-brown.png");
 }
 
 .snake.corner {
-  background-image: url("/images/snake-corner.png");
+  background-image: url("/images/snake-corner-brown.png");
+}
+
+.snake.corner.target {
+  background-image: url("/images/snake-corner-target-brown.png");
 }
 
 .snake.up {
@@ -81,9 +89,6 @@ body {
 }
 
 .food {
-  /* border: 1px solid limegreen; */
-  /* background-color: lime; */
-  /* background-size: contain; */
   background-image: url("/images/mouse.png");
   background-size: cover;
   z-index: 9999;
