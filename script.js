@@ -1,8 +1,6 @@
 // Define HTML elements
 const board = document.getElementById("game-board");
 const startPrompt = document.getElementById("start-prompt");
-const score = document.getElementById("score");
-const highScoreText = document.getElementById("high-score");
 const snakeElements = document.getElementsByClassName("snake");
 
 // Define game variables
@@ -20,10 +18,11 @@ let snake = {
   speed: initialSpeed,
   moveInterval: null,
   speedBoostTimeout: null,
+  score: 0,
+  highScore: 0,
 };
 let food = randomPosition();
 let speedBoost = randomPosition();
-let highScore = 0;
 let isGameStarted = false;
 
 // randomly pick an orientation for a new snake
@@ -117,7 +116,6 @@ function draw() {
   drawSnake();
   drawFood();
   drawSpeedBoost();
-  updateScore();
 }
 
 // check if the snake head collides with itself or the boundary
@@ -162,8 +160,6 @@ function stopGame() {
 
 // reset the game
 function resetGame() {
-  updateScore();
-  updateHighScore();
   stopGame();
   food = randomPosition();
   initialOrientation = randomOrientation();
@@ -174,22 +170,16 @@ function resetGame() {
     initialOrientation
   );
   snake.speed = initialSpeed;
+  snake.score = 0;
 }
 
-// update the score
-function updateScore() {
+// increase a snake's score/high-score
+function increaseScore() {
   const currentScore = snake.segments.length - initialSnakeLength;
-  score.textContent = currentScore.toString().padStart(3, "0");
-}
-
-// update the high score
-function updateHighScore() {
-  const currentScore = snake.segments.length - initialSnakeLength;
-  if (currentScore > highScore) {
-    highScore = currentScore;
-    highScoreText.textContent = highScore.toString().padStart(3, "0");
+  snake.score = currentScore;
+  if (snake.score > snake.highScore) {
+    snake.highScore = snake.score;
   }
-  highScoreText.style.display = "block";
 }
 
 // get the current direction of a snake segment
@@ -310,16 +300,17 @@ function moveSnake() {
   }
   // add a new (head) segment to the snake
   segments.unshift(head);
-  if (!isFoodCollision) {
-    // remove the tail segment of the snake
-    segments.pop();
-  } else {
+  if (isFoodCollision) {
+    increaseScore();
     // respawn food on the board
     food = randomPosition();
-  }
-  if (isSpeedBoostCollision) {
+  } else if (isSpeedBoostCollision) {
+    increaseScore();
     // apply the speed boost effect to the snake
     setSnakeSpeedBoost();
+  } else {
+    // remove the tail segment of the snake
+    segments.pop();
   }
 }
 
