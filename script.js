@@ -19,10 +19,10 @@ let snake = {
   direction: setInitialDirection(initialSnakeSegments[0], initialOrientation),
   speed: initialSpeed,
   moveInterval: null,
+  speedBoostTimeout: null,
 };
 let food = randomPosition();
 let speedBoost = randomPosition();
-let speedBoostTimeout;
 let highScore = 0;
 let isGameStarted = false;
 
@@ -268,7 +268,7 @@ function setSnakeClassNames() {
 // apply the speed boost effect to the snake
 function setSnakeSpeedBoost() {
   // clear existing speed boost timeout (if any)
-  if (speedBoostTimeout) clearTimeout(speedBoostTimeout);
+  if (snake.speedBoostTimeout) clearTimeout(snake.speedBoostTimeout);
   // respawn speed boost on the board
   speedBoost = randomPosition();
   // increase snake speed (lower value = faster)
@@ -277,7 +277,7 @@ function setSnakeSpeedBoost() {
   clearInterval(snake.moveInterval);
   setSnakeMoveInterval();
   // set the speed boost timeout
-  speedBoostTimeout = setTimeout(() => {
+  snake.speedBoostTimeout = setTimeout(() => {
     // reset snake speed
     snake.speed = initialSpeed;
     // reset the game interval (to apply to speed change)
