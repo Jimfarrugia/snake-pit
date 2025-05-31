@@ -14,13 +14,26 @@
     <script src="script.js" defer></script>
   </head>
   <body>
-    <div>
-      <div class="scores">
-        <h1 id="score">000</h1>
-        <h1 id="high-score">000</h1>
-      </div>
+    <div id="wrapper">
+      <h1 id="title">Snake Pit</h1>
       <div id="game-board"></div>
+      <h3 id="start-prompt">Press spacebar to start</h3>
+      <div id="menu">
+        <button id="tutorial-open-btn" title="Help">?</button>
+      </div>
     </div>
-    <h1 id="start-prompt">Press spacebar to start</h1>
+    <dialog id="tutorial-dialog" closedby="any">
+      <h2>How to Play</h2>
+      <ul>
+        <li>Move your snake with the arrow keys.</li>
+        <li>
+          Gain points by eating mice, picking up items and biting other snakes.
+        </li>
+        <li>Avoid running into the walls, yourself or other snakes.</li>
+        <li>As your score increases, so does your length.</li>
+        <li>Don't get bit!</li>
+      </ul>
+      <button id="tutorial-close-btn" title="Close">Got it!</button>
+    </dialog>
   </body>
 </html>

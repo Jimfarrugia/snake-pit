@@ -4,13 +4,23 @@
 }
 
 body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
   margin: 0;
+  padding: 0;
   font-family: "VT323", monospace;
   background: #283618;
+}
+
+#wrapper {
+  width: calc(var(--cell-size) * var(--grid-size));
+  margin: 0 auto;
+}
+
+#title {
+  font-size: 48px;
+  margin: 25px 0;
+  padding: 0;
+  color: #606c38;
+  text-align: center;
 }
 
 #game-board {
@@ -18,18 +28,98 @@ body {
   display: grid;
   grid-template-columns: repeat(var(--grid-size), var(--cell-size));
   grid-template-rows: repeat(var(--grid-size), var(--cell-size));
-  margin: 5px;
+  margin: 0 auto;
+  width: calc(var(--cell-size) * var(--grid-size));
   border: 5px solid #606c38;
   background: #fefae0;
 }
+
 #start-prompt {
-  position: absolute;
-  top: 48%;
+  --prompt-size: 32px;
+  font-size: var(--prompt-size);
+  margin: 0 0 calc(0px - var(--prompt-size));
   color: #283618;
-  width: 300px;
   text-align: center;
   text-transform: uppercase;
-  margin: 0;
+  position: relative;
+  top: calc(0px - var(--cell-size) * var(--grid-size) / 2 - var(--prompt-size));
+}
+
+#tutorial-dialog {
+  background: #283618;
+  border: 5px solid #606c38;
+  border-radius: 5px;
+  color: #fefae0;
+  padding: 25px;
+  text-align: center;
+}
+
+#tutorial-dialog::backdrop {
+  background: #000;
+  opacity: 0.5;
+}
+
+#tutorial-dialog h2 {
+  color: #606c38;
+  font-size: 32px;
+  margin: 0 0 20px;
+  padding: 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+#tutorial-dialog ul {
+  margin: 0 0 0;
+  padding: 0 0 10px;
+}
+
+#tutorial-dialog li {
+  margin: 0 0 15px;
+  padding: 0;
+  list-style: none;
+  font-family: monospace;
+}
+
+#tutorial-dialog button {
+  background: #fefae0;
+  color: #283618;
+  border: 2px solid #606c38;
+  padding: 7px 10px;
+  border-radius: 5px;
+  font-family: "VT323";
+  font-size: 24px;
+  cursor: pointer;
+}
+
+#tutorial-dialog button:hover {
+  color: #fefae0;
+  border-color: #fefae0;
+  background-color: #606c38;
+}
+
+#menu {
+  text-align: right;
+}
+
+#tutorial-open-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "VT323";
+  font-size: 32px;
+  border: 2px solid #606c38;
+  border-radius: 100%;
+  background: #283618;
+  color: #606c38;
+  cursor: pointer;
+  margin: 15px 0 0;
+}
+
+#tutorial-open-btn:hover {
+  color: #fefae0;
+  border-color: #fefae0;
 }
 
 .snake.head {
@@ -98,21 +188,4 @@ body {
   background-image: url("/images/speed-boost.png");
   background-size: cover;
   z-index: 9999;
-}
-
-.scores {
-  display: flex;
-  justify-content: space-between;
-  color: #606c38;
-}
-
-#score,
-#high-score {
-  font-size: 40px;
-  font-weight: bolder;
-  margin: 5px 0;
-}
-
-#high-score {
-  display: none;
 }

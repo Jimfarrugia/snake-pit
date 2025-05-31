@@ -2,6 +2,9 @@
 const board = document.getElementById("game-board");
 const startPrompt = document.getElementById("start-prompt");
 const snakeElements = document.getElementsByClassName("snake");
+const tutorialCloseBtn = document.getElementById("tutorial-close-btn");
+const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
+const tutorialDialog = document.getElementById("tutorial-dialog");
 
 // Define game variables
 const gridSize = 20; // amount of rows and columns
@@ -341,3 +344,12 @@ function handleKeyPress(event) {
 
 // Listen for keypress
 document.addEventListener("keydown", handleKeyPress);
+
+// Open/close the tutorial dialog
+tutorialOpenBtn.addEventListener("click", () => {
+  tutorialDialog.showModal();
+});
+
+tutorialCloseBtn.addEventListener("click", () => {
+  tutorialDialog.close();
+});
