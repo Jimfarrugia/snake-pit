@@ -1,18 +1,22 @@
-// Define HTML elements
-const board = document.getElementById("game-board");
-const startPrompt = document.getElementById("start-prompt");
-const snakeElements = document.getElementsByClassName("snake");
-const tutorialCloseBtn = document.getElementById("tutorial-close-btn");
-const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
-const tutorialDialog = document.getElementById("tutorial-dialog");
+import {
+  gridSize,
+  initialSnakeLength,
+  initialSpeed,
+  speedBoostDuration,
+  speedBoostMultiplier,
+  snakeTargetSize,
+} from "./config.js";
+import {
+  randomOrientation,
+  randomPosition,
+  getSegmentDirection,
+  getBodySegmentType,
+  createGameElement,
+  setElementPosition,
+  setInitialDirection,
+} from "./helpers.js";
 
 // Define game variables
-const gridSize = 20; // amount of rows and columns
-const initialSnakeLength = 5; // amount of segments that snakes begin with
-const initialSpeed = 200; // game interval duration in ms
-const speedBoostDuration = 5000; // duration of speed boost effect in ms
-const speedBoostMultiplier = 0.75; // lower value = higher speed
-const snakeTargetSize = 3; // amount of trailing snake segments that are vulnerable to attack
 let initialOrientation = randomOrientation(); // orientation of the snake when it spawns ("horizontal" or "vertical")
 let initialSnakeSegments = generateSnakeSegments();
 let snake = {
@@ -28,17 +32,13 @@ let food = randomPosition();
 let speedBoost = randomPosition();
 let isGameStarted = false;
 
-// randomly pick an orientation for a new snake
-function randomOrientation() {
-  return Math.round(Math.random()) ? "vertical" : "horizontal";
-}
-
-// generate a random position on the grid
-function randomPosition() {
-  const x = Math.floor(Math.random() * gridSize) + 1;
-  const y = Math.floor(Math.random() * gridSize) + 1;
-  return { x, y };
-}
+// Define HTML elements
+const board = document.getElementById("game-board");
+const startPrompt = document.getElementById("start-prompt");
+const snakeElements = document.getElementsByClassName("snake");
+const tutorialCloseBtn = document.getElementById("tutorial-close-btn");
+const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
+const tutorialDialog = document.getElementById("tutorial-dialog");
 
 // assign the snake a random position on the board
 function generateSnakeSegments() {
@@ -59,29 +59,6 @@ function generateSnakeSegments() {
     segments.push(segment);
   }
   return segments;
-}
-
-// Set the initial direction of movement (away from the nearest boundary)
-function setInitialDirection(position, orientation) {
-  // move away from the nearest boundary
-  if (orientation === "horizontal") {
-    return position.y >= gridSize / 2 ? "up" : "down";
-  } else {
-    return position.x >= gridSize / 2 ? "left" : "right";
-  }
-}
-
-// Create a snake or food element
-function createGameElement(tag, className) {
-  const element = document.createElement(tag);
-  element.className = className;
-  return element;
-}
-
-// set the position of snake or food
-function setElementPosition(element, position) {
-  element.style.gridColumn = position.x;
-  element.style.gridRow = position.y;
 }
 
 // draw food on the board
@@ -183,45 +160,6 @@ function increaseScore() {
   if (snake.score > snake.highScore) {
     snake.highScore = snake.score;
   }
-}
-
-// get the current direction of a snake segment
-function getSegmentDirection(currentSegment, prevSegment) {
-  if (currentSegment.x < prevSegment.x) return "right";
-  else if (currentSegment.x > prevSegment.x) return "left";
-  else if (currentSegment.y < prevSegment.y) return "down";
-  else if (currentSegment.y > prevSegment.y) return "up";
-}
-
-// determine whether a snake body segment is a corner and if so, which type of corner
-function getBodySegmentType(currentSegment, nextSegment, segmentDirection) {
-  let isCorner = false;
-  let cornerType = "";
-  if (segmentDirection === "left" && nextSegment.y !== currentSegment.y) {
-    isCorner = true;
-    nextSegment.y < currentSegment.y
-      ? (cornerType = "left-up")
-      : (cornerType = "left-down");
-  }
-  if (segmentDirection === "right" && nextSegment.y !== currentSegment.y) {
-    isCorner = true;
-    nextSegment.y < currentSegment.y
-      ? (cornerType = "right-up")
-      : (cornerType = "right-down");
-  }
-  if (segmentDirection === "up" && nextSegment.x !== currentSegment.x) {
-    isCorner = true;
-    nextSegment.x < currentSegment.x
-      ? (cornerType = "left-up")
-      : (cornerType = "right-up");
-  }
-  if (segmentDirection === "down" && nextSegment.x !== currentSegment.x) {
-    isCorner = true;
-    nextSegment.x < currentSegment.x
-      ? (cornerType = "left-down")
-      : (cornerType = "right-down");
-  }
-  return isCorner ? cornerType : "body";
 }
 
 // Apply CSS classes to snake segment elements for appropriate styling
