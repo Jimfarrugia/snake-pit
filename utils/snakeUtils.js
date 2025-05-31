@@ -76,19 +76,15 @@ function setInitialDirection(position, orientation) {
 
 function applySpeedBoost(snake) {
   if (typeof speedBoostMultiplier !== "number" || isNaN(speedBoostMultiplier)) {
-    throw new Error("Invalid speedBoostMultiplier value");
+    throw new Error("Invalid speedBoostMultiplier value.");
   }
-  console.log(
-    `Applying speed boost: current=${snake.speed}, multiplier=${speedBoostMultiplier}`
-  );
+  console.log(`${snake.id} speed boost: current speed=${snake.speed}`);
   if (snake.speedBoostTimeout) {
     clearTimeout(snake.speedBoostTimeout);
   }
   snake.speed = snake.speed * speedBoostMultiplier;
   snake.speedBoostTimeout = setTimeout(() => {
-    console.log(
-      `Resetting speed for ${snake.id} to initialSpeed (${initialSpeed})`
-    );
+    console.log(`${snake.id} speed reset to ${initialSpeed}`);
     snake.speed = initialSpeed;
     snake.speedBoostTimeout = null;
   }, speedBoostDuration);
