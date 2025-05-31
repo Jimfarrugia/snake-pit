@@ -90,6 +90,60 @@ function applySpeedBoost(snake) {
   }, speedBoostDuration);
 }
 
+// ! Generate a test snake
+function generateTestSnake() {
+  const testSnake = generateSnake("tester");
+  testSnake.isAlive = true;
+  testSnake.lastMoveTime = Date.now();
+  return testSnake;
+}
+// ! ^
+
+// ! Move a test snake and do not let it run into the boundary
+function moveTestSnake(snake) {
+  if (!snake.isAlive) return;
+  const head = snake.segments[0];
+  const directions = ["up", "down", "left", "right"];
+
+  for (let dir of directions) {
+    const newHead = { ...head };
+    switch (dir) {
+      case "up":
+        newHead.y--;
+        break;
+      case "right":
+        newHead.x++;
+        break;
+      case "down":
+        newHead.y++;
+        break;
+      case "left":
+        newHead.x--;
+        break;
+    }
+
+    const isOutOfBounds =
+      newHead.x < 3 ||
+      newHead.x > gridSize - 2 ||
+      newHead.y < 3 ||
+      newHead.y > gridSize - 2;
+
+    const collidesWithSelf = snake.segments.some(
+      seg => seg.x === newHead.x && seg.y === newHead.y
+    );
+
+    if (!isOutOfBounds && !collidesWithSelf) {
+      snake.nextDirection = dir;
+      return;
+    }
+  }
+
+  // If no direction is safe, mark as dead to avoid infinite loop
+  snake.isAlive = false;
+  console.warn("Test snake is stuck and has died.");
+}
+// ! ^
+
 module.exports = {
   generateSnake,
   respawnSnake,
@@ -98,4 +152,6 @@ module.exports = {
   generateSnakeSegments,
   setInitialDirection,
   applySpeedBoost,
+  generateTestSnake,
+  moveTestSnake,
 };

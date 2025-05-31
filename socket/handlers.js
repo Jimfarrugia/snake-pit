@@ -1,4 +1,8 @@
-const { generateSnake, respawnSnake } = require("../utils/snakeUtils");
+const {
+  generateSnake,
+  respawnSnake,
+  generateTestSnake,
+} = require("../utils/snakeUtils");
 const state = require("../state");
 
 function registerSocketHandlers(io) {
@@ -25,6 +29,14 @@ function registerSocketHandlers(io) {
         console.log(`${id} joined the game.`);
       }
       state.isGameStarted = true;
+
+      // ! remove old test snake(s)
+      state.snakes = state.snakes.filter(s => s.id !== "tester");
+      // ! Spawn test snake(s)
+      state.snakes.push(generateTestSnake());
+      state.snakes.push(generateTestSnake());
+      state.snakes.push(generateTestSnake());
+      // ! ^
     });
 
     socket.on("changeDirection", newDirection => {

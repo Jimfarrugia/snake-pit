@@ -1,5 +1,9 @@
 const state = require("./state");
-const { randomPosition, applySpeedBoost } = require("./utils/snakeUtils");
+const {
+  randomPosition,
+  applySpeedBoost,
+  moveTestSnake,
+} = require("./utils/snakeUtils");
 const { gridSize } = require("./config");
 
 // Move a single snake
@@ -82,7 +86,14 @@ function gameLoop(io) {
   const now = Date.now();
 
   state.snakes.forEach(snake => {
+    // if (snake.isAlive) {
+    // ! Move the test snake
+    if (snake.id === "tester") {
+      moveTestSnake(snake);
+    }
+    // ! ^
     moveSnake(snake, now, io);
+    // }
   });
 
   io.emit("gameState", {
