@@ -1,4 +1,4 @@
-const { generateSnake } = require("../utils/snakeUtils");
+const { generateSnake, respawnSnake } = require("../utils/snakeUtils");
 const state = require("../state");
 
 function registerSocketHandlers(io) {
@@ -7,26 +7,38 @@ function registerSocketHandlers(io) {
     const snake = generateSnake(id);
     state.snakes.push(snake);
 
-    console.log(`${id} connected...`);
-    console.log(`${id}'s snake was added to the snakes array.`);
+    console.log(`${id} connected.`);
+    console.log(`${id}'s snake was created.`);
 
     socket.on("disconnect", reason => {
-      console.log(`${id} disconnected due to ${reason}`);
+      console.log(`${id} disconnected due to ${reason}.`);
       state.snakes = state.snakes.filter(s => s.id !== id);
-      console.log(`${id}'s snake was removed from the snakes array.`);
+      console.log(`${id}'s snake was removed.`);
     });
 
     socket.on("joinGame", data => {
-      console.log(`${id} joined the game...`);
       snake.isAlive = true;
-      // emit snake data to client
-      socket.emit("newSnake", snake);
-      // set moveInterval
+      if (snake.deaths) {
+        respawnSnake(snake);
+        console.log(`${id} respawned.`);
+      } else {
+        console.log(`${id} joined the game.`);
+      }
+      state.isGameStarted = true;
     });
 
-    socket.on("leaveGame", data => {
-      console.log(`${id} left the game...`);
-      snake.isAlive = false;
+    socket.on("changeDirection", newDirection => {
+      if (!snake || !snake.isAlive) return;
+
+      const isOpposite =
+        (snake.direction === "up" && newDirection === "down") ||
+        (snake.direction === "down" && newDirection === "up") ||
+        (snake.direction === "left" && newDirection === "right") ||
+        (snake.direction === "right" && newDirection === "left");
+
+      if (!isOpposite) {
+        snake.nextDirection = newDirection;
+      }
     });
   });
 }

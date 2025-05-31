@@ -1,12 +1,3 @@
-import {
-  gridSize,
-  initialSnakeLength,
-  initialSpeed,
-  speedBoostDuration,
-  speedBoostMultiplier,
-  snakeTargetSize,
-} from "./config.js";
-
 // Create a game element in the DOM
 export function createGameElement(tag, className) {
   const element = document.createElement(tag);
@@ -18,28 +9,6 @@ export function createGameElement(tag, className) {
 export function setElementPosition(element, position) {
   element.style.gridColumn = position.x;
   element.style.gridRow = position.y;
-}
-
-// generate a random position on the grid
-export function randomPosition() {
-  const x = Math.floor(Math.random() * gridSize) + 1;
-  const y = Math.floor(Math.random() * gridSize) + 1;
-  return { x, y };
-}
-
-// randomly pick an orientation for a new snake
-export function randomOrientation() {
-  return Math.round(Math.random()) ? "vertical" : "horizontal";
-}
-
-// Set the initial direction of movement (away from the nearest boundary)
-export function setInitialDirection(position, orientation) {
-  // move away from the nearest boundary
-  if (orientation === "horizontal") {
-    return position.y >= gridSize / 2 ? "up" : "down";
-  } else {
-    return position.x >= gridSize / 2 ? "left" : "right";
-  }
 }
 
 // get the current direction of a snake segment

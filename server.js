@@ -4,6 +4,8 @@ const path = require("path");
 
 const config = require("./config");
 const registerSocketHandlers = require("./socket/handlers");
+const gameLoop = require("./gameLoop");
+const state = require("./state");
 
 const app = express();
 app.use(express.static(path.join(__dirname, "public")));
@@ -15,3 +17,10 @@ const io = new Server(server, {
 
 // Socket logic
 registerSocketHandlers(io);
+
+// Game loop interval
+setInterval(() => {
+  if (state.isGameStarted) {
+    gameLoop(io);
+  }
+}, config.tickRate);
