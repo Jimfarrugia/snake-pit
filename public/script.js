@@ -16,6 +16,9 @@ import {
   setInitialDirection,
 } from "./helpers.js";
 
+// Connect to socket.io
+const socket = io();
+
 // Define game variables
 let initialOrientation = randomOrientation(); // orientation of the snake when it spawns ("horizontal" or "vertical")
 let initialSnakeSegments = generateSnakeSegments();
