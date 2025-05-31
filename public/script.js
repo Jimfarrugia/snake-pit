@@ -74,7 +74,9 @@ function drawPlayerSnake() {
 // draw the enemy snakes
 function drawEnemySnakes() {
   if (isGameStarted) {
-    enemySnakes.forEach(enemy => drawSnakeSegments(enemy, false));
+    enemySnakes.forEach(enemy => {
+      if (enemy.isAlive) drawSnakeSegments(enemy, false);
+    });
   }
 }
 
