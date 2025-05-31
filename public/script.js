@@ -13,7 +13,8 @@ const snakeTargetSize = 3;
 let food;
 let speedBoost;
 let isGameStarted = false;
-let serverSnake = null;
+let playerSnake = null;
+let enemySnakes = [];
 
 // Define HTML elements
 const board = document.getElementById("game-board");
@@ -23,20 +24,24 @@ const tutorialCloseBtn = document.getElementById("tutorial-close-btn");
 const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
 const tutorialDialog = document.getElementById("tutorial-dialog");
 
+// update to reflect the new game state
 socket.on("gameState", data => {
-  serverSnake = data.snakes.find(s => s.id === socket.id);
+  playerSnake = data.snakes.find(s => s.id === socket.id);
+  enemySnakes = data.snakes.filter(s => s.id !== socket.id);
   food = data.food;
   speedBoost = data.speedBoost;
   draw();
   setSnakeClassNames();
 });
 
+// disconnect gracefully
 socket.on("disconnect", () => {
   isGameStarted = false;
   startPrompt.style.display = "block";
   alert("Disconnected from server.");
 });
 
+// stop the game on gameOver
 socket.on("gameOver", () => {
   stopGame();
 });
@@ -59,49 +64,67 @@ function drawSpeedBoost() {
   }
 }
 
-// draw the snake on the board
-function drawSnake() {
-  if (isGameStarted && serverSnake) {
-    const { segments, direction } = serverSnake;
-    segments.forEach((segment, i) => {
-      const snakeElement = createGameElement("div", "snake");
-      // Set CSS classes for snake segments
-      if (i === 0) {
-        // set the classes for the head segment
-        snakeElement.className = `snake head ${direction}`;
-      } else if (i === segments.length - 1) {
-        // set the classes for the tail segment
-        const prevSegment = segments[i - 1];
-        const segmentDirection = getSegmentDirection(segment, prevSegment);
-        snakeElement.className = `snake tail ${segmentDirection}`;
-      } else {
-        // determine if the current segment is a corner and/or a target segment
-        const prevSegment = segments[i - 1];
-        const nextSegment = segments[i + 1];
-        const segmentDirection = getSegmentDirection(segment, prevSegment);
-        const bodySegmentType = getBodySegmentType(
-          segment,
-          nextSegment,
-          segmentDirection
-        );
-        const isCorner = bodySegmentType !== "body";
-        const isTarget = i > segments.length - 1 - snakeTargetSize;
-        // set the classes for the body segments
-        const classNames = `${isCorner ? "corner" : ""} ${bodySegmentType} ${
-          isTarget ? "target" : ""
-        } ${segmentDirection}`;
-        snakeElement.className = `snake ${classNames}`;
-      }
-      setElementPosition(snakeElement, segment);
-      board.appendChild(snakeElement);
-    });
+// draw the players snake
+function drawPlayerSnake() {
+  if (isGameStarted && playerSnake) {
+    drawSnakeSegments(playerSnake, true);
   }
+}
+
+// draw the enemy snakes
+function drawEnemySnakes() {
+  if (isGameStarted) {
+    enemySnakes.forEach(enemy => drawSnakeSegments(enemy, false));
+  }
+}
+
+// draw the segments of a snake
+function drawSnakeSegments(snake, isPlayer) {
+  const { segments, direction } = snake;
+
+  segments.forEach((segment, i) => {
+    const snakeElement = createGameElement("div", "snake");
+    // Set CSS classes for snake segments
+    if (i === 0) {
+      // set the classes for the head segment
+      snakeElement.className = `snake head ${direction} ${
+        isPlayer ? "" : "enemy"
+      }`.trim();
+    } else if (i === segments.length - 1) {
+      // set the classes for the tail segment
+      const prevSegment = segments[i - 1];
+      const segmentDirection = getSegmentDirection(segment, prevSegment);
+      snakeElement.className = `snake tail ${segmentDirection} ${
+        isPlayer ? "" : "enemy"
+      }`.trim();
+    } else {
+      // determine if the current segment is a corner and/or a target segment
+      const prevSegment = segments[i - 1];
+      const nextSegment = segments[i + 1];
+      const segmentDirection = getSegmentDirection(segment, prevSegment);
+      const bodySegmentType = getBodySegmentType(
+        segment,
+        nextSegment,
+        segmentDirection
+      );
+      const isCorner = bodySegmentType !== "body";
+      const isTarget = i > segments.length - 1 - snakeTargetSize;
+      // set the classes for the body segments
+      const classNames = `${bodySegmentType} ${segmentDirection} ${
+        isCorner ? "corner" : ""
+      } ${isTarget ? "target" : ""} ${isPlayer ? "" : "enemy"}`.trim();
+      snakeElement.className = `snake ${classNames}`;
+    }
+    setElementPosition(snakeElement, segment);
+    board.appendChild(snakeElement);
+  });
 }
 
 // draw game elements
 function draw() {
   board.innerHTML = "";
-  drawSnake();
+  drawPlayerSnake();
+  drawEnemySnakes();
   drawFood();
   drawSpeedBoost();
 }
