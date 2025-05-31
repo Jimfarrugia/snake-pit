@@ -129,13 +129,19 @@ function setSnakeMoveInterval() {
 
 // start the game
 function startGame() {
+  socket.emit("joinGame");
+  socket.on("newSnake", data => {
+    snake = data;
+  });
   isGameStarted = true;
   startPrompt.style.display = "none";
   setSnakeMoveInterval();
+  console.log(snake);
 }
 
 // stop the game
 function stopGame() {
+  socket.emit("leaveGame");
   clearInterval(snake.moveInterval);
   isGameStarted = false;
   startPrompt.style.display = "block";
