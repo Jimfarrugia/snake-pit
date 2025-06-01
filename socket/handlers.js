@@ -2,6 +2,7 @@ const {
   generateSnake,
   respawnSnake,
   generateTestSnake,
+  destroyTestSnakes,
 } = require("../utils/snakeUtils");
 const state = require("../state");
 const env = process.env.NODE_ENV || "development";
@@ -44,7 +45,7 @@ function registerSocketHandlers(io) {
       // ! Only run this in development
       if (env === "development") {
         // ! remove old test snake(s)
-        state.snakes = state.snakes.filter(s => s.id !== "tester");
+        destroyTestSnakes(state);
         // ! Spawn test snake(s)
         state.snakes.push(generateTestSnake());
         state.snakes.push(generateTestSnake());

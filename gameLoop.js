@@ -4,6 +4,7 @@ const {
   applySpeedBoost,
   moveTestSnake,
   isSamePosition,
+  destroyTestSnakes,
 } = require("./utils/snakeUtils");
 const { gridSize } = require("./config");
 
@@ -54,6 +55,9 @@ function moveSnake(snake, now, io) {
         console.log(`'${s.name}' was killed by '${snake.name}'.`);
       }
     }
+    // ! Only test snakes will trigger this
+    stopGameIfEmpty(state);
+    // ! ^
   }
 
   // Check food/bonus-effect collisions
@@ -130,11 +134,15 @@ function gameLoop(io) {
 // stop the game loop if no snakes remain alive
 function stopGameIfEmpty(state) {
   const remainingSnakes = state.snakes.filter(
-    s => s.isAlive && s.id !== "tester" // ! Disregard test snakes
-    // ! ^
+    s => s.isAlive && s.id !== "tester"
   );
-  if (!remainingSnakes.length) state.isGameStarted = false;
-  console.log("Game stopped. No snakes alive.");
+  if (!remainingSnakes.length) {
+    // ! remove test snakes
+    destroyTestSnakes(state);
+    // ! ^
+    state.isGameStarted = false;
+    console.log("Game stopped. No snakes alive.");
+  }
 }
 
 module.exports = gameLoop;

@@ -153,6 +153,12 @@ function moveTestSnake(snake) {
 }
 // ! ^
 
+// ! Remove all test snakes
+function destroyTestSnakes(state) {
+  state.snakes = state.snakes.filter(s => s.id !== "tester");
+}
+// ! ^
+
 module.exports = {
   randomPosition,
   randomOrientation,
@@ -164,4 +170,5 @@ module.exports = {
   applySpeedBoost,
   generateTestSnake,
   moveTestSnake,
+  destroyTestSnakes,
 };
