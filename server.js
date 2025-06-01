@@ -1,6 +1,8 @@
 const express = require("express");
 const { Server } = require("socket.io");
 const path = require("path");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const config = require("./config");
 const registerSocketHandlers = require("./socket/handlers");
@@ -10,9 +12,13 @@ const state = require("./state");
 const app = express();
 app.use(express.static(path.join(__dirname, "public")));
 
-const server = app.listen(3000);
+const port = process.env.PORT || 3000;
+const server = app.listen(port);
 const io = new Server(server, {
-  cors: { origin: "http://localhost:3000" },
+  cors: {
+    origin: process.env.CLIENT_ORIGIN,
+    methods: ["GET", "POST"],
+  },
 });
 
 // Socket logic
