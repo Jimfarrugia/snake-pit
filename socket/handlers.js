@@ -31,6 +31,7 @@ function registerSocketHandlers(io) {
 
     socket.on("joinGame", data => {
       snake.isAlive = true;
+      snake.name = data.name;
       if (snake.deaths) {
         respawnSnake(snake);
         console.log(`${id} respawned.`);

@@ -25,6 +25,7 @@ function generateSnake(id) {
   const initialSnakeSegments = generateSnakeSegments(initialOrientation);
   return {
     id,
+    name: null,
     segments: initialSnakeSegments,
     direction: setInitialDirection(initialSnakeSegments[0], initialOrientation),
     nextDirection: null, // queued input
