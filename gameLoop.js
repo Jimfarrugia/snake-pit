@@ -62,6 +62,7 @@ function moveSnake(snake, now, io) {
     console.log(
       `${snake.id} died by hitting the wall with ${snake.score} points.`
     );
+    stopGameIfEmpty(state);
     return;
   }
 
@@ -74,6 +75,7 @@ function moveSnake(snake, now, io) {
       console.log(
         `${snake.id} died by biting itself with ${snake.score} points.`
       );
+      stopGameIfEmpty(state);
       break;
     }
   }
@@ -96,6 +98,7 @@ function gameLoop(io) {
     // }
   });
 
+  // emit the gamestate to all connections
   io.emit("gameState", {
     // strip speedBoostTimeout from the snake object during emit
     // becuase it's non-serializable and causes socket.io to crash
@@ -104,6 +107,16 @@ function gameLoop(io) {
     food: state.food,
     speedBoost: state.speedBoost,
   });
+}
+
+// stop the game loop if no snakes remain alive
+function stopGameIfEmpty(state) {
+  const remainingSnakes = state.snakes.filter(
+    s => s.isAlive && s.id !== "tester" // ! Disregard test snakes
+    // ! ^
+  );
+  if (!remainingSnakes.length) state.isGameStarted = false;
+  console.log("Game stopped. No snakes alive.");
 }
 
 module.exports = gameLoop;

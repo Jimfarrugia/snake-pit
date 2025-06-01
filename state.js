@@ -9,7 +9,7 @@ function resetGameState() {
   snakes = [];
   food = randomPosition();
   speedBoost = randomPosition();
-  isGameStarted = false;
+  isGameStarted = false; // should be true if any snake has isAlive === true
 }
 
 module.exports = {

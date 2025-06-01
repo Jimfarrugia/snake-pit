@@ -19,6 +19,14 @@ function registerSocketHandlers(io) {
       console.log(`${id} disconnected due to ${reason}.`);
       state.snakes = state.snakes.filter(s => s.id !== id);
       console.log(`${id}'s snake was removed.`);
+      // ! Disregard test snakes
+      const remainingSnakes = state.snakes.filter(s => s.id !== "tester");
+      // ! ^
+      if (!remainingSnakes.length) {
+        const wasGameStarted = state.isGameStarted;
+        state.isGameStarted = false;
+        if (wasGameStarted) console.log("Game stopped. No players connected.");
+      }
     });
 
     socket.on("joinGame", data => {
@@ -30,6 +38,7 @@ function registerSocketHandlers(io) {
         console.log(`${id} joined the game.`);
       }
       state.isGameStarted = true;
+      console.log("Game started.");
 
       // ! Only run this in development
       if (env === "development") {
