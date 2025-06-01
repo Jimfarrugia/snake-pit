@@ -85,14 +85,14 @@ function applySpeedBoost(snake) {
     throw new Error("Invalid speedBoostMultiplier value.");
   }
   console.log(
-    `'${snake.id}' gained speed boost. (current speed: ${snake.speed}ms)`
+    `'${snake.name}' gained speed boost. Currently ${snake.speed}ms.`
   );
   if (snake.speedBoostTimeout) {
     clearTimeout(snake.speedBoostTimeout);
   }
   snake.speed = snake.speed * speedBoostMultiplier;
   snake.speedBoostTimeout = setTimeout(() => {
-    console.log(`'${snake.id}' speed was reset to ${initialSpeed}ms.`);
+    console.log(`'${snake.name}' speed reset to ${initialSpeed}ms.`);
     snake.speed = initialSpeed;
     snake.speedBoostTimeout = null;
   }, speedBoostDuration);
@@ -101,6 +101,7 @@ function applySpeedBoost(snake) {
 // ! Generate a test snake
 function generateTestSnake() {
   const testSnake = generateSnake("tester");
+  testSnake.name = "tester";
   testSnake.isAlive = true;
   testSnake.lastMoveTime = Date.now();
   return testSnake;

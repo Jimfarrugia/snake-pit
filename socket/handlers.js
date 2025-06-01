@@ -12,13 +12,13 @@ function registerSocketHandlers(io) {
     const snake = generateSnake(id);
     state.snakes.push(snake);
 
-    console.log(`${id} connected.`);
-    console.log(`${id}'s snake was created.`);
+    console.log(`'${id}' connected.`);
+    console.log(`'${id}' snake was created.`);
 
     socket.on("disconnect", reason => {
-      console.log(`${id} disconnected due to ${reason}.`);
+      console.log(`'${id}' disconnected due to ${reason}.`);
       state.snakes = state.snakes.filter(s => s.id !== id);
-      console.log(`${id}'s snake was removed.`);
+      console.log(`'${id}' snake was removed.`);
       // ! Disregard test snakes
       const remainingSnakes = state.snakes.filter(s => s.id !== "tester");
       // ! ^
@@ -34,9 +34,9 @@ function registerSocketHandlers(io) {
       snake.name = data.name;
       if (snake.deaths) {
         respawnSnake(snake);
-        console.log(`${id} respawned.`);
+        console.log(`'${snake.name}' respawned.`);
       } else {
-        console.log(`${id} joined the game.`);
+        console.log(`'${snake.name}' joined the game.`);
       }
       state.isGameStarted = true;
       console.log("Game started.");
