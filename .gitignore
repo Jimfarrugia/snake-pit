@@ -3,3 +3,7 @@ notes.txt
 *Autosaved*.piko
 
 .DS_Store
+
+.env
+
+node_modules/
