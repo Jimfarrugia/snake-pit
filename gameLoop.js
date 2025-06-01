@@ -78,7 +78,7 @@ function moveSnake(snake, now, io) {
     snake.deaths += 1;
     io.to(snake.id).emit("gameOver");
     console.log(
-      `${snake.id} died by hitting the wall with ${snake.score} points.`
+      `'${snake.id}' died by hitting the wall with ${snake.score} points.`
     );
     stopGameIfEmpty(state);
     return;
@@ -91,7 +91,7 @@ function moveSnake(snake, now, io) {
       snake.deaths += 1;
       io.to(snake.id).emit("gameOver");
       console.log(
-        `${snake.id} died by biting itself with ${snake.score} points.`
+        `'${snake.id}' died by biting itself with ${snake.score} points.`
       );
       stopGameIfEmpty(state);
       break;

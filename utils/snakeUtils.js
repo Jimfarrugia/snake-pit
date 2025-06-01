@@ -83,13 +83,15 @@ function applySpeedBoost(snake) {
   if (typeof speedBoostMultiplier !== "number" || isNaN(speedBoostMultiplier)) {
     throw new Error("Invalid speedBoostMultiplier value.");
   }
-  console.log(`${snake.id} speed boost: current speed=${snake.speed}`);
+  console.log(
+    `'${snake.id}' gained speed boost. (current speed: ${snake.speed}ms)`
+  );
   if (snake.speedBoostTimeout) {
     clearTimeout(snake.speedBoostTimeout);
   }
   snake.speed = snake.speed * speedBoostMultiplier;
   snake.speedBoostTimeout = setTimeout(() => {
-    console.log(`${snake.id} speed reset to ${initialSpeed}`);
+    console.log(`'${snake.id}' speed was reset to ${initialSpeed}ms.`);
     snake.speed = initialSpeed;
     snake.speedBoostTimeout = null;
   }, speedBoostDuration);
