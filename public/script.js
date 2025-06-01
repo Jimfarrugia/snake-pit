@@ -3,6 +3,8 @@ import {
   getBodySegmentType,
   createGameElement,
   setElementPosition,
+  generatePlayerName,
+  isValidName,
 } from "./helpers.js";
 
 // Connect to socket.io
@@ -10,6 +12,7 @@ const socket = io();
 
 // Game variables
 const snakeTargetSize = 3;
+const defaultPlayerName = generatePlayerName();
 let food;
 let speedBoost;
 let isGameStarted = false;
@@ -18,6 +21,7 @@ let enemySnakes = [];
 
 // Define HTML elements
 const board = document.getElementById("game-board");
+const nameInput = document.getElementById("name-input");
 const startPrompt = document.getElementById("start-prompt");
 const tutorialCloseBtn = document.getElementById("tutorial-close-btn");
 const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
@@ -131,7 +135,10 @@ function draw() {
 
 // start the game
 function startGame() {
-  socket.emit("joinGame");
+  const playerName = isValidName(nameInput.value)
+    ? nameInput.value
+    : defaultPlayerName;
+  socket.emit("joinGame", { name: playerName.trim() });
   isGameStarted = true;
   startPrompt.style.display = "none";
 }
@@ -177,4 +184,30 @@ tutorialOpenBtn.addEventListener("click", () => {
 
 tutorialCloseBtn.addEventListener("click", () => {
   tutorialDialog.close();
+});
+
+// Generate a default name for the player when the page loads
+window.addEventListener("DOMContentLoaded", () => {
+  nameInput.value = defaultPlayerName;
+  // Size the input element around the generated text
+  const mirror = document.createElement("span");
+  mirror.style.visibility = "hidden";
+  mirror.style.whiteSpace = "pre";
+  mirror.style.font = getComputedStyle(nameInput).font;
+  mirror.textContent = nameInput.value;
+  document.body.appendChild(mirror);
+  nameInput.style.width = `${mirror.offsetWidth + 3}px`;
+  mirror.remove();
+});
+
+// Validate the name input field as the user types
+nameInput.addEventListener("input", event => {
+  if (!isValidName(nameInput.value)) {
+    nameInput.setCustomValidity(
+      "Only letters, spaces and numbers are allowed."
+    );
+    nameInput.reportValidity();
+  } else {
+    nameInput.setCustomValidity("");
+  }
 });

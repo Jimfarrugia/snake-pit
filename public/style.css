@@ -23,6 +23,10 @@ body {
   text-align: center;
 }
 
+#gameplay-area {
+  position: relative;
+}
+
 #game-board {
   border-radius: 5px;
   display: grid;
@@ -35,14 +39,53 @@ body {
 }
 
 #start-prompt {
-  --prompt-size: 32px;
-  font-size: var(--prompt-size);
-  margin: 0 0 calc(0px - var(--prompt-size));
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: calc(50% + 5px);
+  transform: translate(-50%, -50%);
+  z-index: 999;
+}
+
+#start-prompt form {
+  text-align: center;
+}
+
+#start-prompt label {
+  text-transform: uppercase;
+  font-size: 24px;
+}
+
+#start-prompt input {
+  font-family: monospace;
+  font-size: 16px;
   color: #283618;
+  background: #fff;
+  border: 2px solid #606c38;
+  border-radius: 3px;
+  padding: 5px;
+}
+
+#start-prompt input:invalid {
+  border-color: red;
+}
+#start-prompt input:invalid:focus {
+  outline-style: solid;
+  outline-color: red;
+}
+
+#start-prompt h3 {
+  width: 100%;
+  --prompt-size: 32px;
+  font-size: 40px;
+  margin: 25px 0;
+  color: #606c38;
   text-align: center;
   text-transform: uppercase;
-  position: relative;
-  top: calc(0px - var(--cell-size) * var(--grid-size) / 2 - var(--prompt-size));
+}
+
+#start-prompt h3 span {
+  animation: blinking-start-prompt 0.5s linear infinite;
 }
 
 #tutorial-dialog {
@@ -120,6 +163,14 @@ body {
 #tutorial-open-btn:hover {
   color: #fefae0;
   border-color: #fefae0;
+}
+
+.snake {
+  z-index: 1;
+}
+
+.snake.enemy {
+  z-index: 0;
 }
 
 .snake.head {
@@ -206,4 +257,10 @@ body {
   background-image: url("/images/speed-boost.png");
   background-size: cover;
   z-index: 9999;
+}
+
+@keyframes blinking-start-prompt {
+  50% {
+    color: #283618;
+  }
 }

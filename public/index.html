@@ -17,8 +17,22 @@
   <body>
     <div id="wrapper">
       <h1 id="title">Snake Pit</h1>
-      <div id="game-board"></div>
-      <h3 id="start-prompt">Press spacebar to start</h3>
+      <div id="gameplay-area">
+        <div id="game-board"></div>
+        <div id="start-prompt">
+          <form>
+            <label for="name">Name:</label>
+            <input
+              id="name-input"
+              name="name"
+              type="text"
+              pattern="^[a-zA-Z0-9 ]+$"
+              maxlength="30"
+            />
+          </form>
+          <h3>Press <span>spacebar</span> to start</h3>
+        </div>
+      </div>
       <div id="menu">
         <button id="tutorial-open-btn" title="Help">?</button>
       </div>
