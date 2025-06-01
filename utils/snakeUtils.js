@@ -6,6 +6,20 @@ const {
   speedBoostMultiplier,
 } = require("../config");
 
+function randomPosition() {
+  const x = Math.floor(Math.random() * gridSize) + 1;
+  const y = Math.floor(Math.random() * gridSize) + 1;
+  return { x, y };
+}
+
+function randomOrientation() {
+  return Math.random() < 0.5 ? "horizontal" : "vertical";
+}
+
+function isSamePosition(a, b) {
+  return a.x === b.x && a.y === b.y;
+}
+
 function generateSnake(id) {
   const initialOrientation = randomOrientation();
   const initialSnakeSegments = generateSnakeSegments(initialOrientation);
@@ -19,6 +33,7 @@ function generateSnake(id) {
     speedBoostTimeout: null,
     score: 0,
     highScore: 0,
+    kills: 0,
     deaths: 0,
     isAlive: false,
   };
@@ -35,16 +50,6 @@ function respawnSnake(snake) {
   snake.speed = initialSpeed;
   snake.score = 0;
   snake.isAlive = true;
-}
-
-function randomPosition() {
-  const x = Math.floor(Math.random() * gridSize) + 1;
-  const y = Math.floor(Math.random() * gridSize) + 1;
-  return { x, y };
-}
-
-function randomOrientation() {
-  return Math.random() < 0.5 ? "horizontal" : "vertical";
 }
 
 function generateSnakeSegments(orientation) {
@@ -145,10 +150,11 @@ function moveTestSnake(snake) {
 // ! ^
 
 module.exports = {
-  generateSnake,
-  respawnSnake,
   randomPosition,
   randomOrientation,
+  isSamePosition,
+  generateSnake,
+  respawnSnake,
   generateSnakeSegments,
   setInitialDirection,
   applySpeedBoost,

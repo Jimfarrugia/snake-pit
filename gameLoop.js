@@ -3,6 +3,7 @@ const {
   randomPosition,
   applySpeedBoost,
   moveTestSnake,
+  isSamePosition,
 } = require("./utils/snakeUtils");
 const { gridSize } = require("./config");
 
@@ -37,12 +38,29 @@ function moveSnake(snake, now, io) {
   }
   segments.unshift(head);
 
+  // Check enemy snake collision
+  if (state.snakes.length > 1) {
+    for (const s of state.snakes) {
+      if (s.id === snake.id) continue; // Skip self
+      const targetSegments = s.segments.slice(-3);
+      const match = targetSegments.some(segment =>
+        isSamePosition(segment, head)
+      );
+      if (match) {
+        s.isAlive = false;
+        s.deaths += 1;
+        snake.kills += 1;
+        io.to(s.id).emit("gameOver");
+        console.log(`'${s.id}' was killed by '${snake.id}'.`);
+      }
+    }
+  }
+
   // Check food/bonus-effect collisions
   const food = state.food;
   const speedBoost = state.speedBoost;
-  const isFoodCollision = head.x === food.x && head.y === food.y;
-  const isSpeedBoostCollision =
-    head.x === speedBoost.x && head.y === speedBoost.y;
+  const isFoodCollision = isSamePosition(food, head);
+  const isSpeedBoostCollision = isSamePosition(speedBoost, head);
   if (isFoodCollision) {
     snake.score += 1;
     state.food = randomPosition();
@@ -68,7 +86,7 @@ function moveSnake(snake, now, io) {
 
   // Check self collision
   for (let i = 1; i < segments.length; i++) {
-    if (segments[i].x === head.x && segments[i].y === head.y) {
+    if (isSamePosition(segments[i], head)) {
       snake.isAlive = false;
       snake.deaths += 1;
       io.to(snake.id).emit("gameOver");
