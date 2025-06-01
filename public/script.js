@@ -19,7 +19,6 @@ let enemySnakes = [];
 // Define HTML elements
 const board = document.getElementById("game-board");
 const startPrompt = document.getElementById("start-prompt");
-const snakeElements = document.getElementsByClassName("snake");
 const tutorialCloseBtn = document.getElementById("tutorial-close-btn");
 const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
 const tutorialDialog = document.getElementById("tutorial-dialog");
@@ -31,7 +30,6 @@ socket.on("gameState", data => {
   food = data.food;
   speedBoost = data.speedBoost;
   draw();
-  setSnakeClassNames();
 });
 
 // disconnect gracefully
