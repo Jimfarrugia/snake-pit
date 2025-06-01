@@ -4,6 +4,7 @@ const {
   generateTestSnake,
 } = require("../utils/snakeUtils");
 const state = require("../state");
+const env = process.env.NODE_ENV || "development";
 
 function registerSocketHandlers(io) {
   io.on("connection", socket => {
@@ -30,12 +31,15 @@ function registerSocketHandlers(io) {
       }
       state.isGameStarted = true;
 
-      // ! remove old test snake(s)
-      state.snakes = state.snakes.filter(s => s.id !== "tester");
-      // ! Spawn test snake(s)
-      state.snakes.push(generateTestSnake());
-      state.snakes.push(generateTestSnake());
-      state.snakes.push(generateTestSnake());
+      // ! Only run this in development
+      if (env === "development") {
+        // ! remove old test snake(s)
+        state.snakes = state.snakes.filter(s => s.id !== "tester");
+        // ! Spawn test snake(s)
+        state.snakes.push(generateTestSnake());
+        state.snakes.push(generateTestSnake());
+        state.snakes.push(generateTestSnake());
+      }
       // ! ^
     });
 
