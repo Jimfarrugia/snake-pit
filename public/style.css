@@ -1,5 +1,5 @@
 :root {
-  --grid-size: 20; /* number of rows and columns */
+  --grid-size: 25; /* number of rows and columns in the grid */
   --cell-size: 20px; /* size of each grid cell */
 }
 
