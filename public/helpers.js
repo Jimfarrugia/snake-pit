@@ -1,3 +1,5 @@
+import { adjectives, breeds } from "./dictionary.js";
+
 // Create a game element in the DOM
 export function createGameElement(tag, className) {
   const element = document.createElement(tag);
@@ -52,4 +54,16 @@ export function getBodySegmentType(
       : (cornerType = "right-down");
   }
   return isCorner ? cornerType : "body";
+}
+
+function capitalize(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+export function generatePlayerName() {
+  const breed = breeds[Math.floor(Math.random() * breeds.length)];
+  const matchingAdjectives = adjectives.filter(adj => adj[0] === breed[0]);
+  const adjective =
+    matchingAdjectives[Math.floor(Math.random() * matchingAdjectives.length)];
+  return `${capitalize(adjective)} ${capitalize(breed)}`;
 }
