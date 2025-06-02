@@ -50,6 +50,7 @@ function respawnSnake(snake) {
   );
   snake.speed = initialSpeed;
   snake.score = 0;
+  snake.kills = 0;
   snake.isAlive = true;
 }
 
