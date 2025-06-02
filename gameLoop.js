@@ -50,8 +50,8 @@ function moveSnake(snake, now, io) {
       /* number of target segments increments for each segment added to the snake
       until the number has reached snakeMaxTargetSize */
       const targetSize =
-        s.length < initialSnakeLength + snakeMaxTargetSize
-          ? s.length - (initialSnakeLength - 1)
+        s.segments.length < initialSnakeLength + snakeMaxTargetSize
+          ? s.segments.length - (initialSnakeLength - 1)
           : snakeMaxTargetSize;
       const targetSegments = s.segments.slice(0 - targetSize);
       const match = targetSegments.some(segment => {
