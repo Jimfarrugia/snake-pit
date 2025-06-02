@@ -63,6 +63,7 @@ function moveSnake(snake, now, io) {
         s.isAlive = false;
         s.deaths += 1;
         snake.kills += 1;
+        snake.score += 1;
         io.to(s.id).emit("gameOver");
         console.log(`'${s.name}' was killed by '${snake.name}'.`);
       }
