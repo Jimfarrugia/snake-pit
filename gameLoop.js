@@ -44,9 +44,11 @@ function moveSnake(snake, now, io) {
     for (const s of state.snakes) {
       if (s.id === snake.id) continue; // Skip self
       const targetSegments = s.segments.slice(-3);
-      const match = targetSegments.some(segment =>
-        isSamePosition(segment, head)
-      );
+      const match = targetSegments.some(segment => {
+        // make sure enemy snake is still alive during collision
+        // (prevents bug: extra kills added)
+        return isSamePosition(segment, head) && s.isAlive;
+      });
       if (match) {
         s.isAlive = false;
         s.deaths += 1;
