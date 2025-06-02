@@ -17,7 +17,7 @@ body {
 
 #title {
   font-size: 48px;
-  margin: 25px 0;
+  margin: 15px 0;
   padding: 0;
   color: #606c38;
   text-align: center;
@@ -88,6 +88,27 @@ body {
   animation: blinking-start-prompt 0.5s linear infinite;
 }
 
+#tutorial-open-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "VT323";
+  font-size: 32px;
+  border: 2px solid #bc6c25;
+  border-radius: 100%;
+  background: #283618;
+  color: #bc6c25;
+  cursor: pointer;
+  margin: 0;
+}
+
+#tutorial-open-btn:hover {
+  color: #dda15e;
+  border-color: #dda15e;
+}
+
 #tutorial-dialog {
   background: #283618;
   border: 5px solid #606c38;
@@ -141,28 +162,20 @@ body {
 }
 
 #menu {
-  text-align: right;
-}
-
-#tutorial-open-btn {
-  width: 2.5rem;
-  height: 2.5rem;
-  display: inline-flex;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  font-family: "VT323";
-  font-size: 32px;
-  border: 2px solid #606c38;
-  border-radius: 100%;
-  background: #283618;
-  color: #606c38;
-  cursor: pointer;
-  margin: 15px 0 0;
 }
 
-#tutorial-open-btn:hover {
+#player-name {
+  color: #606c38;
+  font-size: 28px;
+  margin: 0;
+}
+
+#player-name span {
   color: #fefae0;
-  border-color: #fefae0;
 }
 
 .snake {

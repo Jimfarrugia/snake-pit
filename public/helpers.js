@@ -60,6 +60,8 @@ function capitalize(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+// Validate a player name.  Must not be empty and can only contain:
+// letters, numbers, spaces, underscores, dashes
 export const isValidName = name => /^[a-zA-Z0-9_\- ]+$/.test(name);
 
 export function generatePlayerName() {

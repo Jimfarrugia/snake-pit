@@ -13,6 +13,7 @@ const socket = io();
 // Game variables
 const snakeTargetSize = 3;
 const defaultPlayerName = generatePlayerName();
+let playerName;
 let food;
 let speedBoost;
 let isGameStarted = false;
@@ -47,6 +48,15 @@ socket.on("disconnect", () => {
 socket.on("gameOver", () => {
   stopGame();
 });
+
+// draw player name
+function drawName() {
+  if (isGameStarted) {
+    const nameElement = document.getElementById("player-name");
+    console.log("playerName", playerName);
+    nameElement.innerHTML = `Playing as: <span>${playerName}</span>`;
+  }
+}
 
 // draw food on the board
 function drawFood() {
@@ -135,11 +145,12 @@ function draw() {
 
 // start the game
 function startGame() {
-  const playerName = isValidName(nameInput.value)
+  playerName = isValidName(nameInput.value)
     ? nameInput.value
     : defaultPlayerName;
   socket.emit("joinGame", { name: playerName.trim() });
   isGameStarted = true;
+  drawName();
   startPrompt.style.display = "none";
 }
 
