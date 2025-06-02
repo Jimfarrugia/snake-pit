@@ -60,7 +60,7 @@ function capitalize(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export const isValidName = name => /^[a-zA-Z0-9 ]+$/.test(name);
+export const isValidName = name => /^[a-zA-Z0-9_\- ]+$/.test(name);
 
 export function generatePlayerName() {
   const breed = breeds[Math.floor(Math.random() * breeds.length)];
