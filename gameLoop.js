@@ -6,7 +6,11 @@ const {
   isSamePosition,
   destroyTestSnakes,
 } = require("./utils/snakeUtils");
-const { gridSize } = require("./config");
+const {
+  gridSize,
+  snakeMaxTargetSize,
+  initialSnakeLength,
+} = require("./config");
 
 // Move a single snake
 function moveSnake(snake, now, io) {
@@ -43,7 +47,13 @@ function moveSnake(snake, now, io) {
   if (state.snakes.length > 1) {
     for (const s of state.snakes) {
       if (s.id === snake.id) continue; // Skip self
-      const targetSegments = s.segments.slice(-3);
+      /* number of target segments increments for each segment added to the snake
+      until the number has reached snakeMaxTargetSize */
+      const targetSize =
+        s.length < initialSnakeLength + snakeMaxTargetSize
+          ? s.length - (initialSnakeLength - 1)
+          : snakeMaxTargetSize;
+      const targetSegments = s.segments.slice(0 - targetSize);
       const match = targetSegments.some(segment => {
         // make sure enemy snake is still alive during collision
         // (prevents bug: extra kills added)
@@ -130,6 +140,8 @@ function gameLoop(io) {
     snakes: state.snakes.map(({ speedBoostTimeout, ...s }) => s),
     food: state.food,
     speedBoost: state.speedBoost,
+    snakeMaxTargetSize,
+    initialSnakeLength,
   });
 }
 

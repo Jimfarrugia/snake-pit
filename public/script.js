@@ -11,8 +11,9 @@ import {
 const socket = io();
 
 // Game variables
-const snakeTargetSize = 3;
 const defaultPlayerName = generatePlayerName();
+let initialSnakeLength;
+let snakeMaxTargetSize;
 let playerName;
 let food;
 let speedBoost;
@@ -35,6 +36,8 @@ socket.on("gameState", state => {
   enemySnakes = state.snakes.filter(s => s.id !== socket.id);
   food = state.food;
   speedBoost = state.speedBoost;
+  initialSnakeLength = state.initialSnakeLength;
+  snakeMaxTargetSize = state.snakeMaxTargetSize;
   drawGame();
   drawScoreboard(state.snakes);
 });
@@ -123,7 +126,8 @@ function drawSnakeSegments(snake, isPlayer) {
         segmentDirection
       );
       const isCorner = bodySegmentType !== "body";
-      const isTarget = i > segments.length - 1 - snakeTargetSize;
+      const targetSize = getSnakeTargetSize(segments);
+      const isTarget = i > segments.length - 1 - targetSize;
       // set the classes for the body segments
       const classNames = `${bodySegmentType} ${segmentDirection} ${
         isCorner ? "corner" : ""
@@ -135,9 +139,21 @@ function drawSnakeSegments(snake, isPlayer) {
   });
 }
 
+// Return the number of target segments a snake should have
+function getSnakeTargetSize(segments) {
+  /* number of target segments increments for each segment added to the snake
+      until the number has reached snakeMaxTargetSize */
+  const targetSize =
+    segments.length < initialSnakeLength + snakeMaxTargetSize
+      ? segments.length - (initialSnakeLength - 1)
+      : snakeMaxTargetSize;
+  return targetSize;
+}
+
+// draw the scoreboard
 function drawScoreboard(players) {
   scoreboard.innerHTML = "";
-  // Sort by the higher of score or kills, then by the lower value as tiebreaker
+  // Sort players by the higher of score or kills, then by the lower value as tiebreaker
   players.sort((a, b) => {
     const maxA = Math.max(a.score, a.kills);
     const maxB = Math.max(b.score, b.kills);
