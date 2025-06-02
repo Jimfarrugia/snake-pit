@@ -3,22 +3,25 @@
   --cell-size: 20px; /* size of each grid cell */
 }
 
-body {
-  margin: 0;
+* {
   padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+body {
   font-family: "VT323", monospace;
   background: #283618;
 }
 
 #wrapper {
-  width: calc(var(--cell-size) * var(--grid-size));
+  width: calc(var(--cell-size) * var(--grid-size) + 10px);
   margin: 0 auto;
 }
 
 #title {
   font-size: 48px;
-  margin: 15px 0;
-  padding: 0;
+  margin: 20px 0 15px;
   color: #606c38;
   text-align: center;
 }
@@ -32,7 +35,7 @@ body {
   display: grid;
   grid-template-columns: repeat(var(--grid-size), var(--cell-size));
   grid-template-rows: repeat(var(--grid-size), var(--cell-size));
-  margin: 0 auto;
+  margin: 15px auto;
   width: calc(var(--cell-size) * var(--grid-size));
   border: 5px solid #606c38;
   background: #fefae0;
@@ -42,7 +45,7 @@ body {
   width: 100%;
   position: absolute;
   top: 50%;
-  left: calc(50% + 5px);
+  left: 50%;
   transform: translate(-50%, -50%);
   z-index: 999;
 }
@@ -101,7 +104,6 @@ body {
   background: #283618;
   color: #bc6c25;
   cursor: pointer;
-  margin: 0;
 }
 
 #tutorial-open-btn:hover {
@@ -116,6 +118,7 @@ body {
   color: #fefae0;
   padding: 25px;
   text-align: center;
+  margin: auto;
 }
 
 #tutorial-dialog::backdrop {
@@ -127,20 +130,16 @@ body {
   color: #606c38;
   font-size: 32px;
   margin: 0 0 20px;
-  padding: 0;
   text-align: center;
   text-transform: uppercase;
 }
 
 #tutorial-dialog ul {
-  margin: 0 0 0;
   padding: 0 0 10px;
 }
 
 #tutorial-dialog li {
   margin: 0 0 15px;
-  padding: 0;
-  list-style: none;
   font-family: monospace;
 }
 
@@ -162,7 +161,6 @@ body {
 }
 
 #menu {
-  margin-bottom: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -171,11 +169,46 @@ body {
 #player-name {
   color: #606c38;
   font-size: 28px;
-  margin: 0;
 }
 
 #player-name span {
   color: #fefae0;
+}
+
+#scoreboard {
+  color: #fefae0;
+  margin: 5px 0 0;
+}
+
+#scoreboard li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 28px;
+  padding: 10px 5px;
+  border-bottom: 1px solid #606c38;
+  list-style: decimal inside none;
+}
+
+#scoreboard li:first-child {
+  padding-top: 0;
+}
+
+#scoreboard .scoreboard-name span {
+  color: #606c38;
+}
+
+#scoreboard .scores .scoreboard-score {
+  background: url("/images/mouse-icon.png") no-repeat left center;
+  background-size: 32px;
+  padding-left: 37px; /* Background size + 5px */
+}
+
+#scoreboard .scores .scoreboard-kills {
+  background: url("/images/snake-icon.png") no-repeat left center;
+  background-size: 28px;
+  padding-left: 33px; /* Background size + 5px */
+  margin-left: 15px;
 }
 
 .snake {

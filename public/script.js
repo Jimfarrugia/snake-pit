@@ -27,14 +27,16 @@ const startPrompt = document.getElementById("start-prompt");
 const tutorialCloseBtn = document.getElementById("tutorial-close-btn");
 const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
 const tutorialDialog = document.getElementById("tutorial-dialog");
+const scoreboard = document.getElementById("scoreboard");
 
 // update to reflect the new game state
-socket.on("gameState", data => {
-  playerSnake = data.snakes.find(s => s.id === socket.id);
-  enemySnakes = data.snakes.filter(s => s.id !== socket.id);
-  food = data.food;
-  speedBoost = data.speedBoost;
-  draw();
+socket.on("gameState", state => {
+  playerSnake = state.snakes.find(s => s.id === socket.id);
+  enemySnakes = state.snakes.filter(s => s.id !== socket.id);
+  food = state.food;
+  speedBoost = state.speedBoost;
+  drawGame();
+  drawScoreboard(state.snakes);
 });
 
 // disconnect gracefully
@@ -53,7 +55,6 @@ socket.on("gameOver", () => {
 function drawName() {
   if (isGameStarted) {
     const nameElement = document.getElementById("player-name");
-    console.log("playerName", playerName);
     nameElement.innerHTML = `Playing as: <span>${playerName}</span>`;
   }
 }
@@ -134,8 +135,42 @@ function drawSnakeSegments(snake, isPlayer) {
   });
 }
 
+function drawScoreboard(players) {
+  scoreboard.innerHTML = "";
+  // Sort by the higher of score or kills, then by the lower value as tiebreaker
+  players.sort((a, b) => {
+    const maxA = Math.max(a.score, a.kills);
+    const maxB = Math.max(b.score, b.kills);
+    if (maxA !== maxB) return maxB - maxA;
+    const minA = Math.min(a.score, a.kills);
+    const minB = Math.min(b.score, b.kills);
+    return minB - minA;
+  });
+  // Generate scoreboard elements
+  players.forEach((player, index) => {
+    const li = document.createElement("li");
+    const nameSpan = document.createElement("span");
+    nameSpan.className = "scoreboard-name";
+    nameSpan.innerHTML = `<span>${index + 1}.</span> ${player.name}`;
+    const scoresDiv = document.createElement("div");
+    scoresDiv.className = "scores";
+    const scoreSpan = document.createElement("span");
+    scoreSpan.className = "scoreboard-score";
+    scoreSpan.textContent = player.score;
+    const killsSpan = document.createElement("span");
+    killsSpan.className = "scoreboard-kills";
+    killsSpan.textContent = player.kills;
+    // Build the li element & add it to the DOM
+    scoresDiv.appendChild(scoreSpan);
+    scoresDiv.appendChild(killsSpan);
+    li.appendChild(nameSpan);
+    li.appendChild(scoresDiv);
+    scoreboard.appendChild(li);
+  });
+}
+
 // draw game elements
-function draw() {
+function drawGame() {
   board.innerHTML = "";
   drawPlayerSnake();
   drawEnemySnakes();
