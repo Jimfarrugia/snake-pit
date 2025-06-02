@@ -65,7 +65,9 @@ function moveSnake(snake, now, io) {
         snake.kills += 1;
         snake.score += 1;
         io.to(s.id).emit("gameOver");
-        console.log(`'${s.name}' was killed by '${snake.name}'.`);
+        console.log(
+          `'${s.name}' was killed by '${snake.name}' with ${s.score} points.`
+        );
       }
     }
     // ! Only test snakes will trigger this
