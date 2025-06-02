@@ -194,7 +194,7 @@ body {
   padding-top: 0;
 }
 
-#scoreboard .scoreboard-name span {
+#scoreboard .scoreboard-name > span {
   color: #606c38;
 }
 
@@ -206,6 +206,13 @@ body {
 
 #scoreboard .scores .scoreboard-kills {
   background: url("/images/snake-icon.png") no-repeat left center;
+  background-size: 28px;
+  padding-left: 33px; /* Background size + 5px */
+  margin-left: 15px;
+}
+
+#scoreboard .scores .scoreboard-deaths {
+  background: url("/images/skull-icon.png") no-repeat left center;
   background-size: 28px;
   padding-left: 33px; /* Background size + 5px */
   margin-left: 15px;
