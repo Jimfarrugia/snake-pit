@@ -54,12 +54,30 @@ socket.on("gameOver", () => {
   stopGame();
 });
 
-// draw player name
-function drawName() {
-  if (isGameStarted) {
-    const nameElement = document.getElementById("player-name");
-    nameElement.innerHTML = `Playing as: <span>${playerName}</span>`;
-  }
+// start the game
+function startGame() {
+  playerName = isValidName(nameInput.value)
+    ? nameInput.value
+    : defaultPlayerName;
+  socket.emit("joinGame", { name: playerName.trim() });
+  isGameStarted = true;
+  drawName();
+  startPrompt.style.display = "none";
+}
+
+// stop the game
+function stopGame() {
+  isGameStarted = false;
+  startPrompt.style.display = "block";
+}
+
+// draw game elements
+function drawGame() {
+  board.innerHTML = "";
+  drawPlayerSnake();
+  drawEnemySnakes();
+  drawFood();
+  drawSpeedBoost();
 }
 
 // draw food on the board
@@ -150,6 +168,14 @@ function getSnakeTargetSize(segments) {
   return targetSize;
 }
 
+// draw player name
+function drawName() {
+  if (isGameStarted) {
+    const nameElement = document.getElementById("player-name");
+    nameElement.innerHTML = `Playing as: <span>${playerName}</span>`;
+  }
+}
+
 // draw the scoreboard
 function drawScoreboard(players) {
   scoreboard.innerHTML = "";
@@ -183,32 +209,6 @@ function drawScoreboard(players) {
     li.appendChild(scoresDiv);
     scoreboard.appendChild(li);
   });
-}
-
-// draw game elements
-function drawGame() {
-  board.innerHTML = "";
-  drawPlayerSnake();
-  drawEnemySnakes();
-  drawFood();
-  drawSpeedBoost();
-}
-
-// start the game
-function startGame() {
-  playerName = isValidName(nameInput.value)
-    ? nameInput.value
-    : defaultPlayerName;
-  socket.emit("joinGame", { name: playerName.trim() });
-  isGameStarted = true;
-  drawName();
-  startPrompt.style.display = "none";
-}
-
-// stop the game
-function stopGame() {
-  isGameStarted = false;
-  startPrompt.style.display = "block";
 }
 
 // keypress event handler
