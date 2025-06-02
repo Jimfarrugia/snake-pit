@@ -56,6 +56,7 @@ export function getBodySegmentType(
   return isCorner ? cornerType : "body";
 }
 
+// Capitalize the first character of a string
 function capitalize(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -64,6 +65,7 @@ function capitalize(string) {
 // letters, numbers, spaces, underscores, dashes
 export const isValidName = name => /^[a-zA-Z0-9_\- ]+$/.test(name);
 
+// Generate an alliterative default name for the player using words from dictionary.js
 export function generatePlayerName() {
   const breed = breeds[Math.floor(Math.random() * breeds.length)];
   const matchingAdjectives = adjectives.filter(adj => adj[0] === breed[0]);
