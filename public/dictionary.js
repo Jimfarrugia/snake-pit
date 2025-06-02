@@ -31,7 +31,7 @@ export const breeds = [
   "racersnake",
   "ratsnake",
   "rattlesnake",
-  "seasnakes",
+  "seasnake",
   "sidewinder",
   "taipan",
   "urutu",
