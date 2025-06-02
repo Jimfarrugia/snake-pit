@@ -197,12 +197,15 @@ function drawScoreboard(players) {
     const scoresDiv = document.createElement("div");
     scoresDiv.className = "scores";
     const scoreSpan = document.createElement("span");
+    scoreSpan.title = "Score";
     scoreSpan.className = "scoreboard-score";
     scoreSpan.textContent = player.score;
     const killsSpan = document.createElement("span");
+    killsSpan.title = "Kills";
     killsSpan.className = "scoreboard-kills";
     killsSpan.textContent = player.kills;
     const deathsSpan = document.createElement("span");
+    deathsSpan.title = "Deaths";
     deathsSpan.className = "scoreboard-deaths";
     deathsSpan.textContent = player.deaths;
     // Build the li element & add it to the DOM
