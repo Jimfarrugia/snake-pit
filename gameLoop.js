@@ -18,30 +18,8 @@ function moveSnake(snake, now, io) {
   if (now - snake.lastMoveTime < snake.speed) return; // not time to move yet
   snake.lastMoveTime = now;
 
-  // Set new direction
-  if (snake.nextDirection) {
-    snake.direction = snake.nextDirection;
-    snake.nextDirection = null;
-  }
-
-  // Move head according to direction
   const segments = snake.segments;
   const head = { ...segments[0] };
-  switch (snake.direction) {
-    case "up":
-      head.y--;
-      break;
-    case "right":
-      head.x++;
-      break;
-    case "down":
-      head.y++;
-      break;
-    case "left":
-      head.x--;
-      break;
-  }
-  segments.unshift(head);
 
   // Check enemy snake collision
   if (state.snakes.length > 1) {
@@ -74,6 +52,29 @@ function moveSnake(snake, now, io) {
     stopGameIfEmpty(state);
     // ! ^
   }
+
+  // Set new direction
+  if (snake.nextDirection) {
+    snake.direction = snake.nextDirection;
+    snake.nextDirection = null;
+  }
+
+  // Move head according to direction
+  switch (snake.direction) {
+    case "up":
+      head.y--;
+      break;
+    case "right":
+      head.x++;
+      break;
+    case "down":
+      head.y++;
+      break;
+    case "left":
+      head.x--;
+      break;
+  }
+  segments.unshift(head);
 
   // Check food/bonus-effect collisions
   const food = state.food;
