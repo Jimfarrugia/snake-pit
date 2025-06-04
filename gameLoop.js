@@ -5,7 +5,7 @@ const {
   moveTestSnake,
   isSamePosition,
   stopGameIfEmpty,
-} = require("./utils/snakeUtils");
+} = require("./utils");
 const {
   gridSize,
   snakeMaxTargetSize,

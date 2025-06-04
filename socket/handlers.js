@@ -1,10 +1,10 @@
 const {
   generateSnake,
   respawnSnake,
-  generateTestSnake,
+  addTestSnakes,
   destroyTestSnakes,
   stopGameIfNoConnections,
-} = require("../utils/snakeUtils");
+} = require("../utils");
 const state = require("../state");
 const { isDevEnv } = require("../config");
 
@@ -38,9 +38,7 @@ function registerSocketHandlers(io) {
       // Create test snakes in development environment
       if (isDevEnv) {
         destroyTestSnakes(state);
-        state.snakes.push(generateTestSnake());
-        state.snakes.push(generateTestSnake());
-        state.snakes.push(generateTestSnake());
+        addTestSnakes(3, state);
       }
     });
 

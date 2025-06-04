@@ -1,4 +1,4 @@
-const { randomPosition } = require("./utils/snakeUtils");
+const { randomPosition } = require("./utils");
 
 let snakes = [];
 let food = randomPosition();
