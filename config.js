@@ -1,3 +1,5 @@
+const env = process.env.NODE_ENV || "development";
+
 module.exports = {
   gridSize: 25, // amount of rows and columns in the grid
   initialSnakeLength: 5, // amount of segments that snakes begin with
@@ -6,4 +8,6 @@ module.exports = {
   speedBoostMultiplier: 0.75, // lower value = higher speed
   snakeMaxTargetSize: 3, // max amount of trailing snake segments that are vulnerable to attack
   tickRate: 25, // ms between game ticks
+  env,
+  isDevEnv: env === "development",
 };

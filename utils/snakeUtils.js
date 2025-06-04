@@ -4,6 +4,7 @@ const {
   initialSpeed,
   speedBoostDuration,
   speedBoostMultiplier,
+  isDevEnv,
 } = require("../config");
 
 function randomPosition() {
@@ -20,6 +21,30 @@ function isSamePosition(a, b) {
   return a.x === b.x && a.y === b.y;
 }
 
+// stop the game loop if no snakes remain alive
+function stopGameIfEmpty(state) {
+  const remainingSnakes = state.snakes.filter(snake =>
+    isDevEnv ? snake.isAlive && snake.id !== "tester" : snake.isAlive
+  );
+  if (!remainingSnakes.length) {
+    if (isDevEnv) destroyTestSnakes(state);
+    state.isGameStarted = false;
+    console.log("Game stopped. No snakes alive.");
+  }
+}
+
+// stop the game loop if no players are connected
+function stopGameIfNoConnections(state) {
+  // disregard test snakes
+  const remainingSnakes = isDevEnv
+    ? state.snakes.filter(s => s.id !== "tester")
+    : state.snakes;
+  if (!remainingSnakes.length) {
+    const wasGameStarted = state.isGameStarted;
+    state.isGameStarted = false;
+    if (wasGameStarted) console.log("Game stopped. No players connected.");
+  }
+}
 function generateSnake(id) {
   const initialOrientation = randomOrientation();
   const initialSnakeSegments = generateSnakeSegments(initialOrientation);
@@ -172,4 +197,6 @@ module.exports = {
   generateTestSnake,
   moveTestSnake,
   destroyTestSnakes,
+  stopGameIfEmpty,
+  stopGameIfNoConnections,
 };

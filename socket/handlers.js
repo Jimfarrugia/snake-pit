@@ -3,9 +3,10 @@ const {
   respawnSnake,
   generateTestSnake,
   destroyTestSnakes,
+  stopGameIfNoConnections,
 } = require("../utils/snakeUtils");
 const state = require("../state");
-const env = process.env.NODE_ENV || "development";
+const { isDevEnv } = require("../config");
 
 function registerSocketHandlers(io) {
   io.on("connection", socket => {
@@ -20,14 +21,7 @@ function registerSocketHandlers(io) {
       console.log(`'${id}' disconnected due to ${reason}.`);
       state.snakes = state.snakes.filter(s => s.id !== id);
       console.log(`'${id}' snake was removed.`);
-      // ! Disregard test snakes
-      const remainingSnakes = state.snakes.filter(s => s.id !== "tester");
-      // ! ^
-      if (!remainingSnakes.length) {
-        const wasGameStarted = state.isGameStarted;
-        state.isGameStarted = false;
-        if (wasGameStarted) console.log("Game stopped. No players connected.");
-      }
+      stopGameIfNoConnections(state);
     });
 
     socket.on("joinGame", data => {
@@ -41,17 +35,13 @@ function registerSocketHandlers(io) {
       }
       state.isGameStarted = true;
       console.log("Game started.");
-
-      // ! Only run this in development
-      if (env === "development") {
-        // ! remove old test snake(s)
+      // Create test snakes in development environment
+      if (isDevEnv) {
         destroyTestSnakes(state);
-        // ! Spawn test snake(s)
         state.snakes.push(generateTestSnake());
         state.snakes.push(generateTestSnake());
         state.snakes.push(generateTestSnake());
       }
-      // ! ^
     });
 
     socket.on("changeDirection", newDirection => {

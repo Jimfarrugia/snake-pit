@@ -4,12 +4,13 @@ const {
   applySpeedBoost,
   moveTestSnake,
   isSamePosition,
-  destroyTestSnakes,
+  stopGameIfEmpty,
 } = require("./utils/snakeUtils");
 const {
   gridSize,
   snakeMaxTargetSize,
   initialSnakeLength,
+  isDevEnv,
 } = require("./config");
 
 // Move a single snake
@@ -122,20 +123,13 @@ function moveSnake(snake, now, io) {
 // The game loop
 function gameLoop(io) {
   if (!state.isGameStarted) return;
-
   const now = Date.now();
-
   state.snakes.forEach(snake => {
-    // if (snake.isAlive) {
-    // ! Move the test snake
-    if (snake.id === "tester") {
+    if (isDevEnv && snake.id === "tester") {
       moveTestSnake(snake);
     }
-    // ! ^
     moveSnake(snake, now, io);
-    // }
   });
-
   // emit the gamestate to all connections
   io.emit("gameState", {
     // strip speedBoostTimeout from the snake object during emit
@@ -147,20 +141,6 @@ function gameLoop(io) {
     snakeMaxTargetSize,
     initialSnakeLength,
   });
-}
-
-// stop the game loop if no snakes remain alive
-function stopGameIfEmpty(state) {
-  const remainingSnakes = state.snakes.filter(
-    s => s.isAlive && s.id !== "tester"
-  );
-  if (!remainingSnakes.length) {
-    // ! remove test snakes
-    destroyTestSnakes(state);
-    // ! ^
-    state.isGameStarted = false;
-    console.log("Game stopped. No snakes alive.");
-  }
 }
 
 module.exports = gameLoop;
