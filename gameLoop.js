@@ -1,6 +1,8 @@
 const state = require("./state");
 const {
   randomPosition,
+  isEnemySnakeCollision,
+  killSnake,
   applySpeedBoost,
   moveTestSnake,
   isSamePosition,
@@ -14,54 +16,32 @@ const {
 } = require("./config");
 
 // Move a single snake
-function moveSnake(snake, now, io) {
-  if (!snake.isAlive) return;
-  if (now - snake.lastMoveTime < snake.speed) return; // not time to move yet
-  snake.lastMoveTime = now;
+function moveSnake(playerSnake, now, io) {
+  if (!playerSnake.isAlive) return;
+  if (now - playerSnake.lastMoveTime < playerSnake.speed) return; // not time to move yet
+  playerSnake.lastMoveTime = now;
 
-  const segments = snake.segments;
+  const segments = playerSnake.segments;
   const head = { ...segments[0] };
 
-  // Check enemy snake collision
+  // Check/handle enemy snake collision
   if (state.snakes.length > 1) {
-    for (const s of state.snakes) {
-      if (s.id === snake.id) continue; // Skip self
-      /* number of target segments increments for each segment added to the snake
-      until the number has reached snakeMaxTargetSize */
-      const targetSize =
-        s.segments.length < initialSnakeLength + snakeMaxTargetSize
-          ? s.segments.length - (initialSnakeLength - 1)
-          : snakeMaxTargetSize;
-      const targetSegments = s.segments.slice(0 - targetSize);
-      const match = targetSegments.some(segment => {
-        // make sure enemy snake is still alive during collision
-        // (prevents bug: extra kills added)
-        return isSamePosition(segment, head) && s.isAlive;
-      });
-      if (match) {
-        s.isAlive = false;
-        s.deaths += 1;
-        snake.kills += 1;
-        snake.score += 1;
-        io.to(s.id).emit("gameOver");
-        console.log(
-          `'${s.name}' was killed by '${snake.name}' with ${s.score} points.`
-        );
+    state.snakes.forEach(snake => {
+      if (snake.id === playerSnake.id) return; // skip self
+      if (isEnemySnakeCollision(snake, playerSnake)) {
+        killSnake(snake, playerSnake, io);
       }
-    }
-    // ! Only test snakes will trigger this
-    stopGameIfEmpty(state);
-    // ! ^
+    });
   }
 
   // Set new direction
-  if (snake.nextDirection) {
-    snake.direction = snake.nextDirection;
-    snake.nextDirection = null;
+  if (playerSnake.nextDirection) {
+    playerSnake.direction = playerSnake.nextDirection;
+    playerSnake.nextDirection = null;
   }
 
   // Move head according to direction
-  switch (snake.direction) {
+  switch (playerSnake.direction) {
     case "up":
       head.y--;
       break;
@@ -83,38 +63,36 @@ function moveSnake(snake, now, io) {
   const isFoodCollision = isSamePosition(food, head);
   const isSpeedBoostCollision = isSamePosition(speedBoost, head);
   if (isFoodCollision) {
-    snake.score += 1;
+    playerSnake.score += 1;
     state.food = randomPosition();
   } else if (isSpeedBoostCollision) {
-    snake.score += 1;
+    playerSnake.score += 1;
     state.speedBoost = randomPosition();
-    applySpeedBoost(snake);
+    applySpeedBoost(playerSnake);
   } else {
     segments.pop();
   }
 
   // Check boundary collision
   if (head.x < 1 || head.x > gridSize || head.y < 1 || head.y > gridSize) {
-    snake.isAlive = false;
-    snake.deaths += 1;
-    io.to(snake.id).emit("gameOver");
+    playerSnake.isAlive = false;
+    playerSnake.deaths += 1;
+    io.to(playerSnake.id).emit("gameOver");
     console.log(
-      `'${snake.name}' died by hitting the wall with ${snake.score} points.`
+      `'${playerSnake.name}' died by hitting the wall with ${playerSnake.score} points.`
     );
-    stopGameIfEmpty(state);
     return;
   }
 
   // Check self collision
   for (let i = 1; i < segments.length; i++) {
     if (isSamePosition(segments[i], head)) {
-      snake.isAlive = false;
-      snake.deaths += 1;
-      io.to(snake.id).emit("gameOver");
+      playerSnake.isAlive = false;
+      playerSnake.deaths += 1;
+      io.to(playerSnake.id).emit("gameOver");
       console.log(
-        `'${snake.name}' died by biting itself with ${snake.score} points.`
+        `'${playerSnake.name}' died by biting itself with ${playerSnake.score} points.`
       );
-      stopGameIfEmpty(state);
       break;
     }
   }
@@ -141,6 +119,8 @@ function gameLoop(io) {
     snakeMaxTargetSize,
     initialSnakeLength,
   });
+  // stop the game if no players are in-game
+  stopGameIfEmpty(state);
 }
 
 module.exports = gameLoop;
