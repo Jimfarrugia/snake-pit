@@ -13,7 +13,7 @@ function generateTestSnake(idNumber) {
 }
 
 // Move a test snake without letting it run into the boundary or itself
-function moveTestSnake(snake) {
+function setTestSnakeDirection(snake) {
   if (!snake.isAlive) return;
   const clockwise = {
     up: ["up", "right", "down", "left"],
@@ -32,9 +32,9 @@ function moveTestSnake(snake) {
     ? clockwise[snake.direction]
     : counterClockwise[snake.direction];
 
-  for (let direction of directions) {
+  for (let newDirection of directions) {
     const head = { ...snake.segments[0] };
-    switch (direction) {
+    switch (newDirection) {
       case "up":
         head.y--;
         break;
@@ -61,14 +61,14 @@ function moveTestSnake(snake) {
     );
 
     if (!isOutOfBounds && !isSelfCollision) {
-      snake.nextDirection = direction;
+      snake.nextDirection = newDirection;
       return;
     }
   }
 
-  // If no move is safe
+  // If no move is safe, kill the snake
   snake.isAlive = false;
-  console.warn("Test snake is stuck and has died.");
+  console.warn(`${snake.id} is stuck and has died.`);
 }
 
 // Remove all test snakes
@@ -85,7 +85,7 @@ function addTestSnakes(n, state) {
 
 module.exports = {
   generateTestSnake,
-  moveTestSnake,
+  setTestSnakeDirection,
   destroyTestSnakes,
   addTestSnakes,
 };

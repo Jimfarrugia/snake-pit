@@ -7,7 +7,7 @@ const {
   isSpeedBoostCollision,
   eatSpeedBoost,
   applySpeedBoost,
-  moveTestSnake,
+  setTestSnakeDirection,
   isSamePosition,
   stopGameIfEmpty,
 } = require("./utils");
@@ -34,11 +34,12 @@ function moveSnake(playerSnake, now, io) {
       if (snake.id === playerSnake.id) return; // skip self
       if (isEnemySnakeCollision(snake, playerSnake)) {
         killSnake(snake, playerSnake, io);
+        isGrowing = true;
       }
     });
   }
 
-  // Set new direction
+  // Update direction for all snakes (test or not)
   if (playerSnake.nextDirection) {
     playerSnake.direction = playerSnake.nextDirection;
     playerSnake.nextDirection = null;
@@ -74,6 +75,7 @@ function moveSnake(playerSnake, now, io) {
     isGrowing = true;
   }
 
+  // Remove the tail segment if no points were gained
   if (!isGrowing) segments.pop();
 
   // Check boundary collision
@@ -107,7 +109,7 @@ function gameLoop(io) {
   const now = Date.now();
   state.snakes.forEach(snake => {
     if (isDevEnv && snake.id.includes("TestSnake")) {
-      moveTestSnake(snake);
+      setTestSnakeDirection(snake);
     }
     moveSnake(snake, now, io);
   });
