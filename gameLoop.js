@@ -32,7 +32,8 @@ function moveSnake(playerSnake, now, io) {
   if (state.snakes.length > 1) {
     state.snakes.forEach(snake => {
       if (snake.id === playerSnake.id) return; // skip self
-      if (isEnemySnakeCollision(snake, playerSnake)) {
+      // note: dead snakes can be 'killed' if we don't check isAlive here
+      if (snake.isAlive && isEnemySnakeCollision(snake, playerSnake)) {
         killSnake(snake, playerSnake, io);
         isGrowing = true;
       }

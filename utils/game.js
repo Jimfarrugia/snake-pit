@@ -41,13 +41,9 @@ function isEnemySnakeCollision(enemySnake, playerSnake) {
       ? enemySnake.segments.length - (initialSnakeLength - 1)
       : snakeMaxTargetSize;
   const targetSegments = enemySnake.segments.slice(0 - targetSize);
-  const isKill = targetSegments.some(segment => {
-    // make sure enemy snake is still alive during collision
-    // (prevents bug: extra kills added)
-    // TODO: ^ check if this is still an issue
-    return isSamePosition(segment, playerSnakeHead) && enemySnake.isAlive;
-  });
-  return isKill;
+  return targetSegments.some(segment =>
+    isSamePosition(segment, playerSnakeHead)
+  );
 }
 
 // Kill enemy snake and award point to player
