@@ -2,9 +2,10 @@ const { generateSnake } = require("./snake");
 const { gridSize } = require("../config");
 
 // Generate a test snake
-function generateTestSnake() {
-  const testSnake = generateSnake("tester");
-  testSnake.name = "tester";
+function generateTestSnake(idNumber) {
+  const id = `TestSnake${idNumber}`;
+  const testSnake = generateSnake(id);
+  testSnake.name = id;
   testSnake.isAlive = true;
   testSnake.lastMoveTime = Date.now();
   testSnake.isClockwise = Math.round(Math.random());
@@ -72,13 +73,13 @@ function moveTestSnake(snake) {
 
 // Remove all test snakes
 function destroyTestSnakes(state) {
-  state.snakes = state.snakes.filter(s => s.id !== "tester");
+  state.snakes = state.snakes.filter(s => !s.id.includes("TestSnake"));
 }
 
 // Add test snakes to the game (n: number of test snakes to add)
 function addTestSnakes(n, state) {
   for (let i = 0; i < n; i++) {
-    state.snakes.push(generateTestSnake());
+    state.snakes.push(generateTestSnake(i + 1));
   }
 }
 

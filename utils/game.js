@@ -9,7 +9,7 @@ const {
 // stop the game loop if no snakes remain alive
 function stopGameIfEmpty(state) {
   const remainingSnakes = state.snakes.filter(snake =>
-    isDevEnv ? snake.isAlive && snake.id !== "tester" : snake.isAlive
+    isDevEnv ? snake.isAlive && !snake.id.includes("TestSnake") : snake.isAlive
   );
   if (!remainingSnakes.length) {
     if (isDevEnv) destroyTestSnakes(state);
@@ -22,7 +22,7 @@ function stopGameIfEmpty(state) {
 function stopGameIfNoConnections(state) {
   // disregard test snakes
   const remainingSnakes = isDevEnv
-    ? state.snakes.filter(s => s.id !== "tester")
+    ? state.snakes.filter(s => !s.id.includes("TestSnake"))
     : state.snakes;
   if (!remainingSnakes.length) {
     const wasGameStarted = state.isGameStarted;

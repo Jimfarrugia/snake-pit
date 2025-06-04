@@ -103,7 +103,7 @@ function gameLoop(io) {
   if (!state.isGameStarted) return;
   const now = Date.now();
   state.snakes.forEach(snake => {
-    if (isDevEnv && snake.id === "tester") {
+    if (isDevEnv && snake.id.includes("TestSnake")) {
       moveTestSnake(snake);
     }
     moveSnake(snake, now, io);
