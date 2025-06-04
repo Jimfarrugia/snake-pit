@@ -1,4 +1,4 @@
-const { isSamePosition } = require("./helpers");
+const { isSamePosition, randomPosition } = require("./helpers");
 const { destroyTestSnakes } = require("./testSnake");
 const {
   initialSnakeLength,
@@ -62,9 +62,37 @@ function killSnake(enemySnake, playerSnake, io) {
   );
 }
 
+// Check if a snake has collided with food
+function isFoodCollision(food, playerSnake) {
+  const playerSnakeHead = playerSnake.segments[0];
+  return isSamePosition(food, playerSnakeHead);
+}
+
+// Award snake a point and reset food
+function eatFood(state, playerSnake) {
+  playerSnake.score += 1;
+  state.food = randomPosition();
+}
+
+// Check if a snake has collided with food
+function isSpeedBoostCollision(speedBoost, playerSnake) {
+  const playerSnakeHead = playerSnake.segments[0];
+  return isSamePosition(speedBoost, playerSnakeHead);
+}
+
+// Award snake a point and reset food
+function eatSpeedBoost(state, playerSnake) {
+  playerSnake.score += 1;
+  state.speedBoost = randomPosition();
+}
+
 module.exports = {
   stopGameIfEmpty,
   stopGameIfNoConnections,
   isEnemySnakeCollision,
   killSnake,
+  isFoodCollision,
+  eatFood,
+  isSpeedBoostCollision,
+  eatSpeedBoost,
 };

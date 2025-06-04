@@ -1,8 +1,11 @@
 const state = require("./state");
 const {
-  randomPosition,
   isEnemySnakeCollision,
   killSnake,
+  isFoodCollision,
+  eatFood,
+  isSpeedBoostCollision,
+  eatSpeedBoost,
   applySpeedBoost,
   moveTestSnake,
   isSamePosition,
@@ -23,8 +26,9 @@ function moveSnake(playerSnake, now, io) {
 
   const segments = playerSnake.segments;
   const head = { ...segments[0] };
+  let isGrowing = false;
 
-  // Check/handle enemy snake collision
+  // Handle enemy snake collision
   if (state.snakes.length > 1) {
     state.snakes.forEach(snake => {
       if (snake.id === playerSnake.id) return; // skip self
@@ -57,21 +61,20 @@ function moveSnake(playerSnake, now, io) {
   }
   segments.unshift(head);
 
-  // Check food/bonus-effect collisions
-  const food = state.food;
-  const speedBoost = state.speedBoost;
-  const isFoodCollision = isSamePosition(food, head);
-  const isSpeedBoostCollision = isSamePosition(speedBoost, head);
-  if (isFoodCollision) {
-    playerSnake.score += 1;
-    state.food = randomPosition();
-  } else if (isSpeedBoostCollision) {
-    playerSnake.score += 1;
-    state.speedBoost = randomPosition();
-    applySpeedBoost(playerSnake);
-  } else {
-    segments.pop();
+  // Handle food collision
+  if (isFoodCollision(state.food, playerSnake)) {
+    eatFood(state, playerSnake);
+    isGrowing = true;
   }
+
+  // Handle speed boost collision
+  if (isSpeedBoostCollision(state.speedBoost, playerSnake)) {
+    eatSpeedBoost(state, playerSnake);
+    applySpeedBoost(playerSnake);
+    isGrowing = true;
+  }
+
+  if (!isGrowing) segments.pop();
 
   // Check boundary collision
   if (head.x < 1 || head.x > gridSize || head.y < 1 || head.y > gridSize) {
