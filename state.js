@@ -4,6 +4,7 @@ let snakes = [];
 let food = randomPosition();
 let speedBoost = randomPosition();
 let isGameStarted = false;
+let spawnTestSnakesInterval;
 
 function resetGameState() {
   snakes = [];

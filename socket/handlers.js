@@ -37,8 +37,18 @@ function registerSocketHandlers(io) {
       console.log("Game started.");
       // Create test snakes in development environment
       if (isDevEnv) {
+        const numOfTestSnakes = 3;
         destroyTestSnakes(state);
-        addTestSnakes(3, state);
+        addTestSnakes(numOfTestSnakes, state);
+        // Ressurrect test snakes every 10 seconds.
+        state.spawnTestSnakesInterval = setInterval(() => {
+          const testSnakes = state.snakes.filter(
+            snake => snake.id.includes("TestSnake") && snake.isAlive
+          );
+          if (testSnakes.length < numOfTestSnakes) {
+            addTestSnakes(numOfTestSnakes - testSnakes.length, state);
+          }
+        }, 10000);
       }
     });
 
