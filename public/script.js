@@ -220,30 +220,35 @@ function drawScoreboard(players) {
 
 // keypress event handler
 function handleKeyPress(event) {
-  // Don't trigger any events if an input element has focus
+  // Don't do anything if an input element has focus
   const activeElement = document.activeElement;
   if (activeElement.tagName === "INPUT") return;
 
-  if (
-    (!isGameStarted && event.code === "Space") ||
-    (!isGameStarted && event.key === " ")
-  ) {
+  const { key } = event;
+  const isArrowKey = [
+    "ArrowUp",
+    "ArrowDown",
+    "ArrowLeft",
+    "ArrowRight",
+  ].includes(key);
+  const isSpacebar = key === " ";
+
+  // Prevent scrolling during game
+  if ((isArrowKey || isSpacebar) && isGameStarted) {
+    event.preventDefault();
+  }
+
+  // Handle start game
+  if (!isGameStarted && isSpacebar) {
+    event.preventDefault();
     startGame();
-  } else {
-    switch (event.key) {
-      case "ArrowUp":
-        socket.emit("changeDirection", "up");
-        break;
-      case "ArrowDown":
-        socket.emit("changeDirection", "down");
-        break;
-      case "ArrowLeft":
-        socket.emit("changeDirection", "left");
-        break;
-      case "ArrowRight":
-        socket.emit("changeDirection", "right");
-        break;
-    }
+    return;
+  }
+
+  // Handle change direction
+  if (isArrowKey) {
+    const direction = key.replace("Arrow", "").toLowerCase();
+    socket.emit("changeDirection", direction);
   }
 }
 
