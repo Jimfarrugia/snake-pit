@@ -220,6 +220,10 @@ function drawScoreboard(players) {
 
 // keypress event handler
 function handleKeyPress(event) {
+  // Don't trigger any events if an input element has focus
+  const activeElement = document.activeElement;
+  if (activeElement.tagName === "INPUT") return;
+
   if (
     (!isGameStarted && event.code === "Space") ||
     (!isGameStarted && event.key === " ")
