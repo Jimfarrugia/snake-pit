@@ -2,8 +2,8 @@ const { generateSnake, respawnSnake } = require("./snake");
 const { gridSize } = require("../config");
 
 // Generate a test snake
-function generateTestSnake(idNumber) {
-  const id = `TestSnake${idNumber}`;
+function generateTestSnake() {
+  const id = `TestSnake${Math.round(Math.random().toFixed(6) * 1000000)}`;
   const testSnake = generateSnake(id);
   testSnake.name = id;
   testSnake.isAlive = true;
@@ -79,8 +79,9 @@ function destroyTestSnakes(state) {
 // Add test snakes to the game (n: number of test snakes to add)
 function addTestSnakes(n, state) {
   for (let i = 0; i < n; i++) {
-    state.snakes.push(generateTestSnake(i + 1));
+    state.snakes.push(generateTestSnake());
   }
+}
 
 // Revive test snakes
 function respawnTestSnakes(state) {
