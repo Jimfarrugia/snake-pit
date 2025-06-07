@@ -1,21 +1,18 @@
 const state = require("./state");
 const {
-  isEnemySnakeCollision,
   killSnake,
   isFoodCollision,
   eatFood,
   isSpeedBoostCollision,
   eatSpeedBoost,
   applySpeedBoost,
+  isBoundaryCollision,
   setTestSnakeDirection,
   isSamePosition,
   stopGameIfEmpty,
-  getSnakeTargetSize,
-  getSnakeTargetSegments,
   getAllTargetSegments,
 } = require("./utils");
 const {
-  gridSize,
   snakeMaxTargetSize,
   initialSnakeLength,
   isDevEnv,
@@ -94,12 +91,7 @@ function moveSnake(playerSnake, now, io) {
   if (!isGrowing) segments.pop();
 
   // Check boundary collision
-  if (
-    newHead.x < 1 ||
-    newHead.x > gridSize ||
-    newHead.y < 1 ||
-    newHead.y > gridSize
-  ) {
+  if (isBoundaryCollision(newHead)) {
     playerSnake.isAlive = false;
     playerSnake.deaths += 1;
     io.to(playerSnake.id).emit("gameOver");

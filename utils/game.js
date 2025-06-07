@@ -1,11 +1,7 @@
 const { getSnakeTargetSegments, getSnakeTargetSize } = require("./snake");
 const { isSamePosition, randomPosition } = require("./helpers");
 const { destroyTestSnakes } = require("./testSnake");
-const {
-  initialSnakeLength,
-  snakeMaxTargetSize,
-  isDevEnv,
-} = require("../config");
+const { isDevEnv, gridSize } = require("../config");
 
 // stop the game loop if no snakes remain alive
 function stopGameIfEmpty(state) {
@@ -60,21 +56,6 @@ function getAllTargetSegments(state, playerSnake) {
     });
 }
 
-// Check if a snake has collided with a target segment of another snake
-function isEnemySnakeCollision(enemySnake, playerSnake) {
-  const playerSnakeHead = playerSnake.segments[0];
-  /* number of target segments increments for each segment added to the snake
-      until the number has reached snakeMaxTargetSize */
-  const targetSize =
-    enemySnake.segments.length < initialSnakeLength + snakeMaxTargetSize
-      ? enemySnake.segments.length - (initialSnakeLength - 1)
-      : snakeMaxTargetSize;
-  const targetSegments = enemySnake.segments.slice(0 - targetSize);
-  return targetSegments.some(segment =>
-    isSamePosition(segment, playerSnakeHead)
-  );
-}
-
 // Kill enemy snake and award point to player
 function killSnake(enemySnake, playerSnake, io) {
   enemySnake.isAlive = false;
@@ -111,14 +92,24 @@ function eatSpeedBoost(state, playerSnake) {
   state.speedBoost = randomPosition();
 }
 
+// Check if snake head collides with the boundary
+function isBoundaryCollision(snakeHead) {
+  return (
+    snakeHead.x < 1 ||
+    snakeHead.x > gridSize ||
+    snakeHead.y < 1 ||
+    snakeHead.y > gridSize
+  );
+}
+
 module.exports = {
   stopGameIfEmpty,
   stopGameIfNoConnections,
   getAllTargetSegments,
-  isEnemySnakeCollision,
   killSnake,
   isFoodCollision,
   eatFood,
   isSpeedBoostCollision,
   eatSpeedBoost,
+  isBoundaryCollision,
 };
