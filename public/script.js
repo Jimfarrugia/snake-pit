@@ -247,6 +247,11 @@ function handleKeyPress(event) {
   }
 }
 
+// Start button click listener
+document
+  .getElementById("start-btn")
+  .addEventListener("click", () => startGame());
+
 // Listen for keypress
 document.addEventListener("keydown", handleKeyPress);
 

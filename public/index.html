@@ -28,13 +28,17 @@
             <label for="name">Name:</label>
             <input
               id="name-input"
+              title="Enter a name"
               name="name"
               type="text"
               pattern="^[a-zA-Z0-9_\- ]+$"
               maxlength="30"
             />
           </form>
-          <h3>Press <span>spacebar</span> to start</h3>
+          <p>
+            <button id="start-btn" title="Join the game">Join Game</button>
+          </p>
+          <p class="help-text">(or press space)</p>
         </div>
       </div>
       <ol id="scoreboard"></ol>

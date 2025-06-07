@@ -24,6 +24,7 @@ body {
   margin: 20px 0 15px;
   color: #606c38;
   text-align: center;
+  text-transform: uppercase;
 }
 
 #gameplay-area {
@@ -48,20 +49,17 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 999;
-}
-
-#start-prompt form {
   text-align: center;
 }
 
 #start-prompt label {
   text-transform: uppercase;
-  font-size: 24px;
+  font-size: 28px;
 }
 
 #start-prompt input {
   font-family: monospace;
-  font-size: 16px;
+  font-size: 20px;
   color: #283618;
   background: #fff;
   border: 2px solid #606c38;
@@ -77,18 +75,30 @@ body {
   outline-color: red;
 }
 
-#start-prompt h3 {
-  width: 100%;
-  --prompt-size: 32px;
-  font-size: 40px;
-  margin: 25px 0;
-  color: #606c38;
-  text-align: center;
+#start-prompt button {
+  font-family: "VT323";
+  font-size: 42px;
   text-transform: uppercase;
+  color: #fefae0;
+  background-color: #606c38;
+  margin: 30px 0 0;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  animation: blinking-start-prompt 1s linear infinite;
 }
 
-#start-prompt h3 span {
-  animation: blinking-start-prompt 0.5s linear infinite;
+#start-prompt button:hover {
+  color: #fefae0;
+  background-color: #bc6c25;
+}
+
+#start-prompt .help-text {
+  font-size: 24px;
+  font-family: "VT323";
+  text-transform: uppercase;
+  margin: 5px 0 0;
 }
 
 #tutorial-open-btn {
@@ -112,6 +122,7 @@ body {
 }
 
 #tutorial-dialog {
+  font-size: 16px;
   background: #283618;
   border: 5px solid #606c38;
   border-radius: 5px;
@@ -128,7 +139,7 @@ body {
 
 #tutorial-dialog h2 {
   color: #606c38;
-  font-size: 32px;
+  font-size: 42px;
   margin: 0 0 20px;
   text-align: center;
   text-transform: uppercase;
@@ -150,7 +161,7 @@ body {
   padding: 7px 10px;
   border-radius: 5px;
   font-family: "VT323";
-  font-size: 24px;
+  font-size: 32px;
   cursor: pointer;
 }
 
@@ -314,6 +325,6 @@ body {
 
 @keyframes blinking-start-prompt {
   50% {
-    color: #283618;
+    background-color: #283618;
   }
 }
