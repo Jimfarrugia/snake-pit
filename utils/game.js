@@ -61,11 +61,8 @@ function killSnake(enemySnake, playerSnake, io) {
   enemySnake.isAlive = false;
   enemySnake.deaths += 1;
   playerSnake.kills += 1;
-  playerSnake.score += 1;
   io.to(enemySnake.id).emit("gameOver");
-  console.log(
-    `'${enemySnake.name}' was killed by '${playerSnake.name}' with ${enemySnake.score} points.`
-  );
+  console.log(`'${enemySnake.name}' was killed by '${playerSnake.name}'.`);
 }
 
 // Check if a snake has collided with food
