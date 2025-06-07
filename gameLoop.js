@@ -67,6 +67,7 @@ function moveSnake(playerSnake, now, io) {
       if (
         (isSamePosition(newHead, targetSegment.position) &&
           isSamePosition(prevHead, targetSegment.nextPosition)) ||
+        isSamePosition(newHead, targetSegment.nextPosition) ||
         isSamePosition(prevHead, targetSegment.position)
       ) {
         const enemySnake = state.snakes.find(s => s.id === targetSegment.id);
