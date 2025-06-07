@@ -86,7 +86,7 @@ function addTestSnakes(n, state) {
 // Revive test snakes
 function respawnTestSnakes(state) {
   state.snakes.forEach(snake => {
-    if (snake.id.includes("TestSnake")) {
+    if (snake.id.includes("TestSnake") && !snake.isAlive) {
       respawnSnake(snake);
     }
   });
