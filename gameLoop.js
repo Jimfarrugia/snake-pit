@@ -10,6 +10,9 @@ const {
   setTestSnakeDirection,
   isSamePosition,
   stopGameIfEmpty,
+  getSnakeTargetSize,
+  getSnakeTargetSegments,
+  getAllTargetSegments,
 } = require("./utils");
 const {
   gridSize,
@@ -25,20 +28,9 @@ function moveSnake(playerSnake, now, io) {
   playerSnake.lastMoveTime = now;
 
   const segments = playerSnake.segments;
-  const head = { ...segments[0] };
+  const prevHead = segments[0];
+  const newHead = { ...segments[0] };
   let isGrowing = false;
-
-  // Handle enemy snake collision
-  if (state.snakes.length > 1) {
-    state.snakes.forEach(snake => {
-      if (snake.id === playerSnake.id) return; // skip self
-      // note: dead snakes can be 'killed' if we don't check isAlive here
-      if (snake.isAlive && isEnemySnakeCollision(snake, playerSnake)) {
-        killSnake(snake, playerSnake, io);
-        isGrowing = true;
-      }
-    });
-  }
 
   // Update direction for all snakes (test or not)
   if (playerSnake.nextDirection) {
@@ -49,19 +41,40 @@ function moveSnake(playerSnake, now, io) {
   // Move head according to direction
   switch (playerSnake.direction) {
     case "up":
-      head.y--;
+      newHead.y--;
       break;
     case "right":
-      head.x++;
+      newHead.x++;
       break;
     case "down":
-      head.y++;
+      newHead.y++;
       break;
     case "left":
-      head.x--;
+      newHead.x--;
       break;
   }
-  segments.unshift(head);
+  segments.unshift(newHead);
+
+  // Handle enemy snake collision
+  if (state.snakes.length > 1) {
+    const targetSegments = getAllTargetSegments(state, playerSnake);
+    targetSegments.forEach(targetSegment => {
+      if (targetSegment.id === playerSnake.id) return; // skip self
+      // consider cases where head and target segment swap spaces (pass through each other)
+      // (eg. 5,5 -> 6,5 and 6,5 -> 5,5)
+      // or where they both move to the same space at once
+      // (eg. 4,5 -> 5,5 and 6,5 -> 5,5)
+      if (
+        (isSamePosition(newHead, targetSegment.position) &&
+          isSamePosition(prevHead, targetSegment.nextPosition)) ||
+        isSamePosition(prevHead, targetSegment.position)
+      ) {
+        const enemySnake = state.snakes.find(s => s.id === targetSegment.id);
+        killSnake(enemySnake, playerSnake, io);
+        isGrowing = true;
+      }
+    });
+  }
 
   // Handle food collision
   if (isFoodCollision(state.food, playerSnake)) {
@@ -80,7 +93,12 @@ function moveSnake(playerSnake, now, io) {
   if (!isGrowing) segments.pop();
 
   // Check boundary collision
-  if (head.x < 1 || head.x > gridSize || head.y < 1 || head.y > gridSize) {
+  if (
+    newHead.x < 1 ||
+    newHead.x > gridSize ||
+    newHead.y < 1 ||
+    newHead.y > gridSize
+  ) {
     playerSnake.isAlive = false;
     playerSnake.deaths += 1;
     io.to(playerSnake.id).emit("gameOver");
@@ -92,7 +110,7 @@ function moveSnake(playerSnake, now, io) {
 
   // Check self collision
   for (let i = 1; i < segments.length; i++) {
-    if (isSamePosition(segments[i], head)) {
+    if (isSamePosition(segments[i], newHead)) {
       playerSnake.isAlive = false;
       playerSnake.deaths += 1;
       io.to(playerSnake.id).emit("gameOver");

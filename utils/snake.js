@@ -2,6 +2,7 @@ const {
   gridSize,
   initialSpeed,
   initialSnakeLength,
+  snakeMaxTargetSize,
   speedBoostDuration,
   speedBoostMultiplier,
 } = require("../config");
@@ -77,6 +78,20 @@ function respawnSnake(snake) {
   snake.isAlive = true;
 }
 
+// Return the amount of target segments a snake has based on its length
+function getSnakeTargetSize(snake) {
+  // The target size increases by 1 for each segment gained up to snakeMaxTargetSize
+  return snake.segments.length < initialSnakeLength + snakeMaxTargetSize
+    ? snake.segments.length - (initialSnakeLength - 1)
+    : snakeMaxTargetSize;
+}
+
+// Return an array of a snake's target segments
+function getSnakeTargetSegments(snake) {
+  const targetSize = getSnakeTargetSize(snake);
+  return snake.segments.slice(-targetSize);
+}
+
 // Apply the speed boost effect to a snake
 function applySpeedBoost(snake) {
   if (typeof speedBoostMultiplier !== "number" || isNaN(speedBoostMultiplier)) {
@@ -102,5 +117,7 @@ module.exports = {
   respawnSnake,
   generateSnakeSegments,
   setInitialDirection,
+  getSnakeTargetSize,
+  getSnakeTargetSegments,
   applySpeedBoost,
 };

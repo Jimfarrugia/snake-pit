@@ -1,3 +1,4 @@
+const { getSnakeTargetSegments, getSnakeTargetSize } = require("./snake");
 const { isSamePosition, randomPosition } = require("./helpers");
 const { destroyTestSnakes } = require("./testSnake");
 const {
@@ -36,6 +37,27 @@ function stopGameIfNoConnections(state) {
     state.isGameStarted = false;
     if (wasGameStarted) console.log("Game stopped. No players connected.");
   }
+}
+
+// Return an array of all target segments on the board
+// along with their next positions and snake id.
+function getAllTargetSegments(state, playerSnake) {
+  return state.snakes
+    .filter(snake => snake.id !== playerSnake.id && snake.isAlive)
+    .flatMap(snake => {
+      const targetSize = getSnakeTargetSize(snake);
+      const targetSegments = getSnakeTargetSegments(snake);
+      // get the trailing non-target body segment
+      const [trailingBodySegment] = snake.segments.slice(
+        -(targetSize + 1),
+        -targetSize
+      );
+      return targetSegments.map((segment, i, arr) => ({
+        id: snake.id,
+        nextPosition: i === 0 ? trailingBodySegment : arr[i - 1],
+        position: segment,
+      }));
+    });
 }
 
 // Check if a snake has collided with a target segment of another snake
@@ -92,6 +114,7 @@ function eatSpeedBoost(state, playerSnake) {
 module.exports = {
   stopGameIfEmpty,
   stopGameIfNoConnections,
+  getAllTargetSegments,
   isEnemySnakeCollision,
   killSnake,
   isFoodCollision,
