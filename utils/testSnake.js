@@ -1,4 +1,4 @@
-const { generateSnake } = require("./snake");
+const { generateSnake, respawnSnake } = require("./snake");
 const { gridSize } = require("../config");
 
 // Generate a test snake
@@ -81,6 +81,14 @@ function addTestSnakes(n, state) {
   for (let i = 0; i < n; i++) {
     state.snakes.push(generateTestSnake(i + 1));
   }
+
+// Revive test snakes
+function respawnTestSnakes(state) {
+  state.snakes.forEach(snake => {
+    if (snake.id.includes("TestSnake")) {
+      respawnSnake(snake);
+    }
+  });
 }
 
 module.exports = {
@@ -88,4 +96,5 @@ module.exports = {
   setTestSnakeDirection,
   destroyTestSnakes,
   addTestSnakes,
+  respawnTestSnakes,
 };

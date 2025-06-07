@@ -4,6 +4,7 @@ const {
   addTestSnakes,
   destroyTestSnakes,
   stopGameIfNoConnections,
+  respawnTestSnakes,
 } = require("../utils");
 const state = require("../state");
 const { isDevEnv } = require("../config");
@@ -46,7 +47,7 @@ function registerSocketHandlers(io) {
             snake => snake.id.includes("TestSnake") && snake.isAlive
           );
           if (testSnakes.length < numOfTestSnakes) {
-            addTestSnakes(numOfTestSnakes - testSnakes.length, state);
+            respawnTestSnakes(state);
           }
         }, 10000);
       }
