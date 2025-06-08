@@ -5,6 +5,7 @@ const {
   snakeMaxTargetSize,
   speedBoostDuration,
   speedBoostMultiplier,
+  immunityDuration,
 } = require("../config");
 const { randomPosition } = require("./helpers");
 
@@ -26,6 +27,8 @@ function generateSnake(id) {
     speed: initialSpeed,
     lastMoveTime: Date.now(),
     speedBoostTimeout: null,
+    isImmune: false,
+    immunityTimeout: null,
     score: 0,
     highScore: 0,
     kills: 0,
@@ -111,7 +114,21 @@ function applySpeedBoost(snake) {
   }, speedBoostDuration);
 }
 
-// TODO: applyImmunity(snake)
+// Apply the immunity effect to a snake
+function applyImmunity(snake) {
+  if (snake.immunityTimeout) {
+    clearTimeout(snake.immunityTimeout);
+  }
+  snake.isImmune = true;
+  console.log(
+    `${snake.name} gained immunity for ${immunityDuration / 1000} seconds.`
+  );
+  snake.immunityTimeout = setTimeout(() => {
+    console.log(`${snake.name}'s immunity wore off.`);
+    snake.isImmune = false;
+    snake.immunityTimeout = null;
+  }, immunityDuration);
+}
 
 module.exports = {
   randomOrientation,
@@ -122,4 +139,5 @@ module.exports = {
   getSnakeTargetSize,
   getSnakeTargetSegments,
   applySpeedBoost,
+  applyImmunity,
 };

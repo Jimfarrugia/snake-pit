@@ -14,6 +14,7 @@ const {
   randomPosition,
   isImmunityCollision,
   eatImmunity,
+  applyImmunity,
 } = require("./utils");
 const {
   snakeMaxTargetSize,
@@ -94,7 +95,8 @@ function moveSnake(playerSnake, now, io) {
   // Handle immunity collision
   if (state.immunity && isImmunityCollision(state.immunity, playerSnake)) {
     eatImmunity(state, playerSnake);
-    // TODO applyImmunity(playerSnake);
+    applyImmunity(playerSnake);
+    isGrowing = true;
   }
 
   // Remove the tail segment if no points were gained
@@ -150,10 +152,12 @@ function gameLoop(io) {
 
   // emit the gamestate to all connections
   io.emit("gameState", {
-    // strip speedBoostTimeout from the snake object during emit
-    // becuase it's non-serializable and causes socket.io to crash
-    // (alternatively, handle timeouts outside of the game state)
-    snakes: state.snakes.map(({ speedBoostTimeout, ...s }) => s),
+    // strip speedBoostTimeout and immunityTimeout from the snake object during emit
+    // becuase they're non-serializable and cause socket.io to crash
+    // (we could alternatively, handle timeouts outside of the game state)
+    snakes: state.snakes.map(
+      ({ speedBoostTimeout, immunityTimeout, ...s }) => s
+    ),
     food: state.food,
     speedBoost: state.speedBoost,
     immunity: state.immunity,
