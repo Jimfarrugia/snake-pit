@@ -11,11 +11,15 @@ const {
   isSamePosition,
   stopGameIfEmpty,
   getAllTargetSegments,
+  randomPosition,
+  isImmunityCollision,
+  eatImmunity,
 } = require("./utils");
 const {
   snakeMaxTargetSize,
   initialSnakeLength,
   isDevEnv,
+  immunitySpawnCooldown,
 } = require("./config");
 
 // Move a single snake
@@ -87,6 +91,12 @@ function moveSnake(playerSnake, now, io) {
     isGrowing = true;
   }
 
+  // Handle immunity collision
+  if (state.immunity && isImmunityCollision(state.immunity, playerSnake)) {
+    eatImmunity(state, playerSnake);
+    // TODO applyImmunity(playerSnake);
+  }
+
   // Remove the tail segment if no points were gained
   if (!isGrowing) segments.pop();
 
@@ -119,12 +129,25 @@ function moveSnake(playerSnake, now, io) {
 function gameLoop(io) {
   if (!state.isGameStarted) return;
   const now = Date.now();
+  const { lastImmunityEatenTime, immunity } = state;
+
+  // Spawn immunity pickup
+  if (
+    !immunity &&
+    (!lastImmunityEatenTime ||
+      now - lastImmunityEatenTime > immunitySpawnCooldown)
+  ) {
+    state.immunity = randomPosition();
+  }
+
+  // Move snakes
   state.snakes.forEach(snake => {
     if (isDevEnv && snake.id.includes("TestSnake")) {
       setTestSnakeDirection(snake);
     }
     moveSnake(snake, now, io);
   });
+
   // emit the gamestate to all connections
   io.emit("gameState", {
     // strip speedBoostTimeout from the snake object during emit
@@ -133,9 +156,11 @@ function gameLoop(io) {
     snakes: state.snakes.map(({ speedBoostTimeout, ...s }) => s),
     food: state.food,
     speedBoost: state.speedBoost,
+    immunity: state.immunity,
     snakeMaxTargetSize,
     initialSnakeLength,
   });
+
   // stop the game if no players are in-game
   stopGameIfEmpty(state);
 }

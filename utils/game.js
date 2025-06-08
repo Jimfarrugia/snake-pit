@@ -71,7 +71,7 @@ function isFoodCollision(food, playerSnake) {
   return isSamePosition(food, playerSnakeHead);
 }
 
-// Award snake a point and reset food
+// Award snake a point and reset food location
 function eatFood(state, playerSnake) {
   playerSnake.score += 1;
   state.food = randomPosition();
@@ -83,10 +83,23 @@ function isSpeedBoostCollision(speedBoost, playerSnake) {
   return isSamePosition(speedBoost, playerSnakeHead);
 }
 
-// Award snake a point and reset food
+// Award snake a point and reset speed boost location
 function eatSpeedBoost(state, playerSnake) {
   playerSnake.score += 1;
   state.speedBoost = randomPosition();
+}
+
+// Check if a snake has collided with immunity
+function isImmunityCollision(immunity, playerSnake) {
+  const playerSnakeHead = playerSnake.segments[0];
+  return isSamePosition(immunity, playerSnakeHead);
+}
+
+// Award snake a point and remove the immunity pickup
+function eatImmunity(state, playerSnake) {
+  playerSnake.score += 1;
+  state.immunity = null;
+  state.lastImmunityEatenTime = Date.now();
 }
 
 // Check if snake head collides with the boundary
@@ -108,5 +121,7 @@ module.exports = {
   eatFood,
   isSpeedBoostCollision,
   eatSpeedBoost,
+  isImmunityCollision,
+  eatImmunity,
   isBoundaryCollision,
 };

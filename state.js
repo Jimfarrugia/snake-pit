@@ -3,6 +3,8 @@ const { randomPosition } = require("./utils");
 let snakes = [];
 let food = randomPosition();
 let speedBoost = randomPosition();
+let immunity = null;
+let lastImmunityEatenTime = null;
 let isGameStarted = false;
 let spawnTestSnakesInterval;
 
@@ -10,6 +12,8 @@ function resetGameState() {
   snakes = [];
   food = randomPosition();
   speedBoost = randomPosition();
+  immunity = null;
+  lastImmunityEatenTime = null;
   isGameStarted = false; // should be true if any snake has isAlive === true
 }
 
@@ -33,6 +37,13 @@ module.exports = {
   },
   set speedBoost(val) {
     speedBoost = val;
+  },
+
+  get immunity() {
+    return immunity;
+  },
+  set immunity(val) {
+    immunity = val;
   },
 
   get isGameStarted() {

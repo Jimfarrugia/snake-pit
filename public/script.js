@@ -17,6 +17,7 @@ let snakeMaxTargetSize;
 let playerName;
 let food;
 let speedBoost;
+let immunity;
 let isGameStarted = false;
 let playerSnake = null;
 let enemySnakes = [];
@@ -36,6 +37,7 @@ socket.on("gameState", state => {
   enemySnakes = state.snakes.filter(s => s.id !== socket.id);
   food = state.food;
   speedBoost = state.speedBoost;
+  immunity = state.immunity;
   initialSnakeLength = state.initialSnakeLength;
   snakeMaxTargetSize = state.snakeMaxTargetSize;
   drawGame();
@@ -78,6 +80,7 @@ function drawGame() {
   drawEnemySnakes();
   drawFood();
   drawSpeedBoost();
+  drawImmunity();
 }
 
 // draw food on the board
@@ -95,6 +98,15 @@ function drawSpeedBoost() {
     const speedBoostElement = createGameElement("div", "speed-boost");
     setElementPosition(speedBoostElement, speedBoost);
     board.appendChild(speedBoostElement);
+  }
+}
+
+// draw immunity on the board
+function drawImmunity() {
+  if (isGameStarted && immunity) {
+    const immunityElement = createGameElement("div", "immunity");
+    setElementPosition(immunityElement, immunity);
+    board.appendChild(immunityElement);
   }
 }
 

@@ -111,6 +111,8 @@ function applySpeedBoost(snake) {
   }, speedBoostDuration);
 }
 
+// TODO: applyImmunity(snake)
+
 module.exports = {
   randomOrientation,
   generateSnake,

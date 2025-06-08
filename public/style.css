@@ -323,6 +323,12 @@ body {
   z-index: 9999;
 }
 
+.immunity {
+  background-image: url("/images/star.png");
+  background-size: cover;
+  z-index: 9999;
+}
+
 @keyframes blinking-start-prompt {
   50% {
     background-color: #283618;
