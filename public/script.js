@@ -128,23 +128,23 @@ function drawEnemySnakes() {
 
 // draw the segments of a snake
 function drawSnakeSegments(snake, isPlayer) {
-  const { segments, direction } = snake;
+  const { segments, direction, isImmune } = snake;
 
   segments.forEach((segment, i) => {
     const snakeElement = createGameElement("div", "snake");
     // Set CSS classes for snake segments
+    snakeElement.classList.add(
+      ...(isPlayer ? [] : ["enemy"]),
+      ...(isImmune ? ["immune"] : [])
+    );
     if (i === 0) {
       // set the classes for the head segment
-      snakeElement.className = `snake head ${direction} ${
-        isPlayer ? "" : "enemy"
-      }`.trim();
+      snakeElement.classList.add("head", direction);
     } else if (i === segments.length - 1) {
       // set the classes for the tail segment
       const prevSegment = segments[i - 1];
       const segmentDirection = getSegmentDirection(segment, prevSegment);
-      snakeElement.className = `snake tail ${segmentDirection} ${
-        isPlayer ? "" : "enemy"
-      }`.trim();
+      snakeElement.classList.add("tail", segmentDirection);
     } else {
       // determine if the current segment is a corner and/or a target segment
       const prevSegment = segments[i - 1];
@@ -159,10 +159,12 @@ function drawSnakeSegments(snake, isPlayer) {
       const targetSize = getSnakeTargetSize(segments);
       const isTarget = i > segments.length - 1 - targetSize;
       // set the classes for the body segments
-      const classNames = `${bodySegmentType} ${segmentDirection} ${
-        isCorner ? "corner" : ""
-      } ${isTarget ? "target" : ""} ${isPlayer ? "" : "enemy"}`.trim();
-      snakeElement.className = `snake ${classNames}`;
+      snakeElement.classList.add(
+        bodySegmentType,
+        segmentDirection,
+        ...(isCorner ? ["corner"] : []),
+        ...(isTarget && !isImmune ? ["target"] : [])
+      );
     }
     setElementPosition(snakeElement, segment);
     board.appendChild(snakeElement);
