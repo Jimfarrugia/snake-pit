@@ -1,59 +1,25 @@
 const { randomPosition } = require("./utils");
 
-let snakes = [];
-let food = randomPosition();
-let speedBoost = randomPosition();
-let immunity = randomPosition();
-let immunityRespawnTimeout = null;
-let isGameStarted = false;
-let spawnTestSnakesInterval;
+const state = {
+  snakes: [],
+  food: randomPosition(),
+  speedBoost: randomPosition(),
+  immunity: randomPosition(),
+  immunityRespawnTimeout: null,
+  isGameStarted: false,
+  spawnTestSnakesInterval: null,
 
-function resetGameState() {
-  if (immunityRespawnTimeout) {
-    clearTimeout(immunityRespawnTimeout);
-  }
-  snakes = [];
-  food = randomPosition();
-  speedBoost = randomPosition();
-  immunity = randomPosition();
-  isGameStarted = false; // should be true if any snake has isAlive === true
-}
-
-module.exports = {
-  get snakes() {
-    return snakes;
+  resetGameState() {
+    if (this.immunityRespawnTimeout) {
+      clearTimeout(this.immunityRespawnTimeout);
+      this.immunityRespawnTimeout = null;
+    }
+    this.snakes = [];
+    this.food = randomPosition();
+    this.speedBoost = randomPosition();
+    this.immunity = randomPosition();
+    this.isGameStarted = false;
   },
-  set snakes(val) {
-    snakes = val;
-  },
-
-  get food() {
-    return food;
-  },
-  set food(val) {
-    food = val;
-  },
-
-  get speedBoost() {
-    return speedBoost;
-  },
-  set speedBoost(val) {
-    speedBoost = val;
-  },
-
-  get immunity() {
-    return immunity;
-  },
-  set immunity(val) {
-    immunity = val;
-  },
-
-  get isGameStarted() {
-    return isGameStarted;
-  },
-  set isGameStarted(val) {
-    isGameStarted = val;
-  },
-
-  resetGameState,
 };
+
+module.exports = state;
