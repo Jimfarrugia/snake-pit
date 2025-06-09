@@ -23,6 +23,8 @@ const {
   isDevEnv,
   immunityRespawnTime,
   immunityDuration,
+  speedBoostDuration,
+  initialSpeed,
 } = require("./config");
 
 // Move a single snake
@@ -141,7 +143,7 @@ function gameLoop(io) {
   const now = Date.now();
   const { lastImmunityEatenTime, immunity } = state;
 
-  // Spawn immunity pickup
+  // Spawn immunity pickup when it's time
   if (
     !immunity &&
     (!lastImmunityEatenTime ||
@@ -168,10 +170,12 @@ function gameLoop(io) {
     ),
     food: state.food,
     speedBoost: state.speedBoost,
+    speedBoostDuration,
     immunity: state.immunity,
     immunityDuration,
     snakeMaxTargetSize,
     initialSnakeLength,
+    initialSpeed,
   });
 
   // stop the game if no players are in-game

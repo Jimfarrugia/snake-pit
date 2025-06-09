@@ -102,13 +102,10 @@ body {
 }
 
 #tutorial-open-btn {
-  width: 2.5rem;
-  height: 2.5rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  width: 28px;
+  height: 28px;
   font-family: "VT323";
-  font-size: 32px;
+  font-size: 24px;
   border: 2px solid #bc6c25;
   border-radius: 100%;
   background: #283618;
@@ -175,6 +172,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: #fefae0;
 }
 
 #player-name {
@@ -184,6 +182,31 @@ body {
 
 #player-name span {
   color: #fefae0;
+}
+
+#timers {
+  display: none; /* toggled (flex) with script */
+  justify-content: center;
+}
+
+#timers > div {
+  display: none; /* toggled (block) with script */
+  height: 28px;
+  line-height: 28px;
+  font-size: 36px;
+  padding-left: 32px;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#speed-boost-timer {
+  background-image: url("/images/speed-boost-40x40.png");
+  padding-left: 34px;
+}
+
+#immunity-timer {
+  background-image: url("/images/star-36x36.png");
+  margin-left: 12px;
 }
 
 #scoreboard {

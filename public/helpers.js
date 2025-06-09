@@ -1,5 +1,21 @@
 import { adjectives, breeds } from "./dictionary.js";
 
+// Get the time (in ms) remaining until duration has elapsed since startTime
+export function getTimeRemaining(duration, startTime) {
+  return duration - (Date.now() - startTime);
+}
+
+// Format time in ms as seconds with 1 decimal place
+export function formatTimerText(milliseconds) {
+  return (milliseconds / 1000).toFixed(1);
+}
+
+// Reset an effect timer element
+export function resetTimer(timerElement) {
+  timerElement.textContent = "";
+  timerElement.style.display = "none";
+}
+
 // Create a game element in the DOM
 export function createGameElement(tag, className) {
   const element = document.createElement(tag);

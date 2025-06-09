@@ -5,6 +5,9 @@ import {
   setElementPosition,
   generatePlayerName,
   isValidName,
+  getTimeRemaining,
+  formatTimerText,
+  resetTimer,
 } from "./helpers.js";
 
 // Connect to socket.io
@@ -16,7 +19,9 @@ let initialSnakeLength;
 let snakeMaxTargetSize;
 let playerName;
 let food;
+let initialSpeed;
 let speedBoost;
+let speedBoostTimeRemaining;
 let immunity;
 let immunityTimeRemaining = 0;
 let immunityDuration;
@@ -28,6 +33,9 @@ let enemySnakes = [];
 const board = document.getElementById("game-board");
 const nameInput = document.getElementById("name-input");
 const startPrompt = document.getElementById("start-prompt");
+const timers = document.getElementById("timers");
+const immunityTimer = document.getElementById("immunity-timer");
+const speedBoostTimer = document.getElementById("speed-boost-timer");
 const tutorialCloseBtn = document.getElementById("tutorial-close-btn");
 const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
 const tutorialDialog = document.getElementById("tutorial-dialog");
@@ -38,15 +46,24 @@ socket.on("gameState", state => {
   playerSnake = state.snakes.find(s => s.id === socket.id);
   enemySnakes = state.snakes.filter(s => s.id !== socket.id);
   food = state.food;
+  initialSpeed = state.initialSpeed;
   speedBoost = state.speedBoost;
+  speedBoostTimeRemaining =
+    playerSnake.speed !== state.initialSpeed
+      ? getTimeRemaining(
+          state.speedBoostDuration,
+          playerSnake.speedBoostTimeStart
+        )
+      : 0;
   initialSnakeLength = state.initialSnakeLength;
   snakeMaxTargetSize = state.snakeMaxTargetSize;
   immunity = state.immunity;
   immunityDuration = state.immunityDuration;
   immunityTimeRemaining = playerSnake.isImmune
-    ? state.immunityDuration - (Date.now() - playerSnake.immunityTimeStart)
+    ? getTimeRemaining(state.immunityDuration, playerSnake.immunityTimeStart)
     : 0;
   drawGame();
+  drawTimers();
   drawScoreboard(state.snakes);
 });
 
@@ -71,12 +88,18 @@ function startGame() {
   isGameStarted = true;
   drawName();
   startPrompt.style.display = "none";
+  tutorialOpenBtn.style.display = "none";
+  timers.style.display = "flex";
 }
 
 // stop the game
 function stopGame() {
   isGameStarted = false;
   startPrompt.style.display = "block";
+  tutorialOpenBtn.style.display = "block";
+  resetTimer(speedBoostTimer);
+  resetTimer(immunityTimer);
+  timers.style.display = "none";
 }
 
 // draw game elements
@@ -204,6 +227,24 @@ function drawName() {
   if (isGameStarted) {
     const nameElement = document.getElementById("player-name");
     nameElement.innerHTML = `Playing as: <span>${playerName}</span>`;
+  }
+}
+
+// draw effect timers
+function drawTimers() {
+  if (isGameStarted) {
+    if (playerSnake.isImmune && immunityTimeRemaining > 0) {
+      immunityTimer.style.display = "block";
+      immunityTimer.textContent = formatTimerText(immunityTimeRemaining);
+    } else {
+      resetTimer(immunityTimer);
+    }
+    if (playerSnake.speed !== initialSpeed && speedBoostTimeRemaining > 0) {
+      speedBoostTimer.style.display = "block";
+      speedBoostTimer.textContent = formatTimerText(speedBoostTimeRemaining);
+    } else {
+      resetTimer(speedBoostTimer);
+    }
   }
 }
 

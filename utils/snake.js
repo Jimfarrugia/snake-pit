@@ -24,9 +24,10 @@ function generateSnake(id) {
     segments: initialSnakeSegments,
     direction: setInitialDirection(initialSnakeSegments[0], initialOrientation),
     nextDirection: null, // queued input
-    speed: initialSpeed,
     lastMoveTime: Date.now(),
+    speed: initialSpeed,
     speedBoostTimeout: null,
+    speedBoostTimeStart: null,
     isImmune: false,
     immunityTimeout: null,
     immunityTimeStart: null,
@@ -105,6 +106,7 @@ function applySpeedBoost(snake) {
     clearTimeout(snake.speedBoostTimeout);
   }
   snake.speed = snake.speed * speedBoostMultiplier;
+  snake.speedBoostTimeStart = Date.now();
   console.log(
     `'${snake.name}' gained speed boost. Currently ${snake.speed}ms.`
   );
@@ -112,6 +114,7 @@ function applySpeedBoost(snake) {
     console.log(`'${snake.name}' speed reset to ${initialSpeed}ms.`);
     snake.speed = initialSpeed;
     snake.speedBoostTimeout = null;
+    snake.speedBoostTimeStart = null;
   }, speedBoostDuration);
 }
 
@@ -129,6 +132,7 @@ function applyImmunity(snake) {
     console.log(`${snake.name}'s immunity wore off.`);
     snake.isImmune = false;
     snake.immunityTimeout = null;
+    snake.immunityTimeStart = null;
   }, immunityDuration);
 }
 
