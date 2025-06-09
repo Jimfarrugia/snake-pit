@@ -16,6 +16,7 @@ const {
   eatImmunity,
   applyImmunity,
   teleportSnakeHead,
+  logGameEvent,
 } = require("./utils");
 const {
   snakeMaxTargetSize,
@@ -114,8 +115,9 @@ function moveSnake(playerSnake, now, io) {
       playerSnake.isAlive = false;
       playerSnake.deaths += 1;
       io.to(playerSnake.id).emit("gameOver");
-      console.log(
-        `'${playerSnake.name}' died by hitting the wall with ${playerSnake.score} points.`
+      logGameEvent(
+        `'${playerSnake.name}' died by hitting the wall with ${playerSnake.score} points.`,
+        playerSnake.id
       );
       return;
     }
@@ -128,8 +130,9 @@ function moveSnake(playerSnake, now, io) {
         playerSnake.isAlive = false;
         playerSnake.deaths += 1;
         io.to(playerSnake.id).emit("gameOver");
-        console.log(
-          `'${playerSnake.name}' died by biting itself with ${playerSnake.score} points.`
+        logGameEvent(
+          `'${playerSnake.name}' died by biting itself with ${playerSnake.score} points.`,
+          playerSnake.id
         );
         break;
       }

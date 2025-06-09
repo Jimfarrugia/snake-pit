@@ -1,6 +1,7 @@
 const { getSnakeTargetSegments, getSnakeTargetSize } = require("./snake");
 const { isSamePosition, randomPosition } = require("./helpers");
 const { destroyTestSnakes } = require("./testSnake");
+const { logGameEvent } = require("./logger");
 const { isDevEnv, gridSize } = require("../config");
 
 // stop the game loop if no snakes remain alive
@@ -14,7 +15,7 @@ function stopGameIfEmpty(state) {
       destroyTestSnakes(state);
     }
     state.isGameStarted = false;
-    console.log("Game stopped. No snakes alive.");
+    logGameEvent("Game stopped. No snakes alive.");
   }
 }
 
@@ -31,7 +32,7 @@ function stopGameIfNoConnections(state) {
     }
     const wasGameStarted = state.isGameStarted;
     state.isGameStarted = false;
-    if (wasGameStarted) console.log("Game stopped. No players connected.");
+    if (wasGameStarted) logGameEvent("Game stopped. No players connected.");
   }
 }
 
@@ -62,7 +63,10 @@ function killSnake(enemySnake, playerSnake, io) {
   enemySnake.deaths += 1;
   playerSnake.kills += 1;
   io.to(enemySnake.id).emit("gameOver");
-  console.log(`'${enemySnake.name}' was killed by '${playerSnake.name}'.`);
+  logGameEvent(
+    `'${enemySnake.name}' was killed by '${playerSnake.name}'.`,
+    enemySnake.id
+  );
 }
 
 // Check if a snake has collided with food
