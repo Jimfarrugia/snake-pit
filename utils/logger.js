@@ -12,7 +12,6 @@ const colorFns = [
   chalk.red,
   chalk.green,
   chalk.whiteBright,
-  chalk.gray,
 ];
 
 // This will map IDs to colors as they appear
@@ -30,8 +29,8 @@ function getColorFnForId(id) {
 }
 
 // Log to the console using the color assigned to the id
-function logGameEvent(message, id) {
-  const colorFn = getColorFnForId(id);
+function logGameEvent(message, id = "server") {
+  const colorFn = id === "server" ? chalk.gray : getColorFnForId(id);
   console.log(colorFn(message));
 }
 
