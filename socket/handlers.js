@@ -5,7 +5,7 @@ const {
   destroyTestSnakes,
   stopGameIfNoConnections,
   respawnTestSnakes,
-  logGameEvent,
+  logEvent,
 } = require("../utils");
 const state = require("../state");
 const { isDevEnv } = require("../config");
@@ -16,13 +16,13 @@ function registerSocketHandlers(io) {
     const snake = generateSnake(id);
     state.snakes.push(snake);
 
-    logGameEvent(`'${id}' connected.`, id);
-    logGameEvent(`'${id}' snake was created.`, id);
+    logEvent(`'${id}' connected.`, id);
+    logEvent(`'${id}' snake was created.`, id);
 
     socket.on("disconnect", reason => {
-      logGameEvent(`'${id}' disconnected due to ${reason}.`, id);
+      logEvent(`'${id}' disconnected due to ${reason}.`, id);
       state.snakes = state.snakes.filter(s => s.id !== id);
-      logGameEvent(`'${id}' snake was removed.`, id);
+      logEvent(`'${id}' snake was removed.`, id);
       stopGameIfNoConnections(state);
     });
 
@@ -31,12 +31,12 @@ function registerSocketHandlers(io) {
       snake.name = data.name;
       if (snake.deaths) {
         respawnSnake(snake);
-        logGameEvent(`'${snake.name}' respawned.`, snake.id);
+        logEvent(`'${snake.name}' respawned.`, snake.id);
       } else {
-        logGameEvent(`'${snake.name}' joined the game.`, snake.id);
+        logEvent(`'${snake.name}' joined the game.`, snake.id);
       }
       state.isGameStarted = true;
-      logGameEvent("Game started.");
+      logEvent("Game started.");
       // Create test snakes in development environment
       if (isDevEnv) {
         const numOfTestSnakes = 3;

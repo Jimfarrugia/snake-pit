@@ -1,6 +1,6 @@
 const { generateSnake, respawnSnake } = require("./snake");
 const { gridSize } = require("../config");
-const { logGameEvent } = require("./logger");
+const { logEvent } = require("./logger");
 
 // Generate a test snake
 function generateTestSnake() {
@@ -69,7 +69,7 @@ function setTestSnakeDirection(snake) {
 
   // If no move is safe, kill the snake
   snake.isAlive = false;
-  logGameEvent(`${snake.id} is stuck and has died.`);
+  logEvent(`${snake.id} is stuck and has died.`);
 }
 
 // Remove all test snakes

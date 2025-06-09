@@ -5,7 +5,7 @@ const {
 } = require("./snake");
 const { isSamePosition, randomPosition } = require("./helpers");
 const { destroyTestSnakes } = require("./testSnake");
-const { logGameEvent } = require("./logger");
+const { logEvent } = require("./logger");
 const { isDevEnv, gridSize, immunityRespawnCooldown } = require("../config");
 
 // stop the game loop if no snakes remain alive
@@ -19,7 +19,7 @@ function stopGameIfEmpty(state) {
       destroyTestSnakes(state);
     }
     state.isGameStarted = false;
-    logGameEvent("Game stopped. No snakes alive.");
+    logEvent("Game stopped. No snakes alive.");
   }
 }
 
@@ -36,7 +36,7 @@ function stopGameIfNoConnections(state) {
     }
     const wasGameStarted = state.isGameStarted;
     state.isGameStarted = false;
-    if (wasGameStarted) logGameEvent("Game stopped. No players connected.");
+    if (wasGameStarted) logEvent("Game stopped. No players connected.");
   }
 }
 
@@ -68,7 +68,7 @@ function killSnake(enemySnake, playerSnake, io) {
   enemySnake.deaths += 1;
   playerSnake.kills += 1;
   io.to(enemySnake.id).emit("gameOver");
-  logGameEvent(
+  logEvent(
     `'${enemySnake.name}' was killed by '${playerSnake.name}'.`,
     enemySnake.id
   );
@@ -110,7 +110,7 @@ function eatImmunity(state, playerSnake) {
   state.immunity = null;
   state.immunityRespawnTimeout = setTimeout(() => {
     state.immunity = randomPosition();
-    logGameEvent("Immunity has respawned.");
+    logEvent("Immunity has respawned.");
   }, immunityRespawnCooldown);
 }
 

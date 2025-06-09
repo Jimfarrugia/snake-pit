@@ -8,7 +8,7 @@ const {
   immunityDuration,
 } = require("../config");
 const { randomPosition } = require("./helpers");
-const { logGameEvent } = require("./logger");
+const { logEvent } = require("./logger");
 
 // Generate a random orientation for a snake
 function randomOrientation() {
@@ -107,12 +107,12 @@ function applySpeedBoost(snake) {
   }
   snake.speed = snake.speed * speedBoostMultiplier;
   snake.speedBoostTimeStart = Date.now();
-  logGameEvent(
+  logEvent(
     `'${snake.name}' gained speed boost. Currently ${snake.speed}ms.`,
     snake.id
   );
   snake.speedBoostTimeout = setTimeout(() => {
-    logGameEvent(`'${snake.name}' speed reset to ${initialSpeed}ms.`, snake.id);
+    logEvent(`'${snake.name}' speed reset to ${initialSpeed}ms.`, snake.id);
     snake.speed = initialSpeed;
     snake.speedBoostTimeout = null;
     snake.speedBoostTimeStart = null;
@@ -126,12 +126,12 @@ function applyImmunity(snake) {
   }
   snake.isImmune = true;
   snake.immunityTimeStart = Date.now();
-  logGameEvent(
+  logEvent(
     `'${snake.name}' gained immunity for ${immunityDuration / 1000} seconds.`,
     snake.id
   );
   snake.immunityTimeout = setTimeout(() => {
-    logGameEvent(`'${snake.name}'s immunity wore off.`, snake.id);
+    logEvent(`'${snake.name}'s immunity wore off.`, snake.id);
     snake.isImmune = false;
     snake.immunityTimeout = null;
     snake.immunityTimeStart = null;

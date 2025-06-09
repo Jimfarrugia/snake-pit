@@ -15,7 +15,7 @@ const {
   eatImmunity,
   applyImmunity,
   teleportSnakeHead,
-  logGameEvent,
+  logEvent,
   clearSnakeEffects,
 } = require("./utils");
 const {
@@ -115,7 +115,7 @@ function moveSnake(playerSnake, now, io) {
       playerSnake.isAlive = false;
       playerSnake.deaths += 1;
       io.to(playerSnake.id).emit("gameOver");
-      logGameEvent(
+      logEvent(
         `'${playerSnake.name}' died by hitting the wall with ${playerSnake.score} points.`,
         playerSnake.id
       );
@@ -131,7 +131,7 @@ function moveSnake(playerSnake, now, io) {
         playerSnake.isAlive = false;
         playerSnake.deaths += 1;
         io.to(playerSnake.id).emit("gameOver");
-        logGameEvent(
+        logEvent(
           `'${playerSnake.name}' died by biting itself with ${playerSnake.score} points.`,
           playerSnake.id
         );

@@ -29,11 +29,11 @@ function getColorFnForId(id) {
 }
 
 // Log to the console using the color assigned to the id
-function logGameEvent(message, id = "server") {
+function logEvent(message, id = "server") {
   const colorFn = id === "server" ? chalk.gray : getColorFnForId(id);
   console.log(colorFn(message));
 }
 
 module.exports = {
-  logGameEvent,
+  logEvent,
 };
