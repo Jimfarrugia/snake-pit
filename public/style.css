@@ -243,6 +243,15 @@ body {
 .snake.head.immune {
   background-image: url("/images/snake-head-immune-brown.png");
 }
+.snake.head.immune.half {
+  background-image: url("/images/snake-head-immune-half-brown.png");
+}
+.snake.head.immune.quarter {
+  background-image: url("/images/snake-head-immune-quarter-brown.png");
+}
+.snake.head.immune.critical {
+  background-image: url("/images/snake-head-immune-critical-brown.png");
+}
 .snake.head.enemy {
   background-image: url("/images/snake-head-green.png");
 }
@@ -255,6 +264,15 @@ body {
 }
 .snake.body.immune {
   background-image: url("/images/snake-body-immune-brown.png");
+}
+.snake.body.immune.half {
+  background-image: url("/images/snake-body-immune-half-brown.png");
+}
+.snake.body.immune.quarter {
+  background-image: url("/images/snake-body-immune-quarter-brown.png");
+}
+.snake.body.immune.critical {
+  background-image: url("/images/snake-body-immune-critical-brown.png");
 }
 .snake.body.enemy {
   background-image: url("/images/snake-body-green.png");
@@ -276,6 +294,15 @@ body {
 .snake.tail.immune {
   background-image: url("/images/snake-tail-immune-brown.png");
 }
+.snake.tail.immune.half {
+  background-image: url("/images/snake-tail-immune-half-brown.png");
+}
+.snake.tail.immune.quarter {
+  background-image: url("/images/snake-tail-immune-quarter-brown.png");
+}
+.snake.tail.immune.critical {
+  background-image: url("/images/snake-tail-immune-critical-brown.png");
+}
 .snake.tail.enemy {
   background-image: url("/images/snake-tail-target-green.png");
 }
@@ -288,6 +315,15 @@ body {
 }
 .snake.corner.immune {
   background-image: url("/images/snake-corner-immune-brown.png");
+}
+.snake.corner.immune.half {
+  background-image: url("/images/snake-corner-immune-half-brown.png");
+}
+.snake.corner.immune.quarter {
+  background-image: url("/images/snake-corner-immune-quarter-brown.png");
+}
+.snake.corner.immune.critical {
+  background-image: url("/images/snake-corner-immune-critical-brown.png");
 }
 .snake.corner.enemy {
   background-image: url("/images/snake-corner-green.png");

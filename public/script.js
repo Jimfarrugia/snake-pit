@@ -18,6 +18,8 @@ let playerName;
 let food;
 let speedBoost;
 let immunity;
+let immunityTimeRemaining = 0;
+let immunityDuration;
 let isGameStarted = false;
 let playerSnake = null;
 let enemySnakes = [];
@@ -37,9 +39,13 @@ socket.on("gameState", state => {
   enemySnakes = state.snakes.filter(s => s.id !== socket.id);
   food = state.food;
   speedBoost = state.speedBoost;
-  immunity = state.immunity;
   initialSnakeLength = state.initialSnakeLength;
   snakeMaxTargetSize = state.snakeMaxTargetSize;
+  immunity = state.immunity;
+  immunityDuration = state.immunityDuration;
+  immunityTimeRemaining = playerSnake.isImmune
+    ? state.immunityDuration - (Date.now() - playerSnake.immunityTimeStart)
+    : 0;
   drawGame();
   drawScoreboard(state.snakes);
 });
@@ -135,7 +141,7 @@ function drawSnakeSegments(snake, isPlayer) {
     // Set CSS classes for snake segments
     snakeElement.classList.add(
       ...(isPlayer ? [] : ["enemy"]),
-      ...(isImmune ? ["immune"] : [])
+      ...(isImmune ? ["immune", getImmunityStatus()] : [])
     );
     if (i === 0) {
       // set the classes for the head segment
@@ -169,6 +175,17 @@ function drawSnakeSegments(snake, isPlayer) {
     setElementPosition(snakeElement, segment);
     board.appendChild(snakeElement);
   });
+}
+
+// Return a class name for immunity status based on how much time is remaining for the effect
+function getImmunityStatus() {
+  return immunityTimeRemaining < immunityDuration * 0.125
+    ? "critical"
+    : immunityTimeRemaining < immunityDuration / 4
+    ? "quarter"
+    : immunityTimeRemaining < immunityDuration / 2
+    ? "half"
+    : "full";
 }
 
 // Return the number of target segments a snake should have

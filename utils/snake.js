@@ -29,6 +29,7 @@ function generateSnake(id) {
     speedBoostTimeout: null,
     isImmune: false,
     immunityTimeout: null,
+    immunityTimeStart: null,
     score: 0,
     highScore: 0,
     kills: 0,
@@ -120,6 +121,7 @@ function applyImmunity(snake) {
     clearTimeout(snake.immunityTimeout);
   }
   snake.isImmune = true;
+  snake.immunityTimeStart = Date.now();
   console.log(
     `${snake.name} gained immunity for ${immunityDuration / 1000} seconds.`
   );

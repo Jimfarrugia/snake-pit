@@ -22,6 +22,7 @@ const {
   initialSnakeLength,
   isDevEnv,
   immunityRespawnTime,
+  immunityDuration,
 } = require("./config");
 
 // Move a single snake
@@ -168,6 +169,7 @@ function gameLoop(io) {
     food: state.food,
     speedBoost: state.speedBoost,
     immunity: state.immunity,
+    immunityDuration,
     snakeMaxTargetSize,
     initialSnakeLength,
   });
