@@ -119,15 +119,17 @@ function moveSnake(playerSnake, now, io) {
   }
 
   // Check self collision
-  for (let i = 1; i < segments.length; i++) {
-    if (isSamePosition(segments[i], newHead)) {
-      playerSnake.isAlive = false;
-      playerSnake.deaths += 1;
-      io.to(playerSnake.id).emit("gameOver");
-      console.log(
-        `'${playerSnake.name}' died by biting itself with ${playerSnake.score} points.`
-      );
-      break;
+  if (!playerSnake.isImmune) {
+    for (let i = 1; i < segments.length; i++) {
+      if (isSamePosition(segments[i], newHead)) {
+        playerSnake.isAlive = false;
+        playerSnake.deaths += 1;
+        io.to(playerSnake.id).emit("gameOver");
+        console.log(
+          `'${playerSnake.name}' died by biting itself with ${playerSnake.score} points.`
+        );
+        break;
+      }
     }
   }
 }
@@ -144,7 +146,7 @@ function gameLoop(io) {
     (!lastImmunityEatenTime ||
       now - lastImmunityEatenTime > immunitySpawnCooldown)
   ) {
-    state.immunity = randomPosition();
+    state.immunity = { x: 4, y: 21 };
   }
 
   // Move snakes
