@@ -17,6 +17,7 @@ const {
   applyImmunity,
   teleportSnakeHead,
   logGameEvent,
+  clearSnakeEffects,
 } = require("./utils");
 const {
   snakeMaxTargetSize,
@@ -112,6 +113,7 @@ function moveSnake(playerSnake, now, io) {
     if (playerSnake.isImmune) {
       teleportSnakeHead(playerSnake);
     } else {
+      clearSnakeEffects(playerSnake);
       playerSnake.isAlive = false;
       playerSnake.deaths += 1;
       io.to(playerSnake.id).emit("gameOver");
@@ -127,6 +129,7 @@ function moveSnake(playerSnake, now, io) {
   if (!playerSnake.isImmune) {
     for (let i = 1; i < segments.length; i++) {
       if (isSamePosition(segments[i], newHead)) {
+        clearSnakeEffects(playerSnake);
         playerSnake.isAlive = false;
         playerSnake.deaths += 1;
         io.to(playerSnake.id).emit("gameOver");

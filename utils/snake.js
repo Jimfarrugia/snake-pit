@@ -78,7 +78,6 @@ function respawnSnake(snake) {
     initialSnakeSegments[0],
     initialOrientation
   );
-  snake.speed = initialSpeed;
   snake.score = 0;
   snake.kills = 0;
   snake.isAlive = true;
@@ -139,6 +138,22 @@ function applyImmunity(snake) {
   }, immunityDuration);
 }
 
+// Clear a snake's speed boost and immunity effects
+function clearSnakeEffects(snake) {
+  if (snake.speedBoostTimeout) {
+    clearTimeout(snake.speedBoostTimeout);
+  }
+  if (snake.immunityTimeout) {
+    clearTimeout(snake.immunityTimeout);
+  }
+  snake.speed = initialSpeed;
+  snake.speedBoostTimeout = null;
+  snake.speedBoostTimeStart = null;
+  snake.isImmune = false;
+  snake.immunityTimeout = null;
+  snake.immunityTimeStart = null;
+}
+
 function teleportSnakeHead(snake) {
   switch (snake.direction) {
     case "up":
@@ -166,5 +181,6 @@ module.exports = {
   getSnakeTargetSegments,
   applySpeedBoost,
   applyImmunity,
+  clearSnakeEffects,
   teleportSnakeHead,
 };

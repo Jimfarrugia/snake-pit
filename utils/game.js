@@ -1,4 +1,8 @@
-const { getSnakeTargetSegments, getSnakeTargetSize } = require("./snake");
+const {
+  getSnakeTargetSegments,
+  getSnakeTargetSize,
+  clearSnakeEffects,
+} = require("./snake");
 const { isSamePosition, randomPosition } = require("./helpers");
 const { destroyTestSnakes } = require("./testSnake");
 const { logGameEvent } = require("./logger");
@@ -59,6 +63,7 @@ function getAllTargetSegments(state, playerSnake) {
 
 // Kill enemy snake and award point to player
 function killSnake(enemySnake, playerSnake, io) {
+  clearSnakeEffects(enemySnake);
   enemySnake.isAlive = false;
   enemySnake.deaths += 1;
   playerSnake.kills += 1;
