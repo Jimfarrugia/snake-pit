@@ -21,7 +21,7 @@ const {
   snakeMaxTargetSize,
   initialSnakeLength,
   isDevEnv,
-  immunitySpawnCooldown,
+  immunityRespawnTime,
 } = require("./config");
 
 // Move a single snake
@@ -144,9 +144,9 @@ function gameLoop(io) {
   if (
     !immunity &&
     (!lastImmunityEatenTime ||
-      now - lastImmunityEatenTime > immunitySpawnCooldown)
+      now - lastImmunityEatenTime > immunityRespawnTime)
   ) {
-    state.immunity = { x: 4, y: 21 };
+    state.immunity = randomPosition();
   }
 
   // Move snakes
