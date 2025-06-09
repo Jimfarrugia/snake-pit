@@ -39,11 +39,11 @@ function stopGameIfNoConnections(state) {
 // along with their next positions and snake id.
 function getAllTargetSegments(state, playerSnake) {
   return state.snakes
-    .filter(snake => snake.id !== playerSnake.id && snake.isAlive)
+    .filter(s => s.id !== playerSnake.id && s.isAlive && !s.isImmune)
     .flatMap(snake => {
       const targetSize = getSnakeTargetSize(snake);
       const targetSegments = getSnakeTargetSegments(snake);
-      // get the trailing non-target body segment
+      // get the last non-target body segment
       const [trailingBodySegment] = snake.segments.slice(
         -(targetSize + 1),
         -targetSize
