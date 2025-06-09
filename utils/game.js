@@ -6,7 +6,7 @@ const {
 const { isSamePosition, randomPosition } = require("./helpers");
 const { destroyTestSnakes } = require("./testSnake");
 const { logGameEvent } = require("./logger");
-const { isDevEnv, gridSize } = require("../config");
+const { isDevEnv, gridSize, immunityRespawnCooldown } = require("../config");
 
 // stop the game loop if no snakes remain alive
 function stopGameIfEmpty(state) {
@@ -104,11 +104,14 @@ function isImmunityCollision(immunity, playerSnake) {
   return isSamePosition(immunity, playerSnakeHead);
 }
 
-// Award snake a point and remove the immunity pickup
+// Award snake a point and queue the immunity pickup for respawn
 function eatImmunity(state, playerSnake) {
   playerSnake.score += 1;
   state.immunity = null;
-  state.lastImmunityEatenTime = Date.now();
+  state.immunityRespawnTimeout = setTimeout(() => {
+    state.immunity = randomPosition();
+    logGameEvent("Immunity has respawned.");
+  }, immunityRespawnCooldown);
 }
 
 // Check if snake head collides with the boundary

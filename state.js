@@ -3,17 +3,19 @@ const { randomPosition } = require("./utils");
 let snakes = [];
 let food = randomPosition();
 let speedBoost = randomPosition();
-let immunity = null;
-let lastImmunityEatenTime = null;
+let immunity = randomPosition();
+let immunityRespawnTimeout = null;
 let isGameStarted = false;
 let spawnTestSnakesInterval;
 
 function resetGameState() {
+  if (immunityRespawnTimeout) {
+    clearTimeout(immunityRespawnTimeout);
+  }
   snakes = [];
   food = randomPosition();
   speedBoost = randomPosition();
-  immunity = null;
-  lastImmunityEatenTime = null;
+  immunity = randomPosition();
   isGameStarted = false; // should be true if any snake has isAlive === true
 }
 

@@ -11,7 +11,6 @@ const {
   isSamePosition,
   stopGameIfEmpty,
   getAllTargetSegments,
-  randomPosition,
   isImmunityCollision,
   eatImmunity,
   applyImmunity,
@@ -23,7 +22,6 @@ const {
   snakeMaxTargetSize,
   initialSnakeLength,
   isDevEnv,
-  immunityRespawnTime,
   immunityDuration,
   speedBoostDuration,
   initialSpeed,
@@ -147,16 +145,6 @@ function moveSnake(playerSnake, now, io) {
 function gameLoop(io) {
   if (!state.isGameStarted) return;
   const now = Date.now();
-  const { lastImmunityEatenTime, immunity } = state;
-
-  // Spawn immunity pickup when it's time
-  if (
-    !immunity &&
-    (!lastImmunityEatenTime ||
-      now - lastImmunityEatenTime > immunityRespawnTime)
-  ) {
-    state.immunity = randomPosition();
-  }
 
   // Move snakes
   state.snakes.forEach(snake => {
