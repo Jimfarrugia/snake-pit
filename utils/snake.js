@@ -130,6 +130,23 @@ function applyImmunity(snake) {
   }, immunityDuration);
 }
 
+function teleportSnakeHead(snake) {
+  switch (snake.direction) {
+    case "up":
+      snake.segments[0].y = gridSize;
+      break;
+    case "right":
+      snake.segments[0].x = 1;
+      break;
+    case "down":
+      snake.segments[0].y = 1;
+      break;
+    case "left":
+      snake.segments[0].x = gridSize;
+      break;
+  }
+}
+
 module.exports = {
   randomOrientation,
   generateSnake,
@@ -140,4 +157,5 @@ module.exports = {
   getSnakeTargetSegments,
   applySpeedBoost,
   applyImmunity,
+  teleportSnakeHead,
 };

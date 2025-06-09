@@ -15,6 +15,7 @@ const {
   isImmunityCollision,
   eatImmunity,
   applyImmunity,
+  teleportSnakeHead,
 } = require("./utils");
 const {
   snakeMaxTargetSize,
@@ -104,13 +105,17 @@ function moveSnake(playerSnake, now, io) {
 
   // Check boundary collision
   if (isBoundaryCollision(newHead)) {
-    playerSnake.isAlive = false;
-    playerSnake.deaths += 1;
-    io.to(playerSnake.id).emit("gameOver");
-    console.log(
-      `'${playerSnake.name}' died by hitting the wall with ${playerSnake.score} points.`
-    );
-    return;
+    if (playerSnake.isImmune) {
+      teleportSnakeHead(playerSnake);
+    } else {
+      playerSnake.isAlive = false;
+      playerSnake.deaths += 1;
+      io.to(playerSnake.id).emit("gameOver");
+      console.log(
+        `'${playerSnake.name}' died by hitting the wall with ${playerSnake.score} points.`
+      );
+      return;
+    }
   }
 
   // Check self collision

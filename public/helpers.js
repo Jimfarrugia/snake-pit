@@ -13,12 +13,31 @@ export function setElementPosition(element, position) {
   element.style.gridRow = position.y;
 }
 
+// check if two segments are orthogonally adjacent (left/right/up/down)
+export function isAdjacentSegments(a, b) {
+  const xDistance = Math.abs(a.x - b.x);
+  const yDistance = Math.abs(a.y - b.y);
+  return xDistance + yDistance === 1;
+}
+
 // get the current direction of a snake segment
 export function getSegmentDirection(currentSegment, prevSegment) {
-  if (currentSegment.x < prevSegment.x) return "right";
-  else if (currentSegment.x > prevSegment.x) return "left";
-  else if (currentSegment.y < prevSegment.y) return "down";
-  else if (currentSegment.y > prevSegment.y) return "up";
+  if (isAdjacentSegments(currentSegment, prevSegment)) {
+    if (currentSegment.x < prevSegment.x) return "right";
+    else if (currentSegment.x > prevSegment.x) return "left";
+    else if (currentSegment.y < prevSegment.y) return "down";
+    else if (currentSegment.y > prevSegment.y) return "up";
+  }
+  /* Not all segments will be adjacent to thier neighbours when an immune snake moves through
+     the boundary to the other side of the grid. */
+  if (currentSegment.y === prevSegment.y) {
+    if (currentSegment.x === 1) return "left";
+    else return "right";
+  }
+  if (currentSegment.x === prevSegment.x) {
+    if (currentSegment.y === 1) return "up";
+    else return "down";
+  }
 }
 
 // determine whether a snake body segment is a corner and if so, which type of corner
@@ -31,27 +50,51 @@ export function getBodySegmentType(
   let cornerType = "";
   if (segmentDirection === "left" && nextSegment.y !== currentSegment.y) {
     isCorner = true;
-    nextSegment.y < currentSegment.y
-      ? (cornerType = "left-up")
-      : (cornerType = "left-down");
+    if (nextSegment.y < currentSegment.y) {
+      isAdjacentSegments(nextSegment, currentSegment)
+        ? (cornerType = "left-up")
+        : (cornerType = "left-down");
+    } else {
+      isAdjacentSegments(nextSegment, currentSegment)
+        ? (cornerType = "left-down")
+        : (cornerType = "left-up");
+    }
   }
   if (segmentDirection === "right" && nextSegment.y !== currentSegment.y) {
     isCorner = true;
-    nextSegment.y < currentSegment.y
-      ? (cornerType = "right-up")
-      : (cornerType = "right-down");
+    if (nextSegment.y < currentSegment.y) {
+      isAdjacentSegments(nextSegment, currentSegment)
+        ? (cornerType = "right-up")
+        : (cornerType = "right-down");
+    } else {
+      isAdjacentSegments(nextSegment, currentSegment)
+        ? (cornerType = "right-down")
+        : (cornerType = "right-up");
+    }
   }
   if (segmentDirection === "up" && nextSegment.x !== currentSegment.x) {
     isCorner = true;
-    nextSegment.x < currentSegment.x
-      ? (cornerType = "left-up")
-      : (cornerType = "right-up");
+    if (nextSegment.x < currentSegment.x) {
+      isAdjacentSegments(nextSegment, currentSegment)
+        ? (cornerType = "left-up")
+        : (cornerType = "right-up");
+    } else {
+      isAdjacentSegments(nextSegment, currentSegment)
+        ? (cornerType = "right-up")
+        : (cornerType = "left-up");
+    }
   }
   if (segmentDirection === "down" && nextSegment.x !== currentSegment.x) {
     isCorner = true;
-    nextSegment.x < currentSegment.x
-      ? (cornerType = "left-down")
-      : (cornerType = "right-down");
+    if (nextSegment.x < currentSegment.x) {
+      isAdjacentSegments(nextSegment, currentSegment)
+        ? (cornerType = "left-down")
+        : (cornerType = "right-down");
+    } else {
+      isAdjacentSegments(nextSegment, currentSegment)
+        ? (cornerType = "right-down")
+        : (cornerType = "left-down");
+    }
   }
   return isCorner ? cornerType : "body";
 }
