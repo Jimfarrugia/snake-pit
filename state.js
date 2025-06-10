@@ -1,6 +1,8 @@
 const { randomPosition } = require("./utils");
 
 const state = {
+  gameIntervalId: null,
+  connectedPlayers: new Set(),
   snakes: [],
   food: randomPosition(),
   speedBoost: randomPosition(),
@@ -10,15 +12,19 @@ const state = {
   spawnTestSnakesInterval: null,
 
   resetGameState() {
-    if (this.immunityRespawnTimeout) {
-      clearTimeout(this.immunityRespawnTimeout);
-      this.immunityRespawnTimeout = null;
-    }
     this.snakes = [];
     this.food = randomPosition();
     this.speedBoost = randomPosition();
     this.immunity = randomPosition();
     this.isGameStarted = false;
+    if (this.immunityRespawnTimeout) {
+      clearTimeout(this.immunityRespawnTimeout);
+      this.immunityRespawnTimeout = null;
+    }
+    if (this.spawnTestSnakesInterval) {
+      clearInterval(this.spawnTestSnakesInterval);
+      this.spawnTestSnakesInterval = null;
+    }
   },
 };
 

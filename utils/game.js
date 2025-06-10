@@ -8,35 +8,21 @@ const { destroyTestSnakes } = require("./testSnake");
 const { logEvent } = require("./logger");
 const { isDevEnv, gridSize, immunityRespawnCooldown } = require("../config");
 
-// stop the game loop if no snakes remain alive
+// stop the game if no snakes remain alive (test snakes don't count)
 function stopGameIfEmpty(state) {
   const remainingSnakes = state.snakes.filter(snake =>
     isDevEnv ? snake.isAlive && !snake.id.includes("TestSnake") : snake.isAlive
   );
   if (!remainingSnakes.length) {
     if (isDevEnv) {
+      state.snakes.forEach(snake => {
+        if (snake.id.includes("TestSnake")) clearSnakeEffects(snake);
+      });
       clearInterval(state.spawnTestSnakesInterval);
       destroyTestSnakes(state);
     }
     state.isGameStarted = false;
     logEvent("Game stopped. No snakes alive.");
-  }
-}
-
-// stop the game loop if no players are connected
-function stopGameIfNoConnections(state) {
-  // disregard test snakes
-  const remainingSnakes = isDevEnv
-    ? state.snakes.filter(s => !s.id.includes("TestSnake"))
-    : state.snakes;
-  if (!remainingSnakes.length) {
-    if (isDevEnv) {
-      clearInterval(state.spawnTestSnakesInterval);
-      destroyTestSnakes(state);
-    }
-    const wasGameStarted = state.isGameStarted;
-    state.isGameStarted = false;
-    if (wasGameStarted) logEvent("Game stopped. No players connected.");
   }
 }
 
@@ -126,7 +112,6 @@ function isBoundaryCollision(snakeHead) {
 
 module.exports = {
   stopGameIfEmpty,
-  stopGameIfNoConnections,
   getAllTargetSegments,
   killSnake,
   isFoodCollision,

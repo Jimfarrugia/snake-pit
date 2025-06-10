@@ -75,6 +75,7 @@ function setTestSnakeDirection(snake) {
 // Remove all test snakes
 function destroyTestSnakes(state) {
   state.snakes = state.snakes.filter(s => !s.id.includes("TestSnake"));
+  logEvent("All test snakes were removed.");
 }
 
 // Add test snakes to the game (n: number of test snakes to add)
@@ -82,6 +83,7 @@ function addTestSnakes(n, state) {
   for (let i = 0; i < n; i++) {
     state.snakes.push(generateTestSnake());
   }
+  logEvent(`Added ${n} test snakes.`);
 }
 
 // Revive test snakes
@@ -89,6 +91,7 @@ function respawnTestSnakes(state) {
   state.snakes.forEach(snake => {
     if (snake.id.includes("TestSnake") && !snake.isAlive) {
       respawnSnake(snake);
+      logEvent(`${snake.id} respawned.`, snake.id);
     }
   });
 }
