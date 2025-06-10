@@ -4,12 +4,9 @@ const {
   isSamePosition,
   mapAllTargetSegments,
   killSnake,
-  isFoodCollision,
   eatFood,
-  isSpeedBoostCollision,
   eatSpeedBoost,
   applySpeedBoost,
-  isImmunityCollision,
   eatImmunity,
   applyImmunity,
   teleportSnakeHead,
@@ -34,6 +31,7 @@ function moveSnake(snake, now, io) {
   snake.lastMoveTime = now;
   snake.isGrowing = false;
 
+  const { food, speedBoost, immunity } = state;
   const segments = snake.segments;
   const prevHead = segments[0];
   const newHead = { ...segments[0] };
@@ -60,6 +58,30 @@ function moveSnake(snake, now, io) {
       break;
   }
   segments.unshift(newHead);
+
+  // Handle boundary collision
+  if (isBoundaryCollision(newHead)) {
+    if (snake.isImmune) {
+      teleportSnakeHead(snake);
+    } else {
+      killSnake(io, snake);
+      logEvent(
+        `'${snake.name}' died by hitting the wall with ${snake.score} points.`,
+        snake.id
+      );
+      return;
+    }
+  }
+
+  // Handle self collision
+  if (!snake.isImmune && isSelfCollision(snake.segments, newHead)) {
+    killSnake(io, snake);
+    logEvent(
+      `'${snake.name}' died by biting itself with ${snake.score} points.`,
+      snake.id
+    );
+    return;
+  }
 
   // Handle enemy snake collision
   if (state.snakes.length > 1) {
@@ -88,56 +110,34 @@ function moveSnake(snake, now, io) {
   }
 
   // Handle food collision
-  if (isFoodCollision(state.food, snake)) {
+  if (isSamePosition(food, newHead)) {
     eatFood(state, snake);
   }
 
   // Handle speed boost collision
-  if (isSpeedBoostCollision(state.speedBoost, snake)) {
+  if (isSamePosition(speedBoost, newHead)) {
     eatSpeedBoost(state, snake);
     applySpeedBoost(snake);
   }
 
   // Handle immunity collision
-  if (state.immunity && isImmunityCollision(state.immunity, snake)) {
+  if (immunity && isSamePosition(immunity, newHead)) {
     eatImmunity(state, snake);
     applyImmunity(snake);
   }
 
   // Remove the tail segment if no points were gained
   if (!snake.isGrowing) segments.pop();
-
-  // Check boundary collision
-  if (isBoundaryCollision(newHead)) {
-    if (snake.isImmune) {
-      teleportSnakeHead(snake);
-    } else {
-      killSnake(io, snake);
-      logEvent(
-        `'${snake.name}' died by hitting the wall with ${snake.score} points.`,
-        snake.id
-      );
-      return;
-    }
-  }
-
-  // Check self collision
-  if (!snake.isImmune && isSelfCollision(snake.segments, newHead)) {
-    killSnake(io, snake);
-    logEvent(
-      `'${snake.name}' died by biting itself with ${snake.score} points.`,
-      snake.id
-    );
-  }
 }
 
 // The game loop
 function gameLoop(io) {
   if (!state.isGameStarted) return;
   const now = Date.now();
+  const { food, speedBoost, immunity, snakes } = state;
 
   // Move snakes
-  state.snakes.forEach(snake => {
+  snakes.forEach(snake => {
     if (isDevEnv && snake.id.includes("TestSnake")) {
       setTestSnakeDirection(snake);
     }
@@ -149,13 +149,11 @@ function gameLoop(io) {
     // strip timeout values from the snake object during emit
     // becuase they're non-serializable and cause socket.io to crash
     // (we could alternatively, handle timeouts outside of the game state)
-    snakes: state.snakes.map(
-      ({ speedBoostTimeout, immunityTimeout, ...s }) => s
-    ),
-    food: state.food,
-    speedBoost: state.speedBoost,
+    snakes: snakes.map(({ speedBoostTimeout, immunityTimeout, ...s }) => s),
+    food,
+    speedBoost,
     speedBoostDuration,
-    immunity: state.immunity,
+    immunity,
     immunityDuration,
     snakeMaxTargetSize,
     initialSnakeLength,
