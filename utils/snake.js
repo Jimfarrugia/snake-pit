@@ -26,6 +26,7 @@ function generateSnake(id) {
     direction: setInitialDirection(initialSnakeSegments[0], initialOrientation),
     nextDirection: null, // queued input
     lastMoveTime: Date.now(),
+    isGrowing: false,
     speed: initialSpeed,
     speedBoostTimeout: null,
     speedBoostTimeStart: null,

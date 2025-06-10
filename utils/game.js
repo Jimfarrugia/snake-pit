@@ -54,6 +54,7 @@ function killSnake(io, victimSnake, killerSnake = null) {
   io.to(victimSnake.id).emit("gameOver");
   if (killerSnake) {
     killerSnake.kills += 1;
+    killerSnake.isGrowing = true;
   }
 }
 
@@ -66,6 +67,7 @@ function isFoodCollision(food, playerSnake) {
 // Award snake a point and reset food location
 function eatFood(state, playerSnake) {
   playerSnake.score += 1;
+  playerSnake.isGrowing = true;
   state.food = randomPosition();
 }
 
@@ -78,6 +80,7 @@ function isSpeedBoostCollision(speedBoost, playerSnake) {
 // Award snake a point and reset speed boost location
 function eatSpeedBoost(state, playerSnake) {
   playerSnake.score += 1;
+  playerSnake.isGrowing = true;
   state.speedBoost = randomPosition();
 }
 
@@ -90,6 +93,7 @@ function isImmunityCollision(immunity, playerSnake) {
 // Award snake a point and queue the immunity pickup for respawn
 function eatImmunity(state, playerSnake) {
   playerSnake.score += 1;
+  playerSnake.isGrowing = true;
   state.immunity = null;
   state.immunityRespawnTimeout = setTimeout(() => {
     state.immunity = randomPosition();

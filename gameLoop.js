@@ -31,11 +31,11 @@ function moveSnake(playerSnake, now, io) {
   if (!playerSnake.isAlive) return;
   if (now - playerSnake.lastMoveTime < playerSnake.speed) return; // not time to move yet
   playerSnake.lastMoveTime = now;
+  playerSnake.isGrowing = false;
 
   const segments = playerSnake.segments;
   const prevHead = segments[0];
   const newHead = { ...segments[0] };
-  let isGrowing = false;
 
   // Update direction for all snakes (test or not)
   if (playerSnake.nextDirection) {
@@ -82,7 +82,6 @@ function moveSnake(playerSnake, now, io) {
           `'${enemySnake.name}' was killed by '${playerSnake.name}'.`,
           enemySnake.id
         );
-        isGrowing = true;
       }
     }
   }
@@ -90,25 +89,22 @@ function moveSnake(playerSnake, now, io) {
   // Handle food collision
   if (isFoodCollision(state.food, playerSnake)) {
     eatFood(state, playerSnake);
-    isGrowing = true;
   }
 
   // Handle speed boost collision
   if (isSpeedBoostCollision(state.speedBoost, playerSnake)) {
     eatSpeedBoost(state, playerSnake);
     applySpeedBoost(playerSnake);
-    isGrowing = true;
   }
 
   // Handle immunity collision
   if (state.immunity && isImmunityCollision(state.immunity, playerSnake)) {
     eatImmunity(state, playerSnake);
     applyImmunity(playerSnake);
-    isGrowing = true;
   }
 
   // Remove the tail segment if no points were gained
-  if (!isGrowing) segments.pop();
+  if (!playerSnake.isGrowing) segments.pop();
 
   // Check boundary collision
   if (isBoundaryCollision(newHead)) {
