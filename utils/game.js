@@ -26,25 +26,24 @@ function stopGameIfEmpty(state) {
   }
 }
 
-// Return an array of all target segments on the board
-// along with their next positions and snake id.
-function getAllTargetSegments(state, playerSnake) {
-  return state.snakes
-    .filter(s => s.id !== playerSnake.id && s.isAlive && !s.isImmune)
-    .flatMap(snake => {
-      const targetSize = getSnakeTargetSize(snake);
-      const targetSegments = getSnakeTargetSegments(snake);
-      // get the last non-target body segment
-      const [trailingBodySegment] = snake.segments.slice(
-        -(targetSize + 1),
-        -targetSize
-      );
-      return targetSegments.map((segment, i, arr) => ({
-        id: snake.id,
-        nextPosition: i === 0 ? trailingBodySegment : arr[i - 1],
-        position: segment,
-      }));
-    });
+// Return a map of { [snakeId]: [targetSegments] },
+// each targetSegment having a position and a nextPosition
+function mapAllTargetSegments(state, playerSnake) {
+  const result = {};
+  state.snakes.forEach(snake => {
+    if (snake.id === playerSnake.id || !snake.isAlive || snake.isImmune) return;
+    const targetSize = getSnakeTargetSize(snake);
+    const targetSegments = getSnakeTargetSegments(snake);
+    const [trailingBodySegment] = snake.segments.slice(
+      -(targetSize + 1),
+      -targetSize
+    );
+    result[snake.id] = targetSegments.map((segment, i, arr) => ({
+      position: segment,
+      nextPosition: i === 0 ? trailingBodySegment : arr[i - 1],
+    }));
+  });
+  return result;
 }
 
 // Kill a snake and award point to the killer if there is one
@@ -110,7 +109,7 @@ function isBoundaryCollision(snakeHead) {
 
 module.exports = {
   stopGameIfEmpty,
-  getAllTargetSegments,
+  mapAllTargetSegments,
   killSnake,
   isFoodCollision,
   eatFood,

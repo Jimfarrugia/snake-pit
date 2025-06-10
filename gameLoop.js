@@ -1,22 +1,21 @@
 const state = require("./state");
 const {
+  logEvent,
+  isSamePosition,
+  mapAllTargetSegments,
   killSnake,
   isFoodCollision,
   eatFood,
   isSpeedBoostCollision,
   eatSpeedBoost,
   applySpeedBoost,
-  isBoundaryCollision,
-  setTestSnakeDirection,
-  isSamePosition,
-  stopGameIfEmpty,
-  getAllTargetSegments,
   isImmunityCollision,
   eatImmunity,
   applyImmunity,
   teleportSnakeHead,
-  logEvent,
-  clearSnakeEffects,
+  isBoundaryCollision,
+  setTestSnakeDirection,
+  stopGameIfEmpty,
 } = require("./utils");
 const {
   snakeMaxTargetSize,
@@ -63,28 +62,29 @@ function moveSnake(playerSnake, now, io) {
 
   // Handle enemy snake collision
   if (state.snakes.length > 1) {
-    const targetSegments = getAllTargetSegments(state, playerSnake);
-    targetSegments.forEach(targetSegment => {
-      if (targetSegment.id === playerSnake.id) return; // skip self
-      // consider cases where head and target segment swap spaces (pass through each other)
-      // (eg. SnakeA moves 5,5 -> 6,5 and snakeB moves 6,5 -> 5,5)
-      // or where they both move to the same space at once
-      // (eg. SnakeA moves 4,5 -> 5,5 and snakeB moves 6,5 -> 5,5)
-      if (
-        (isSamePosition(newHead, targetSegment.position) &&
-          isSamePosition(prevHead, targetSegment.nextPosition)) ||
-        isSamePosition(newHead, targetSegment.nextPosition) ||
-        isSamePosition(prevHead, targetSegment.position)
-      ) {
-        const enemySnake = state.snakes.find(s => s.id === targetSegment.id);
+    const allTargetSegmentsMap = mapAllTargetSegments(state, playerSnake);
+    const enemySnakesMap = Object.fromEntries(state.snakes.map(s => [s.id, s]));
+    for (const [id, segments] of Object.entries(allTargetSegmentsMap)) {
+      const enemySnake = enemySnakesMap[id];
+      if (!enemySnake || !enemySnake.isAlive) continue;
+      const isCollision = segments.some(
+        ({ position, nextPosition }) =>
+          // head and target swap positions (pass through each other)
+          (isSamePosition(newHead, position) &&
+            isSamePosition(prevHead, nextPosition)) ||
+          // head and target meet on the same position
+          isSamePosition(newHead, nextPosition) ||
+          isSamePosition(prevHead, position)
+      );
+      if (isCollision) {
         killSnake(io, enemySnake, playerSnake);
-        isGrowing = true;
         logEvent(
           `'${enemySnake.name}' was killed by '${playerSnake.name}'.`,
           enemySnake.id
         );
+        isGrowing = true;
       }
-    });
+    }
   }
 
   // Handle food collision
@@ -154,7 +154,7 @@ function gameLoop(io) {
 
   // emit the gamestate to all connections
   io.emit("gameState", {
-    // strip speedBoostTimeout and immunityTimeout from the snake object during emit
+    // strip timeout values from the snake object during emit
     // becuase they're non-serializable and cause socket.io to crash
     // (we could alternatively, handle timeouts outside of the game state)
     snakes: state.snakes.map(
