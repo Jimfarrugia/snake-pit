@@ -28,10 +28,10 @@ function stopGameIfEmpty(state) {
 
 // Return a map of { [snakeId]: [targetSegments] },
 // each targetSegment having a position and a nextPosition
-function mapAllTargetSegments(state, playerSnake) {
+function mapAllTargetSegments(state, playerSnakeId) {
   const result = {};
   state.snakes.forEach(snake => {
-    if (snake.id === playerSnake.id || !snake.isAlive || snake.isImmune) return;
+    if (snake.id === playerSnakeId || !snake.isAlive || snake.isImmune) return;
     const targetSize = getSnakeTargetSize(snake);
     const targetSegments = getSnakeTargetSegments(snake);
     const [trailingBodySegment] = snake.segments.slice(
@@ -59,41 +59,41 @@ function killSnake(io, victimSnake, killerSnake = null) {
 }
 
 // Check if a snake has collided with food
-function isFoodCollision(food, playerSnake) {
-  const playerSnakeHead = playerSnake.segments[0];
-  return isSamePosition(food, playerSnakeHead);
+function isFoodCollision(food, snake) {
+  const snakeHead = snake.segments[0];
+  return isSamePosition(food, snakeHead);
 }
 
 // Award snake a point and reset food location
-function eatFood(state, playerSnake) {
-  playerSnake.score += 1;
-  playerSnake.isGrowing = true;
+function eatFood(state, snake) {
+  snake.score += 1;
+  snake.isGrowing = true;
   state.food = randomPosition();
 }
 
 // Check if a snake has collided with food
-function isSpeedBoostCollision(speedBoost, playerSnake) {
-  const playerSnakeHead = playerSnake.segments[0];
-  return isSamePosition(speedBoost, playerSnakeHead);
+function isSpeedBoostCollision(speedBoost, snake) {
+  const snakeHead = snake.segments[0];
+  return isSamePosition(speedBoost, snakeHead);
 }
 
 // Award snake a point and reset speed boost location
-function eatSpeedBoost(state, playerSnake) {
-  playerSnake.score += 1;
-  playerSnake.isGrowing = true;
+function eatSpeedBoost(state, snake) {
+  snake.score += 1;
+  snake.isGrowing = true;
   state.speedBoost = randomPosition();
 }
 
 // Check if a snake has collided with immunity
-function isImmunityCollision(immunity, playerSnake) {
-  const playerSnakeHead = playerSnake.segments[0];
-  return isSamePosition(immunity, playerSnakeHead);
+function isImmunityCollision(immunity, snake) {
+  const snakeHead = snake.segments[0];
+  return isSamePosition(immunity, snakeHead);
 }
 
 // Award snake a point and queue the immunity pickup for respawn
-function eatImmunity(state, playerSnake) {
-  playerSnake.score += 1;
-  playerSnake.isGrowing = true;
+function eatImmunity(state, snake) {
+  snake.score += 1;
+  snake.isGrowing = true;
   state.immunity = null;
   state.immunityRespawnTimeout = setTimeout(() => {
     state.immunity = randomPosition();

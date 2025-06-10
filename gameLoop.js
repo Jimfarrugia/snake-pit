@@ -27,24 +27,24 @@ const {
 } = require("./config");
 
 // Move a single snake
-function moveSnake(playerSnake, now, io) {
-  if (!playerSnake.isAlive) return;
-  if (now - playerSnake.lastMoveTime < playerSnake.speed) return; // not time to move yet
-  playerSnake.lastMoveTime = now;
-  playerSnake.isGrowing = false;
+function moveSnake(snake, now, io) {
+  if (!snake.isAlive) return;
+  if (now - snake.lastMoveTime < snake.speed) return; // not time to move yet
+  snake.lastMoveTime = now;
+  snake.isGrowing = false;
 
-  const segments = playerSnake.segments;
+  const segments = snake.segments;
   const prevHead = segments[0];
   const newHead = { ...segments[0] };
 
   // Update direction for all snakes (test or not)
-  if (playerSnake.nextDirection) {
-    playerSnake.direction = playerSnake.nextDirection;
-    playerSnake.nextDirection = null;
+  if (snake.nextDirection) {
+    snake.direction = snake.nextDirection;
+    snake.nextDirection = null;
   }
 
   // Move head according to direction
-  switch (playerSnake.direction) {
+  switch (snake.direction) {
     case "up":
       newHead.y--;
       break;
@@ -62,7 +62,7 @@ function moveSnake(playerSnake, now, io) {
 
   // Handle enemy snake collision
   if (state.snakes.length > 1) {
-    const allTargetSegmentsMap = mapAllTargetSegments(state, playerSnake);
+    const allTargetSegmentsMap = mapAllTargetSegments(state, snake.id);
     const enemySnakesMap = Object.fromEntries(state.snakes.map(s => [s.id, s]));
     for (const [id, segments] of Object.entries(allTargetSegmentsMap)) {
       const enemySnake = enemySnakesMap[id];
@@ -77,9 +77,9 @@ function moveSnake(playerSnake, now, io) {
           isSamePosition(prevHead, position)
       );
       if (isCollision) {
-        killSnake(io, enemySnake, playerSnake);
+        killSnake(io, enemySnake, snake);
         logEvent(
-          `'${enemySnake.name}' was killed by '${playerSnake.name}'.`,
+          `'${enemySnake.name}' was killed by '${snake.name}'.`,
           enemySnake.id
         );
       }
@@ -87,47 +87,47 @@ function moveSnake(playerSnake, now, io) {
   }
 
   // Handle food collision
-  if (isFoodCollision(state.food, playerSnake)) {
-    eatFood(state, playerSnake);
+  if (isFoodCollision(state.food, snake)) {
+    eatFood(state, snake);
   }
 
   // Handle speed boost collision
-  if (isSpeedBoostCollision(state.speedBoost, playerSnake)) {
-    eatSpeedBoost(state, playerSnake);
-    applySpeedBoost(playerSnake);
+  if (isSpeedBoostCollision(state.speedBoost, snake)) {
+    eatSpeedBoost(state, snake);
+    applySpeedBoost(snake);
   }
 
   // Handle immunity collision
-  if (state.immunity && isImmunityCollision(state.immunity, playerSnake)) {
-    eatImmunity(state, playerSnake);
-    applyImmunity(playerSnake);
+  if (state.immunity && isImmunityCollision(state.immunity, snake)) {
+    eatImmunity(state, snake);
+    applyImmunity(snake);
   }
 
   // Remove the tail segment if no points were gained
-  if (!playerSnake.isGrowing) segments.pop();
+  if (!snake.isGrowing) segments.pop();
 
   // Check boundary collision
   if (isBoundaryCollision(newHead)) {
-    if (playerSnake.isImmune) {
-      teleportSnakeHead(playerSnake);
+    if (snake.isImmune) {
+      teleportSnakeHead(snake);
     } else {
-      killSnake(io, playerSnake);
+      killSnake(io, snake);
       logEvent(
-        `'${playerSnake.name}' died by hitting the wall with ${playerSnake.score} points.`,
-        playerSnake.id
+        `'${snake.name}' died by hitting the wall with ${snake.score} points.`,
+        snake.id
       );
       return;
     }
   }
 
   // Check self collision
-  if (!playerSnake.isImmune) {
+  if (!snake.isImmune) {
     for (let i = 1; i < segments.length; i++) {
       if (isSamePosition(segments[i], newHead)) {
-        killSnake(io, playerSnake);
+        killSnake(io, snake);
         logEvent(
-          `'${playerSnake.name}' died by biting itself with ${playerSnake.score} points.`,
-          playerSnake.id
+          `'${snake.name}' died by biting itself with ${snake.score} points.`,
+          snake.id
         );
         break;
       }
