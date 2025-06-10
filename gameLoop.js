@@ -67,9 +67,9 @@ function moveSnake(playerSnake, now, io) {
     targetSegments.forEach(targetSegment => {
       if (targetSegment.id === playerSnake.id) return; // skip self
       // consider cases where head and target segment swap spaces (pass through each other)
-      // (eg. 5,5 -> 6,5 and 6,5 -> 5,5)
+      // (eg. SnakeA moves 5,5 -> 6,5 and snakeB moves 6,5 -> 5,5)
       // or where they both move to the same space at once
-      // (eg. 4,5 -> 5,5 and 6,5 -> 5,5)
+      // (eg. SnakeA moves 4,5 -> 5,5 and snakeB moves 6,5 -> 5,5)
       if (
         (isSamePosition(newHead, targetSegment.position) &&
           isSamePosition(prevHead, targetSegment.nextPosition)) ||
@@ -77,8 +77,12 @@ function moveSnake(playerSnake, now, io) {
         isSamePosition(prevHead, targetSegment.position)
       ) {
         const enemySnake = state.snakes.find(s => s.id === targetSegment.id);
-        killSnake(enemySnake, playerSnake, io);
+        killSnake(io, enemySnake, playerSnake);
         isGrowing = true;
+        logEvent(
+          `'${enemySnake.name}' was killed by '${playerSnake.name}'.`,
+          enemySnake.id
+        );
       }
     });
   }
@@ -111,10 +115,7 @@ function moveSnake(playerSnake, now, io) {
     if (playerSnake.isImmune) {
       teleportSnakeHead(playerSnake);
     } else {
-      clearSnakeEffects(playerSnake);
-      playerSnake.isAlive = false;
-      playerSnake.deaths += 1;
-      io.to(playerSnake.id).emit("gameOver");
+      killSnake(io, playerSnake);
       logEvent(
         `'${playerSnake.name}' died by hitting the wall with ${playerSnake.score} points.`,
         playerSnake.id
@@ -127,10 +128,7 @@ function moveSnake(playerSnake, now, io) {
   if (!playerSnake.isImmune) {
     for (let i = 1; i < segments.length; i++) {
       if (isSamePosition(segments[i], newHead)) {
-        clearSnakeEffects(playerSnake);
-        playerSnake.isAlive = false;
-        playerSnake.deaths += 1;
-        io.to(playerSnake.id).emit("gameOver");
+        killSnake(io, playerSnake);
         logEvent(
           `'${playerSnake.name}' died by biting itself with ${playerSnake.score} points.`,
           playerSnake.id

@@ -47,17 +47,15 @@ function getAllTargetSegments(state, playerSnake) {
     });
 }
 
-// Kill enemy snake and award point to player
-function killSnake(enemySnake, playerSnake, io) {
-  clearSnakeEffects(enemySnake);
-  enemySnake.isAlive = false;
-  enemySnake.deaths += 1;
-  playerSnake.kills += 1;
-  io.to(enemySnake.id).emit("gameOver");
-  logEvent(
-    `'${enemySnake.name}' was killed by '${playerSnake.name}'.`,
-    enemySnake.id
-  );
+// Kill a snake and award point to the killer if there is one
+function killSnake(io, victimSnake, killerSnake = null) {
+  clearSnakeEffects(victimSnake);
+  victimSnake.isAlive = false;
+  victimSnake.deaths += 1;
+  io.to(victimSnake.id).emit("gameOver");
+  if (killerSnake) {
+    killerSnake.kills += 1;
+  }
 }
 
 // Check if a snake has collided with food
