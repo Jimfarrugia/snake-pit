@@ -16,6 +16,7 @@ const {
   isBoundaryCollision,
   setTestSnakeDirection,
   stopGameIfEmpty,
+  isSelfCollision,
 } = require("./utils");
 const {
   snakeMaxTargetSize,
@@ -121,17 +122,12 @@ function moveSnake(snake, now, io) {
   }
 
   // Check self collision
-  if (!snake.isImmune) {
-    for (let i = 1; i < segments.length; i++) {
-      if (isSamePosition(segments[i], newHead)) {
-        killSnake(io, snake);
-        logEvent(
-          `'${snake.name}' died by biting itself with ${snake.score} points.`,
-          snake.id
-        );
-        break;
-      }
-    }
+  if (!snake.isImmune && isSelfCollision(snake.segments, newHead)) {
+    killSnake(io, snake);
+    logEvent(
+      `'${snake.name}' died by biting itself with ${snake.score} points.`,
+      snake.id
+    );
   }
 }
 

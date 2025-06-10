@@ -111,6 +111,16 @@ function isBoundaryCollision(snakeHead) {
   );
 }
 
+// Check if a snake collides with itself
+function isSelfCollision(snakeSegments, snakeHead) {
+  for (let i = 1; i < snakeSegments.length; i++) {
+    if (isSamePosition(snakeSegments[i], snakeHead)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 module.exports = {
   stopGameIfEmpty,
   mapAllTargetSegments,
@@ -122,4 +132,5 @@ module.exports = {
   isImmunityCollision,
   eatImmunity,
   isBoundaryCollision,
+  isSelfCollision,
 };
