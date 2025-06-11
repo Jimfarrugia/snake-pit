@@ -30,14 +30,17 @@
         <div id="start-prompt">
           <div id="name-form">
             <label for="name">Name:</label>
-            <input
-              id="name-input"
-              title="Enter a name"
-              name="name"
-              type="text"
-              pattern="^[a-zA-Z0-9_\- ]+$"
-              maxlength="30"
-            />
+            <div class="input-wrapper">
+              <input
+                id="name-input"
+                title="Enter a name"
+                name="name"
+                type="text"
+                pattern="^[a-zA-Z0-9_\- ]+$"
+                maxlength="30"
+              />
+              <span id="name-status"></span>
+            </div>
           </div>
           <p>
             <button id="start-btn" title="Join the game">Join Game</button>

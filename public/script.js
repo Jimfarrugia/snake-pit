@@ -33,6 +33,7 @@ let enemySnakes = [];
 // Define HTML elements
 const board = document.getElementById("game-board");
 const nameInput = document.getElementById("name-input");
+const nameStatus = document.getElementById("name-status");
 const nameWarning = document.getElementById("name-warning");
 const startPrompt = document.getElementById("start-prompt");
 const timers = document.getElementById("timers");
@@ -392,12 +393,27 @@ window.addEventListener("DOMContentLoaded", () => {
   );
 });
 
+function setNameStatusIcon(isValid, isAvailable) {
+  if (!isValid) {
+    nameStatus.textContent = "❌";
+    nameStatus.style.color = "red";
+  } else if (!isAvailable) {
+    nameStatus.textContent = "❌";
+    nameStatus.style.color = "orange";
+  } else {
+    nameStatus.textContent = "✅";
+    nameStatus.style.color = "green";
+  }
+}
+
 // Validate the name input field as the user types
 nameInput.addEventListener("input", () => {
   clearTimeout(nameInputDebounceTimer);
   nameInputDebounceTimer = setTimeout(() => {
     const name = nameInput.value;
-    if (!isValidName(name)) {
+    const isValid = isValidName(name);
+    if (!isValid) {
+      setNameStatusIcon(isValid);
       nameInput.setCustomValidity(
         "Only letters, numbers, spaces, underscores and dashes are allowed."
       );
@@ -408,6 +424,7 @@ nameInput.addEventListener("input", () => {
       "checkNameAvailability",
       { name, getReservedNames: false },
       ({ isAvailable }) => {
+        setNameStatusIcon(true, isAvailable);
         if (!isAvailable) {
           nameInput.setCustomValidity("This name is already taken.");
         } else {

@@ -65,7 +65,7 @@ body {
   background: #fff;
   border: 2px solid #606c38;
   border-radius: 3px;
-  padding: 5px;
+  padding: 5px 1.5em 5px 5px;
 }
 
 #name-form input:invalid {
@@ -74,6 +74,20 @@ body {
 #name-form input:invalid:focus {
   outline-style: solid;
   outline-color: red;
+}
+
+#name-form .input-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+#name-status {
+  position: absolute;
+  top: 50%;
+  right: 0.5em;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 1.2em;
 }
 
 #start-prompt button {
