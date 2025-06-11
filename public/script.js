@@ -86,7 +86,7 @@ function startGame() {
   playerName = nameInput.value;
   socket.emit(
     "joinGame",
-    { name: playerName, fallbackName: defaultPlayerName },
+    { name: playerName.trim(), fallbackName: defaultPlayerName },
     ({ isValidName, isAvailable, finalName, reservedNames }) => {
       if (playerName === defaultPlayerName && !isAvailable) {
         defaultPlayerName = generatePlayerName(reservedNames);

@@ -37,7 +37,7 @@ function registerSocketHandlers(io) {
       );
       const finalName = isValidName && isAvailable ? name : fallbackName;
       const reservedNames = isAvailable ? [] : state.snakes.map(s => s.name);
-      snake.name = finalName;
+      snake.name = finalName.trim();
       callback({ isValidName, isAvailable, finalName, reservedNames });
 
       snake.isAlive = true;
