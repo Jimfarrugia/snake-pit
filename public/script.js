@@ -263,10 +263,14 @@ function drawScoreboard(players) {
   // Generate scoreboard elements
   players.forEach((player, index) => {
     if (!player.name) return;
-    const li = document.createElement("li");
+    // Rank and name
     const nameSpan = document.createElement("span");
     nameSpan.className = "scoreboard-name";
-    nameSpan.innerHTML = `<span>${index + 1}.</span> ${player.name}`;
+    const rankSpan = document.createElement("span");
+    rankSpan.textContent = `${index + 1}. `;
+    nameSpan.appendChild(rankSpan);
+    nameSpan.append(player.name);
+    // Stats
     const scoresDiv = document.createElement("div");
     scoresDiv.className = "scores";
     const scoreSpan = document.createElement("span");
@@ -282,6 +286,7 @@ function drawScoreboard(players) {
     deathsSpan.className = "scoreboard-deaths";
     deathsSpan.textContent = player.deaths;
     // Build the li element & add it to the DOM
+    const li = document.createElement("li");
     scoresDiv.appendChild(scoreSpan);
     scoresDiv.appendChild(killsSpan);
     scoresDiv.appendChild(deathsSpan);
