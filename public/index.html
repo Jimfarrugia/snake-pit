@@ -52,17 +52,121 @@
       <ol id="scoreboard"></ol>
     </div>
     <dialog id="tutorial-dialog" closedby="any">
-      <h2>How to Play</h2>
-      <ul>
-        <li>Move your snake with the arrow keys.</li>
-        <li>
-          Gain points by eating mice, picking up items and biting other snakes.
-        </li>
-        <li>Avoid running into the walls, yourself or other snakes.</li>
-        <li>As your score increases, so does your length.</li>
-        <li>Don't get bit!</li>
-      </ul>
-      <button id="tutorial-close-btn" title="Close">Got it!</button>
+      <div id="tutorial-step-1" class="modal-step" data-step="1">
+        <h2>Tutorial (1/6)</h2>
+        <div class="flex">
+          <img
+            src="/images/tutorial/player-snake.png"
+            alt="the player's snake"
+          />
+          <p>This is your snake.</p>
+        </div>
+        <div class="flex">
+          <img src="/images/tutorial/enemy-snake.png" alt="an enemy snake" />
+          <p>This is an enemy snake.</p>
+        </div>
+        <nav>
+          <button class="next-step-btn">Next &gt;</button>
+        </nav>
+      </div>
+
+      <div id="tutorial-step-2" class="modal-step" data-step="2" hidden>
+        <h2>Tutorial (2/6)</h2>
+        <p>Change direction by swiping or using the arrow keys.</p>
+        <div class="flex">
+          <img src="/images/tutorial/swipe.png" alt="swipe" />
+          <img src="/images/tutorial/arrow-keys.png" alt="arrow-keys" />
+        </div>
+        <nav>
+          <button class="prev-step-btn">&lt; Back</button>
+          <button class="next-step-btn">Next &gt;</button>
+        </nav>
+      </div>
+
+      <div id="tutorial-step-3" class="modal-step" data-step="3" hidden>
+        <h2>Tutorial (3/6)</h2>
+        <p>It's game over if you run into the boundary or yourself.</p>
+        <div class="flex">
+          <img
+            src="/images/tutorial/boundary-collision.png"
+            alt="a boundary collision death"
+          />
+          <img
+            src="/images/tutorial/self-collision.png"
+            alt="a self collision death"
+          />
+        </div>
+        <nav>
+          <button class="prev-step-btn">&lt; Back</button>
+          <button class="next-step-btn">Next &gt;</button>
+        </nav>
+      </div>
+
+      <div id="tutorial-step-4" class="modal-step" data-step="4" hidden>
+        <h2>Tutorial (4/6)</h2>
+        <p>
+          Eating mice and picking up items will increase your score and your
+          length.
+        </p>
+        <div class="flex">
+          <img src="/images/tutorial/mouse-144x144.png" alt="a mouse" />
+          <img
+            src="/images/tutorial/speed-boost-120x120.png"
+            alt="a speed boost"
+          />
+          <img src="/images/tutorial/star-120x120.png" alt="an immunity star" />
+        </div>
+        <nav>
+          <button class="prev-step-btn">&lt; Back</button>
+          <button class="next-step-btn">Next &gt;</button>
+        </nav>
+      </div>
+
+      <div id="tutorial-step-5" class="modal-step" data-step="5" hidden>
+        <h2>Tutorial (5/6)</h2>
+        <p>Earn kills by biting other snakes' tails.</p>
+        <img
+          src="/images/tutorial/pvp-collision.png"
+          alt="earning a kill over another player"
+        />
+        <nav>
+          <button class="prev-step-btn">&lt; Back</button>
+          <button class="next-step-btn">Next &gt;</button>
+        </nav>
+      </div>
+
+      <div id="tutorial-step-6" class="modal-step" data-step="6" hidden>
+        <h2>Tutorial (6/6)</h2>
+        <p>Pick up items to gain temporary bonus effects.</p>
+        <div class="flex">
+          <img
+            src="/images/tutorial/speed-boost-120x120.png"
+            alt="a speed boost"
+          />
+          <div>
+            <h3>Speed Boost</h3>
+            <p>
+              Move faster for <span id="speed-boost-duration">5</span> seconds.
+              This effect can stack!
+            </p>
+          </div>
+        </div>
+        <div class="flex">
+          <img src="/images/tutorial/star-120x120.png" alt="an immunity star" />
+          <div>
+            <h3>Immunity Star</h3>
+            <p>
+              Become invulnerable for
+              <span id="immunity-duration">15</span> seconds. Even move through
+              the boundary!
+            </p>
+          </div>
+        </div>
+        <nav>
+          <button class="prev-step-btn">&lt; Back</button>
+          <button id="tutorial-close-btn" title="Close">Done</button>
+        </nav>
+      </div>
     </dialog>
   </body>
 </html>

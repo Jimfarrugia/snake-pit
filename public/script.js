@@ -361,11 +361,40 @@ document
 // Listen for keypress
 document.addEventListener("keydown", handleKeyPress);
 
-// Open/close the tutorial dialog
+let currentStepIndex = 0;
+const steps = Array.from(tutorialDialog.querySelectorAll(".modal-step"));
+
+function showStep(index) {
+  steps.forEach((step, i) => {
+    step.hidden = i !== index;
+  });
+}
+
+// Open the tutorial dialog
 tutorialOpenBtn.addEventListener("click", () => {
+  currentStepIndex = 0;
+  showStep(currentStepIndex);
   tutorialDialog.showModal();
 });
 
+// Navigate the tutorial dialog
+tutorialDialog.addEventListener("click", event => {
+  if (event.target.matches(".next-step-btn")) {
+    if (currentStepIndex < steps.length - 1) {
+      currentStepIndex++;
+      showStep(currentStepIndex);
+    }
+  }
+
+  if (event.target.matches(".prev-step-btn")) {
+    if (currentStepIndex > 0) {
+      currentStepIndex--;
+      showStep(currentStepIndex);
+    }
+  }
+});
+
+// Close the tutorial dialog
 tutorialCloseBtn.addEventListener("click", () => {
   tutorialDialog.close();
 });

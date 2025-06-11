@@ -15,6 +15,10 @@ body {
   background: #283618;
 }
 
+.flex {
+  display: flex;
+}
+
 #wrapper {
   width: calc(var(--cell-size) * var(--grid-size) + 10px);
   margin: 0 auto;
@@ -134,36 +138,21 @@ body {
 }
 
 #tutorial-dialog {
+  box-sizing: border-box;
   font-size: 16px;
+  font-family: monospace;
   background: #283618;
   border: 5px solid #606c38;
   border-radius: 5px;
   color: #fefae0;
   padding: 25px;
-  text-align: center;
+  width: 480px;
   margin: auto;
 }
 
 #tutorial-dialog::backdrop {
   background: #000;
   opacity: 0.5;
-}
-
-#tutorial-dialog h2 {
-  color: #606c38;
-  font-size: 42px;
-  margin: 0 0 20px;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-#tutorial-dialog ul {
-  padding: 0 0 10px;
-}
-
-#tutorial-dialog li {
-  margin: 0 0 15px;
-  font-family: monospace;
 }
 
 #tutorial-dialog button {
@@ -173,7 +162,7 @@ body {
   padding: 7px 10px;
   border-radius: 5px;
   font-family: "VT323";
-  font-size: 32px;
+  font-size: 28px;
   cursor: pointer;
 }
 
@@ -181,6 +170,89 @@ body {
   color: #fefae0;
   border-color: #fefae0;
   background-color: #606c38;
+}
+
+#tutorial-dialog .next-step-btn {
+  background-image: url("/images/tutorial/");
+}
+
+#tutorial-dialog #tutorial-close-btn {
+  padding: 7px 20px;
+}
+
+#tutorial-dialog h2 {
+  color: #606c38;
+  font-size: 42px;
+  font-family: "VT323";
+  margin: 0 0 25px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+#tutorial-dialog h3 {
+  margin-bottom: 10px;
+}
+
+#tutorial-dialog nav {
+  display: flex;
+  justify-content: space-between;
+}
+#tutorial-dialog nav .next-step-btn {
+  margin-left: auto;
+}
+
+#tutorial-dialog img {
+  border-radius: 5px;
+}
+
+#tutorial-dialog p {
+  line-height: 1.35;
+}
+
+#tutorial-dialog .modal-step > p {
+  margin-bottom: 25px;
+}
+
+#tutorial-dialog .flex {
+  margin-bottom: 25px;
+}
+
+#tutorial-dialog .flex img {
+  display: block;
+  max-width: calc(50% - 25px);
+  height: 100%;
+}
+
+#tutorial-step-1 img,
+#tutorial-step-6 img {
+  margin-right: 25px;
+}
+
+#tutorial-step-2 img:first-child {
+  width: 25%;
+  margin: 0;
+}
+
+#tutorial-step-2 .flex,
+#tutorial-step-4 .flex {
+  justify-content: space-around;
+}
+
+#tutorial-step-3 .flex {
+  justify-content: space-between;
+}
+#tutorial-step-3 .flex img {
+  max-width: none;
+  width: calc(50% - 12.5px);
+}
+
+#tutorial-step-4 .flex img {
+  width: calc((100% / 3) - (100px / 3));
+}
+
+#tutorial-step-5 img {
+  width: 100%;
+  margin-bottom: 25px;
 }
 
 #menu {
