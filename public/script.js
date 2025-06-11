@@ -262,6 +262,7 @@ function drawScoreboard(players) {
   });
   // Generate scoreboard elements
   players.forEach((player, index) => {
+    if (!player.name) return;
     const li = document.createElement("li");
     const nameSpan = document.createElement("span");
     nameSpan.className = "scoreboard-name";
