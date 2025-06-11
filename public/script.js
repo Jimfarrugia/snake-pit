@@ -438,3 +438,8 @@ nameInput.addEventListener("input", () => {
 window.addEventListener("beforeunload", () =>
   clearTimeout(nameInputDebounceTimer)
 );
+
+// Pressing enter from the name input starts the game
+nameInput.addEventListener("keydown", event => {
+  if (event.key === "Enter") startGame();
+});
