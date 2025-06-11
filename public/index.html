@@ -28,7 +28,7 @@
       <div id="gameplay-area">
         <div id="game-board"></div>
         <div id="start-prompt">
-          <form>
+          <div id="name-form">
             <label for="name">Name:</label>
             <input
               id="name-input"
@@ -38,13 +38,14 @@
               pattern="^[a-zA-Z0-9_\- ]+$"
               maxlength="30"
             />
-          </form>
+          </div>
           <p>
             <button id="start-btn" title="Join the game">Join Game</button>
           </p>
           <p class="help-text">(or press space)</p>
         </div>
       </div>
+      <p id="name-warning"></p>
       <ol id="scoreboard"></ol>
     </div>
     <dialog id="tutorial-dialog" closedby="any">

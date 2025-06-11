@@ -125,10 +125,16 @@ function capitalize(string) {
 export const isValidName = name => /^[a-zA-Z0-9_\- ]+$/.test(name);
 
 // Generate an alliterative default name for the player using words from dictionary.js
-export function generatePlayerName() {
-  const breed = breeds[Math.floor(Math.random() * breeds.length)];
-  const matchingAdjectives = adjectives.filter(adj => adj[0] === breed[0]);
-  const adjective =
-    matchingAdjectives[Math.floor(Math.random() * matchingAdjectives.length)];
-  return `${capitalize(adjective)} ${capitalize(breed)}`;
+export function generatePlayerName(reservedNames = []) {
+  const maxAttempts = 50;
+  for (let i = 0; i < maxAttempts; i++) {
+    const breed = breeds[Math.floor(Math.random() * breeds.length)];
+    const matchingAdjectives = adjectives.filter(adj => adj[0] === breed[0]);
+    const adjective =
+      matchingAdjectives[Math.floor(Math.random() * matchingAdjectives.length)];
+    const name = `${capitalize(adjective)} ${capitalize(breed)}`;
+    if (isValidName(name) && !reservedNames.includes(name)) return name;
+  }
+  // fallback if all attempts fail
+  return `Player${Math.floor(Math.random() * 100000)}`;
 }

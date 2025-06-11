@@ -14,7 +14,8 @@ import {
 const socket = io();
 
 // Game variables
-const defaultPlayerName = generatePlayerName();
+let nameInputDebounceTimer;
+let defaultPlayerName = generatePlayerName();
 let initialSnakeLength;
 let snakeMaxTargetSize;
 let playerName;
@@ -32,6 +33,7 @@ let enemySnakes = [];
 // Define HTML elements
 const board = document.getElementById("game-board");
 const nameInput = document.getElementById("name-input");
+const nameWarning = document.getElementById("name-warning");
 const startPrompt = document.getElementById("start-prompt");
 const timers = document.getElementById("timers");
 const immunityTimer = document.getElementById("immunity-timer");
@@ -81,12 +83,32 @@ socket.on("gameOver", () => {
 
 // start the game
 function startGame() {
-  playerName = isValidName(nameInput.value)
-    ? nameInput.value
-    : defaultPlayerName;
-  socket.emit("joinGame", { name: playerName.trim() });
+  playerName = nameInput.value;
+  socket.emit(
+    "joinGame",
+    { name: playerName, fallbackName: defaultPlayerName },
+    ({ isValidName, isAvailable, finalName, reservedNames }) => {
+      if (playerName === defaultPlayerName && !isAvailable) {
+        defaultPlayerName = generatePlayerName(reservedNames);
+        nameInput.value = defaultPlayerName;
+      }
+      if (!isValidName || !isAvailable) {
+        nameWarning.style.display = "block";
+        nameWarning.textContent = `The name you chose was ${
+          !isAvailable ? "taken" : "invalid"
+        }.  You will be known as `;
+        const nameWarningSpan = document.createElement("strong");
+        nameWarningSpan.textContent = finalName;
+        nameWarning.appendChild(nameWarningSpan);
+        nameWarning.append(` until you change it.`);
+      } else {
+        nameWarning.style.display = "none";
+      }
+      playerName = finalName;
+      drawName();
+    }
+  );
   isGameStarted = true;
-  drawName();
   startPrompt.style.display = "none";
   tutorialOpenBtn.style.display = "none";
   timers.style.display = "flex";
@@ -349,26 +371,53 @@ tutorialCloseBtn.addEventListener("click", () => {
 
 // Generate a default name for the player when the page loads
 window.addEventListener("DOMContentLoaded", () => {
-  nameInput.value = defaultPlayerName;
-  // Size the input element around the generated text
-  const mirror = document.createElement("span");
-  mirror.style.visibility = "hidden";
-  mirror.style.whiteSpace = "pre";
-  mirror.style.font = getComputedStyle(nameInput).font;
-  mirror.textContent = nameInput.value;
-  document.body.appendChild(mirror);
-  nameInput.style.width = `${mirror.offsetWidth + 3}px`;
-  mirror.remove();
+  socket.emit(
+    "checkNameAvailability",
+    { name: defaultPlayerName, getReservedNames: true },
+    ({ isAvailable, reservedNames }) => {
+      if (!isAvailable) {
+        defaultPlayerName = generatePlayerName(reservedNames);
+      }
+      nameInput.value = defaultPlayerName;
+      // Size the input element around the generated text
+      const mirror = document.createElement("span");
+      mirror.style.visibility = "hidden";
+      mirror.style.whiteSpace = "pre";
+      mirror.style.font = getComputedStyle(nameInput).font;
+      mirror.textContent = nameInput.value;
+      document.body.appendChild(mirror);
+      nameInput.style.width = `${mirror.offsetWidth + 3}px`;
+      mirror.remove();
+    }
+  );
 });
 
 // Validate the name input field as the user types
-nameInput.addEventListener("input", event => {
-  if (!isValidName(nameInput.value)) {
-    nameInput.setCustomValidity(
-      "Only letters, spaces and numbers are allowed."
+nameInput.addEventListener("input", () => {
+  clearTimeout(nameInputDebounceTimer);
+  nameInputDebounceTimer = setTimeout(() => {
+    const name = nameInput.value;
+    if (!isValidName(name)) {
+      nameInput.setCustomValidity(
+        "Only letters, numbers, spaces, underscores and dashes are allowed."
+      );
+      nameInput.reportValidity();
+      return;
+    }
+    socket.emit(
+      "checkNameAvailability",
+      { name, getReservedNames: false },
+      ({ isAvailable }) => {
+        if (!isAvailable) {
+          nameInput.setCustomValidity("This name is already taken.");
+        } else {
+          nameInput.setCustomValidity("");
+        }
+        nameInput.reportValidity();
+      }
     );
-    nameInput.reportValidity();
-  } else {
-    nameInput.setCustomValidity("");
-  }
+  }, 200);
 });
+window.addEventListener("beforeunload", () =>
+  clearTimeout(nameInputDebounceTimer)
+);

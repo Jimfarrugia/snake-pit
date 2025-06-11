@@ -28,9 +28,19 @@ function registerSocketHandlers(io) {
       handlePlayerDisconnect(id);
     });
 
-    socket.on("joinGame", data => {
+    socket.on("joinGame", ({ name, fallbackName }, callback) => {
+      // name must not be empty and can only contain:
+      // letters, numbers, spaces, underscores, dashes
+      const isValidName = /^[a-zA-Z0-9_\- ]+$/.test(name);
+      const isAvailable = !state.snakes.some(
+        s => s.name === name && s.id !== id
+      );
+      const finalName = isValidName && isAvailable ? name : fallbackName;
+      const reservedNames = isAvailable ? [] : state.snakes.map(s => s.name);
+      snake.name = finalName;
+      callback({ isValidName, isAvailable, finalName, reservedNames });
+
       snake.isAlive = true;
-      snake.name = data.name;
       if (snake.deaths) {
         respawnSnake(snake);
         logEvent(`'${snake.name}' respawned.`, snake.id);
@@ -69,6 +79,19 @@ function registerSocketHandlers(io) {
         snake.nextDirection = newDirection;
       }
     });
+
+    socket.on(
+      "checkNameAvailability",
+      ({ name, getReservedNames }, callback) => {
+        const isAvailable = !state.snakes.some(s => s.name === name);
+        if (getReservedNames) {
+          const reservedNames = state.snakes.map(s => s.name);
+          callback({ isAvailable, reservedNames });
+        } else {
+          callback({ isAvailable });
+        }
+      }
+    );
   });
 }
 

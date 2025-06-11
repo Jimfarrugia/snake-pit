@@ -53,12 +53,12 @@ body {
   text-align: center;
 }
 
-#start-prompt label {
+#name-form label {
   text-transform: uppercase;
   font-size: 28px;
 }
 
-#start-prompt input {
+#name-form input {
   font-family: monospace;
   font-size: 20px;
   color: #283618;
@@ -68,10 +68,10 @@ body {
   padding: 5px;
 }
 
-#start-prompt input:invalid {
+#name-form input:invalid {
   border-color: red;
 }
-#start-prompt input:invalid:focus {
+#name-form input:invalid:focus {
   outline-style: solid;
   outline-color: red;
 }
@@ -208,6 +208,18 @@ body {
 #immunity-timer {
   background-image: url("/images/star-36x36.png");
   margin-left: 12px;
+}
+
+#name-warning {
+  display: none;
+  font-size: 14px;
+  font-family: monospace;
+  line-height: 1.35;
+  padding: 10px;
+  margin: 15px 0;
+  background: #dda15e;
+  border: 2px solid #bc6c25;
+  border-radius: 5px;
 }
 
 #scoreboard {
