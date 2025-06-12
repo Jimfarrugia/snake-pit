@@ -6,6 +6,7 @@ const {
   respawnTestSnakes,
   validateName,
   logEvent,
+  setSnakeNewDirection,
 } = require("../utils");
 const state = require("../state");
 const {
@@ -78,14 +79,7 @@ function registerSocketHandlers(io) {
 
     socket.on("changeDirection", newDirection => {
       if (!snake || !snake.isAlive) return;
-      const isOpposite =
-        (snake.direction === "up" && newDirection === "down") ||
-        (snake.direction === "down" && newDirection === "up") ||
-        (snake.direction === "left" && newDirection === "right") ||
-        (snake.direction === "right" && newDirection === "left");
-      if (!isOpposite) {
-        snake.nextDirection = newDirection;
-      }
+      setSnakeNewDirection(snake, newDirection);
     });
 
     socket.on(

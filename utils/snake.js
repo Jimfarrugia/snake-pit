@@ -70,6 +70,15 @@ function setInitialDirection(position, orientation) {
   }
 }
 
+function setSnakeNewDirection(snake, newDirection) {
+  const isOpposite =
+    (snake.direction === "up" && newDirection === "down") ||
+    (snake.direction === "down" && newDirection === "up") ||
+    (snake.direction === "left" && newDirection === "right") ||
+    (snake.direction === "right" && newDirection === "left");
+  snake.nextDirection = !isOpposite ? newDirection : snake.direction;
+}
+
 // Reset some of a snake's values making it ready to rejoin the game
 function respawnSnake(snake) {
   const initialOrientation = randomOrientation();
@@ -178,6 +187,7 @@ module.exports = {
   respawnSnake,
   generateSnakeSegments,
   setInitialDirection,
+  setSnakeNewDirection,
   getSnakeTargetSize,
   getSnakeTargetSegments,
   applySpeedBoost,
