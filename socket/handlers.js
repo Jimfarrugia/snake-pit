@@ -4,6 +4,7 @@ const {
   addTestSnakes,
   destroyTestSnakes,
   respawnTestSnakes,
+  validateName,
   logEvent,
 } = require("../utils");
 const state = require("../state");
@@ -44,17 +45,11 @@ function registerSocketHandlers(io) {
     });
 
     socket.on("joinGame", ({ name, fallbackName }, callback) => {
-      // name must not be empty and can only contain:
-      // letters, numbers, spaces, underscores, dashes
-      const isValidName = /^[a-zA-Z0-9_\- ]+$/.test(name);
-      const isAvailable = !state.snakes.some(
-        s => s.name === name && s.id !== id
-      );
-      const finalName = isValidName && isAvailable ? name : fallbackName;
-      const reservedNames = isAvailable ? [] : state.snakes.map(s => s.name);
-      snake.name = finalName.trim();
+      const { isValidName, isAvailable, finalName, reservedNames } =
+        validateName(state, id, name.trim(), fallbackName.trim());
       callback({ isValidName, isAvailable, finalName, reservedNames });
 
+      snake.name = finalName;
       snake.isAlive = true;
       if (snake.deaths) {
         respawnSnake(snake);

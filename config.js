@@ -10,6 +10,7 @@ module.exports = {
   speedBoostMultiplier: 0.75, // lower value = higher speed
   snakeMaxTargetSize: 3, // max amount of trailing snake segments that are vulnerable to attack
   tickRate: 25, // ms between game ticks
+  nameRegex: /^[a-zA-Z0-9_\- ]+$/, // valid name pattern: not empty & only letters, numbers, spaces, underscores, dashes
   env,
   isDevEnv: env === "development",
 };
