@@ -15,14 +15,7 @@ const {
   stopGameIfEmpty,
   isSelfCollision,
 } = require("./utils");
-const {
-  snakeMaxTargetSize,
-  initialSnakeLength,
-  isDevEnv,
-  immunityDuration,
-  speedBoostDuration,
-  initialSpeed,
-} = require("./config");
+const { isDevEnv } = require("./config");
 
 // Move a single snake
 function moveSnake(snake, now, io) {
@@ -152,12 +145,7 @@ function gameLoop(io) {
     snakes: snakes.map(({ speedBoostTimeout, immunityTimeout, ...s }) => s),
     food,
     speedBoost,
-    speedBoostDuration,
     immunity,
-    immunityDuration,
-    snakeMaxTargetSize,
-    initialSnakeLength,
-    initialSpeed,
   });
 
   // stop the game if no players are in-game

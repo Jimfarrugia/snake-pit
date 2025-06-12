@@ -22,7 +22,8 @@ let playerName;
 let food;
 let initialSpeed;
 let speedBoost;
-let speedBoostTimeRemaining;
+let speedBoostTimeRemaining = 0;
+let speedBoostDuration;
 let immunity;
 let immunityTimeRemaining = 0;
 let immunityDuration;
@@ -42,29 +43,37 @@ const speedBoostTimer = document.getElementById("speed-boost-timer");
 const tutorialCloseBtn = document.getElementById("tutorial-close-btn");
 const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
 const tutorialDialog = document.getElementById("tutorial-dialog");
+const speedBoostDurationSpan = document.getElementById("speed-boost-duration");
+const immunityDurationSpan = document.getElementById("immunity-duration");
 const scoreboard = document.getElementById("scoreboard");
+
+// Get config values from server
+socket.on("config", config => {
+  initialSpeed = config.initialSpeed;
+  initialSnakeLength = config.initialSnakeLength;
+  snakeMaxTargetSize = config.snakeMaxTargetSize;
+  speedBoostDuration = config.speedBoostDuration;
+  immunityDuration = config.immunityDuration;
+  // update page content
+  speedBoostDurationSpan.textContent = `${Math.round(
+    speedBoostDuration / 1000
+  )}`;
+  immunityDurationSpan.textContent = `${Math.round(immunityDuration / 1000)}`;
+});
 
 // update to reflect the new game state
 socket.on("gameState", state => {
   playerSnake = state.snakes.find(s => s.id === socket.id);
   enemySnakes = state.snakes.filter(s => s.id !== socket.id);
   food = state.food;
-  initialSpeed = state.initialSpeed;
-  speedBoost = state.speedBoost;
-  speedBoostTimeRemaining =
-    playerSnake.speed !== state.initialSpeed
-      ? getTimeRemaining(
-          state.speedBoostDuration,
-          playerSnake.speedBoostTimeStart
-        )
-      : 0;
-  initialSnakeLength = state.initialSnakeLength;
-  snakeMaxTargetSize = state.snakeMaxTargetSize;
   immunity = state.immunity;
-  immunityDuration = state.immunityDuration;
-  immunityTimeRemaining = playerSnake.isImmune
-    ? getTimeRemaining(state.immunityDuration, playerSnake.immunityTimeStart)
-    : 0;
+  speedBoost = state.speedBoost;
+  const { immunityTimeStart, speedBoostTimeStart } = playerSnake;
+  immunityTimeRemaining = getTimeRemaining(immunityDuration, immunityTimeStart);
+  speedBoostTimeRemaining = getTimeRemaining(
+    speedBoostDuration,
+    speedBoostTimeStart
+  );
   drawGame();
   drawTimers();
   drawScoreboard(state.snakes);

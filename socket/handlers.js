@@ -7,7 +7,14 @@ const {
   logEvent,
 } = require("../utils");
 const state = require("../state");
-const { isDevEnv } = require("../config");
+const {
+  isDevEnv,
+  initialSpeed,
+  initialSnakeLength,
+  snakeMaxTargetSize,
+  speedBoostDuration,
+  immunityDuration,
+} = require("../config");
 const {
   handlePlayerConnect,
   handlePlayerDisconnect,
@@ -20,6 +27,14 @@ function registerSocketHandlers(io) {
     const snake = generateSnake(id);
     state.snakes.push(snake);
     logEvent(`'${id}' snake was created.`, id);
+
+    socket.emit("config", {
+      initialSpeed,
+      initialSnakeLength,
+      snakeMaxTargetSize,
+      speedBoostDuration,
+      immunityDuration,
+    });
 
     socket.on("disconnect", reason => {
       logEvent(`'${id}' disconnected due to ${reason}.`, id);
@@ -68,13 +83,11 @@ function registerSocketHandlers(io) {
 
     socket.on("changeDirection", newDirection => {
       if (!snake || !snake.isAlive) return;
-
       const isOpposite =
         (snake.direction === "up" && newDirection === "down") ||
         (snake.direction === "down" && newDirection === "up") ||
         (snake.direction === "left" && newDirection === "right") ||
         (snake.direction === "right" && newDirection === "left");
-
       if (!isOpposite) {
         snake.nextDirection = newDirection;
       }
