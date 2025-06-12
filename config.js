@@ -11,6 +11,7 @@ module.exports = {
   snakeMaxTargetSize: 3, // max amount of trailing snake segments that are vulnerable to attack
   tickRate: 25, // ms between game ticks
   nameRegex: /^[a-zA-Z0-9_\- ]+$/, // valid name pattern: not empty & only letters, numbers, spaces, underscores, dashes
-  env,
+  numOfTestSnakes: 3, // Number of test snakes to spawn in dev environment
   isDevEnv: env === "development",
+  env,
 };

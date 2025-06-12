@@ -1,9 +1,7 @@
 const {
   generateSnake,
   respawnSnake,
-  addTestSnakes,
-  destroyTestSnakes,
-  respawnTestSnakes,
+  setupTestSnakes,
   validateName,
   logEvent,
   setSnakeNewDirection,
@@ -11,6 +9,7 @@ const {
 const state = require("../state");
 const {
   isDevEnv,
+  numOfTestSnakes,
   initialSpeed,
   initialSnakeLength,
   snakeMaxTargetSize,
@@ -51,29 +50,18 @@ function registerSocketHandlers(io) {
       callback({ isValidName, isAvailable, finalName, reservedNames });
 
       snake.name = finalName;
-      snake.isAlive = true;
+      state.isGameStarted = true;
       if (snake.deaths) {
         respawnSnake(snake);
         logEvent(`'${snake.name}' respawned.`, snake.id);
       } else {
+        snake.isAlive = true;
         logEvent(`'${snake.name}' joined the game.`, snake.id);
       }
-      state.isGameStarted = true;
 
       // Create test snakes in development environment
       if (isDevEnv) {
-        const numOfTestSnakes = 3;
-        destroyTestSnakes(state);
-        addTestSnakes(numOfTestSnakes, state);
-        // Ressurrect test snakes every 10 seconds.
-        state.spawnTestSnakesInterval = setInterval(() => {
-          const testSnakes = state.snakes.filter(
-            snake => snake.id.includes("TestSnake") && snake.isAlive
-          );
-          if (testSnakes.length < numOfTestSnakes) {
-            respawnTestSnakes(state);
-          }
-        }, 10000);
+        setupTestSnakes(state, numOfTestSnakes, 10000);
       }
     });
 

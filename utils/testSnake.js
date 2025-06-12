@@ -72,6 +72,21 @@ function setTestSnakeDirection(snake) {
   logEvent(`${snake.id} is stuck and has died.`);
 }
 
+// Setup test snakes at the start of the game
+function setupTestSnakes(state, numOfTestSnakes, respawnInterval) {
+  destroyTestSnakes(state);
+  addTestSnakes(numOfTestSnakes, state);
+  // Revive test snakes every 10 seconds.
+  state.spawnTestSnakesInterval = setInterval(() => {
+    const testSnakes = state.snakes.filter(
+      snake => snake.id.includes("TestSnake") && snake.isAlive
+    );
+    if (testSnakes.length < numOfTestSnakes) {
+      respawnTestSnakes(state);
+    }
+  }, respawnInterval);
+}
+
 // Remove all test snakes
 function destroyTestSnakes(state) {
   state.snakes = state.snakes.filter(s => !s.id.includes("TestSnake"));
@@ -99,7 +114,8 @@ function respawnTestSnakes(state) {
 module.exports = {
   generateTestSnake,
   setTestSnakeDirection,
-  destroyTestSnakes,
+  setupTestSnakes,
   addTestSnakes,
+  destroyTestSnakes,
   respawnTestSnakes,
 };
