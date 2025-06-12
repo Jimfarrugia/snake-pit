@@ -138,3 +138,17 @@ export function generatePlayerName(reservedNames = []) {
   // fallback if all attempts fail
   return `Player${Math.floor(Math.random() * 100000)}`;
 }
+
+// Update the name status icon based on validity and availability
+export function setNameStatusIcon(isValid, isAvailable, element) {
+  if (!isValid) {
+    element.textContent = "❌";
+    element.style.color = "red";
+  } else if (!isAvailable) {
+    element.textContent = "❌";
+    element.style.color = "orange";
+  } else {
+    element.textContent = "✅";
+    element.style.color = "green";
+  }
+}

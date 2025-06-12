@@ -10,6 +10,7 @@ import {
   getTimeRemaining,
   formatTimerText,
   resetTimer,
+  setNameStatusIcon,
 } from "./helpers.js";
 
 // Connect to socket.io
@@ -393,19 +394,6 @@ window.addEventListener("DOMContentLoaded", () => {
   );
 });
 
-function setNameStatusIcon(isValid, isAvailable) {
-  if (!isValid) {
-    nameStatus.textContent = "❌";
-    nameStatus.style.color = "red";
-  } else if (!isAvailable) {
-    nameStatus.textContent = "❌";
-    nameStatus.style.color = "orange";
-  } else {
-    nameStatus.textContent = "✅";
-    nameStatus.style.color = "green";
-  }
-}
-
 // Validate the name input field as the user types
 nameInput.addEventListener("input", () => {
   clearTimeout(nameInputDebounceTimer);
@@ -413,7 +401,7 @@ nameInput.addEventListener("input", () => {
     const name = nameInput.value;
     const isValid = isValidName(name);
     if (!isValid) {
-      setNameStatusIcon(isValid);
+      setNameStatusIcon(isValid, true, nameStatus);
       nameInput.setCustomValidity(
         "Only letters, numbers, spaces, underscores and dashes are allowed."
       );
@@ -424,7 +412,7 @@ nameInput.addEventListener("input", () => {
       "checkNameAvailability",
       { name, getReservedNames: false },
       ({ isAvailable }) => {
-        setNameStatusIcon(true, isAvailable);
+        setNameStatusIcon(true, isAvailable, nameStatus);
         if (!isAvailable) {
           nameInput.setCustomValidity("This name is already taken.");
         } else {
