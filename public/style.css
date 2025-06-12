@@ -172,10 +172,6 @@ body {
   background-color: #606c38;
 }
 
-#tutorial-dialog .next-step-btn {
-  background-image: url("/images/tutorial/");
-}
-
 #tutorial-dialog #tutorial-close-btn {
   padding: 7px 20px;
 }
