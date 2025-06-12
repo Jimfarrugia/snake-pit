@@ -1,16 +1,18 @@
 import "./tutorialModal.js";
 
 import {
-  getSegmentDirection,
-  getBodySegmentType,
   createGameElement,
   setElementPosition,
+  getSegmentDirection,
+  getBodySegmentType,
+  getImmunityStatus,
   generatePlayerName,
-  isValidName,
-  getTimeRemaining,
-  formatTimerText,
   resetTimer,
+  formatTimerText,
+  getTimeRemaining,
+  isValidName,
   setNameStatusIcon,
+  drawScoreboard,
 } from "./helpers.js";
 
 // Connect to socket.io
@@ -45,7 +47,6 @@ const immunityTimer = document.getElementById("immunity-timer");
 const speedBoostTimer = document.getElementById("speed-boost-timer");
 const speedBoostDurationSpan = document.getElementById("speed-boost-duration");
 const immunityDurationSpan = document.getElementById("immunity-duration");
-const scoreboard = document.getElementById("scoreboard");
 const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
 
 // Get config values from server
@@ -191,13 +192,16 @@ function drawEnemySnakes() {
 // draw the segments of a snake
 function drawSnakeSegments(snake, isPlayer) {
   const { segments, direction, isImmune } = snake;
-
   segments.forEach((segment, i) => {
     const snakeElement = createGameElement("div", "snake");
     // Set CSS classes for snake segments
+    const immunityStatus = getImmunityStatus(
+      immunityDuration,
+      immunityTimeRemaining
+    );
     snakeElement.classList.add(
       ...(isPlayer ? [] : ["enemy"]),
-      ...(isImmune ? ["immune", getImmunityStatus()] : [])
+      ...(isImmune ? ["immune", immunityStatus] : [])
     );
     if (i === 0) {
       // set the classes for the head segment
@@ -231,17 +235,6 @@ function drawSnakeSegments(snake, isPlayer) {
     setElementPosition(snakeElement, segment);
     board.appendChild(snakeElement);
   });
-}
-
-// Return a class name for immunity status based on how much time is remaining for the effect
-function getImmunityStatus() {
-  return immunityTimeRemaining < immunityDuration * 0.125
-    ? "critical"
-    : immunityTimeRemaining < immunityDuration / 4
-    ? "quarter"
-    : immunityTimeRemaining < immunityDuration / 2
-    ? "half"
-    : "full";
 }
 
 // Return the number of target segments a snake should have
@@ -279,54 +272,6 @@ function drawTimers() {
       resetTimer(speedBoostTimer);
     }
   }
-}
-
-// draw the scoreboard
-function drawScoreboard(players) {
-  scoreboard.innerHTML = "";
-  // Sort players by the higher of score or kills, then by the lower value as tiebreaker
-  players.sort((a, b) => {
-    const maxA = Math.max(a.score, a.kills);
-    const maxB = Math.max(b.score, b.kills);
-    if (maxA !== maxB) return maxB - maxA;
-    const minA = Math.min(a.score, a.kills);
-    const minB = Math.min(b.score, b.kills);
-    return minB - minA;
-  });
-  // Generate scoreboard elements
-  players.forEach((player, index) => {
-    if (!player.name) return;
-    // Rank and name
-    const nameSpan = document.createElement("span");
-    nameSpan.className = "scoreboard-name";
-    const rankSpan = document.createElement("span");
-    rankSpan.textContent = `${index + 1}. `;
-    nameSpan.appendChild(rankSpan);
-    nameSpan.append(player.name);
-    // Stats
-    const scoresDiv = document.createElement("div");
-    scoresDiv.className = "scores";
-    const scoreSpan = document.createElement("span");
-    scoreSpan.title = "Score";
-    scoreSpan.className = "scoreboard-score";
-    scoreSpan.textContent = player.score;
-    const killsSpan = document.createElement("span");
-    killsSpan.title = "Kills";
-    killsSpan.className = "scoreboard-kills";
-    killsSpan.textContent = player.kills;
-    const deathsSpan = document.createElement("span");
-    deathsSpan.title = "Deaths";
-    deathsSpan.className = "scoreboard-deaths";
-    deathsSpan.textContent = player.deaths;
-    // Build the li element & add it to the DOM
-    const li = document.createElement("li");
-    scoresDiv.appendChild(scoreSpan);
-    scoresDiv.appendChild(killsSpan);
-    scoresDiv.appendChild(deathsSpan);
-    li.appendChild(nameSpan);
-    li.appendChild(scoresDiv);
-    scoreboard.appendChild(li);
-  });
 }
 
 // keypress event handler
