@@ -1,3 +1,5 @@
+import "./tutorialModal.js";
+
 import {
   getSegmentDirection,
   getBodySegmentType,
@@ -40,12 +42,10 @@ const startPrompt = document.getElementById("start-prompt");
 const timers = document.getElementById("timers");
 const immunityTimer = document.getElementById("immunity-timer");
 const speedBoostTimer = document.getElementById("speed-boost-timer");
-const tutorialCloseBtn = document.getElementById("tutorial-close-btn");
-const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
-const tutorialDialog = document.getElementById("tutorial-dialog");
 const speedBoostDurationSpan = document.getElementById("speed-boost-duration");
 const immunityDurationSpan = document.getElementById("immunity-duration");
 const scoreboard = document.getElementById("scoreboard");
+const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
 
 // Get config values from server
 socket.on("config", config => {
@@ -369,44 +369,6 @@ document
 
 // Listen for keypress
 document.addEventListener("keydown", handleKeyPress);
-
-let currentStepIndex = 0;
-const steps = Array.from(tutorialDialog.querySelectorAll(".modal-step"));
-
-function showStep(index) {
-  steps.forEach((step, i) => {
-    step.hidden = i !== index;
-  });
-}
-
-// Open the tutorial dialog
-tutorialOpenBtn.addEventListener("click", () => {
-  currentStepIndex = 0;
-  showStep(currentStepIndex);
-  tutorialDialog.showModal();
-});
-
-// Navigate the tutorial dialog
-tutorialDialog.addEventListener("click", event => {
-  if (event.target.matches(".next-step-btn")) {
-    if (currentStepIndex < steps.length - 1) {
-      currentStepIndex++;
-      showStep(currentStepIndex);
-    }
-  }
-
-  if (event.target.matches(".prev-step-btn")) {
-    if (currentStepIndex > 0) {
-      currentStepIndex--;
-      showStep(currentStepIndex);
-    }
-  }
-});
-
-// Close the tutorial dialog
-tutorialCloseBtn.addEventListener("click", () => {
-  tutorialDialog.close();
-});
 
 // Generate a default name for the player when the page loads
 window.addEventListener("DOMContentLoaded", () => {
