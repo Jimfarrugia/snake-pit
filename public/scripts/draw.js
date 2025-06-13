@@ -26,11 +26,9 @@ export function drawGame() {
 
 // stop the game
 export function stopGame() {
-  const startPrompt = document.getElementById("start-prompt");
-  const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
   state.isGameStarted = false;
-  startPrompt.style.display = "block";
-  tutorialOpenBtn.style.display = "block";
+  document.getElementById("start-prompt").style.display = "block";
+  document.getElementById("tutorial-open-btn").style.display = "block";
   resetTimer(speedBoostTimer);
   resetTimer(immunityTimer);
   timers.style.display = "none";

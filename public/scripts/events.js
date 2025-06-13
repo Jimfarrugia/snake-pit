@@ -4,15 +4,13 @@ import {
   setNameStatusIcon,
 } from "./helpers.js";
 import { drawName, drawNameInputMirror, drawNameWarning } from "./draw.js";
-import { state, socket } from "./state.js";
 
 const nameStatus = document.getElementById("name-status");
 const nameInput = document.getElementById("name-input");
-const startPrompt = document.getElementById("start-prompt");
 const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
 
 // start the game
-function startGame() {
+function startGame(socket, state) {
   state.playerName = nameInput.value;
   socket.emit(
     "joinGame",
@@ -28,13 +26,13 @@ function startGame() {
     }
   );
   state.isGameStarted = true;
-  startPrompt.style.display = "none";
+  document.getElementById("start-prompt").style.display = "none";
   tutorialOpenBtn.style.display = "none";
   timers.style.display = "flex";
 }
 
 // Setup event listeners
-export function setupEventListeners() {
+export function setupEventListeners(socket, state) {
   // Generate a default name for the player when the page loads
   window.addEventListener("DOMContentLoaded", () => {
     socket.emit(
@@ -53,7 +51,7 @@ export function setupEventListeners() {
   // Start button click listener
   document
     .getElementById("start-btn")
-    .addEventListener("click", () => startGame());
+    .addEventListener("click", () => startGame(socket, state));
 
   // General keypress listener
   document.addEventListener("keydown", event => {
@@ -78,7 +76,7 @@ export function setupEventListeners() {
     // Handle start game
     if (!state.isGameStarted && isSpacebar) {
       event.preventDefault();
-      startGame();
+      startGame(socket, state);
       return;
     }
 
@@ -124,6 +122,6 @@ export function setupEventListeners() {
 
   // Pressing enter from the name input starts the game
   nameInput.addEventListener("keydown", event => {
-    if (event.key === "Enter") startGame();
+    if (event.key === "Enter") startGame(socket, state);
   });
 }
