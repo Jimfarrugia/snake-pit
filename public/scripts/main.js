@@ -1,5 +1,4 @@
 import "./tutorialModal.js";
-
 import {
   createGameElement,
   setElementPosition,
@@ -14,27 +13,10 @@ import {
   setNameStatusIcon,
   drawScoreboard,
 } from "./helpers.js";
+import { state } from "./state.js";
 
 // Connect to socket.io
 const socket = io();
-
-// Game variables
-let nameInputDebounceTimer;
-let defaultPlayerName = generatePlayerName();
-let initialSnakeLength;
-let snakeMaxTargetSize;
-let playerName;
-let food;
-let initialSpeed;
-let speedBoost;
-let speedBoostTimeRemaining = 0;
-let speedBoostDuration;
-let immunity;
-let immunityTimeRemaining = 0;
-let immunityDuration;
-let isGameStarted = false;
-let playerSnake = null;
-let enemySnakes = [];
 
 // Define HTML elements
 const board = document.getElementById("game-board");
@@ -51,39 +33,44 @@ const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
 
 // Get config values from server
 socket.on("config", config => {
-  initialSpeed = config.initialSpeed;
-  initialSnakeLength = config.initialSnakeLength;
-  snakeMaxTargetSize = config.snakeMaxTargetSize;
-  speedBoostDuration = config.speedBoostDuration;
-  immunityDuration = config.immunityDuration;
+  state.initialSpeed = config.initialSpeed;
+  state.initialSnakeLength = config.initialSnakeLength;
+  state.snakeMaxTargetSize = config.snakeMaxTargetSize;
+  state.speedBoostDuration = config.speedBoostDuration;
+  state.immunityDuration = config.immunityDuration;
   // update page content
   speedBoostDurationSpan.textContent = `${Math.round(
-    speedBoostDuration / 1000
+    state.speedBoostDuration / 1000
   )}`;
-  immunityDurationSpan.textContent = `${Math.round(immunityDuration / 1000)}`;
+  immunityDurationSpan.textContent = `${Math.round(
+    state.immunityDuration / 1000
+  )}`;
 });
 
 // update to reflect the new game state
-socket.on("gameState", state => {
-  playerSnake = state.snakes.find(s => s.id === socket.id);
-  enemySnakes = state.snakes.filter(s => s.id !== socket.id);
-  food = state.food;
-  immunity = state.immunity;
-  speedBoost = state.speedBoost;
-  const { immunityTimeStart, speedBoostTimeStart } = playerSnake;
-  immunityTimeRemaining = getTimeRemaining(immunityDuration, immunityTimeStart);
-  speedBoostTimeRemaining = getTimeRemaining(
-    speedBoostDuration,
+socket.on("gameState", newState => {
+  state.playerSnake = newState.snakes.find(s => s.id === socket.id);
+  state.enemySnakes = newState.snakes.filter(s => s.id !== socket.id);
+  state.food = newState.food;
+  state.immunity = newState.immunity;
+  state.speedBoost = newState.speedBoost;
+  const { immunityTimeStart, speedBoostTimeStart } = state.playerSnake;
+  state.immunityTimeRemaining = getTimeRemaining(
+    state.immunityDuration,
+    immunityTimeStart
+  );
+  state.speedBoostTimeRemaining = getTimeRemaining(
+    state.speedBoostDuration,
     speedBoostTimeStart
   );
   drawGame();
   drawTimers();
-  drawScoreboard(state.snakes);
+  drawScoreboard(newState.snakes);
 });
 
 // disconnect gracefully
 socket.on("disconnect", () => {
-  isGameStarted = false;
+  state.isGameStarted = false;
   startPrompt.style.display = "block";
   alert("Disconnected from server.");
 });
@@ -95,14 +82,14 @@ socket.on("gameOver", () => {
 
 // start the game
 function startGame() {
-  playerName = nameInput.value;
+  state.playerName = nameInput.value;
   socket.emit(
     "joinGame",
-    { name: playerName, fallbackName: defaultPlayerName },
+    { name: state.playerName, fallbackName: state.defaultPlayerName },
     ({ isValidName, isAvailable, finalName, reservedNames }) => {
-      if (playerName === defaultPlayerName && !isAvailable) {
-        defaultPlayerName = generatePlayerName(reservedNames);
-        nameInput.value = defaultPlayerName;
+      if (state.playerName === state.defaultPlayerName && !isAvailable) {
+        state.defaultPlayerName = generatePlayerName(reservedNames);
+        nameInput.value = state.defaultPlayerName;
       }
       if (!isValidName || !isAvailable) {
         nameWarning.style.display = "block";
@@ -116,11 +103,11 @@ function startGame() {
       } else {
         nameWarning.style.display = "none";
       }
-      playerName = finalName;
+      state.playerName = finalName;
       drawName();
     }
   );
-  isGameStarted = true;
+  state.isGameStarted = true;
   startPrompt.style.display = "none";
   tutorialOpenBtn.style.display = "none";
   timers.style.display = "flex";
@@ -128,7 +115,7 @@ function startGame() {
 
 // stop the game
 function stopGame() {
-  isGameStarted = false;
+  state.isGameStarted = false;
   startPrompt.style.display = "block";
   tutorialOpenBtn.style.display = "block";
   resetTimer(speedBoostTimer);
@@ -148,42 +135,42 @@ function drawGame() {
 
 // draw food on the board
 function drawFood() {
-  if (isGameStarted) {
+  if (state.isGameStarted) {
     const foodElement = createGameElement("div", "food");
-    setElementPosition(foodElement, food);
+    setElementPosition(foodElement, state.food);
     board.appendChild(foodElement);
   }
 }
 
 // draw speed boost on the board
 function drawSpeedBoost() {
-  if (isGameStarted) {
+  if (state.isGameStarted) {
     const speedBoostElement = createGameElement("div", "speed-boost");
-    setElementPosition(speedBoostElement, speedBoost);
+    setElementPosition(speedBoostElement, state.speedBoost);
     board.appendChild(speedBoostElement);
   }
 }
 
 // draw immunity on the board
 function drawImmunity() {
-  if (isGameStarted && immunity) {
+  if (state.isGameStarted && state.immunity) {
     const immunityElement = createGameElement("div", "immunity");
-    setElementPosition(immunityElement, immunity);
+    setElementPosition(immunityElement, state.immunity);
     board.appendChild(immunityElement);
   }
 }
 
 // draw the players snake
 function drawPlayerSnake() {
-  if (isGameStarted && playerSnake) {
-    drawSnakeSegments(playerSnake, true);
+  if (state.isGameStarted && state.playerSnake) {
+    drawSnakeSegments(state.playerSnake, true);
   }
 }
 
 // draw the enemy snakes
 function drawEnemySnakes() {
-  if (isGameStarted) {
-    enemySnakes.forEach(enemy => {
+  if (state.isGameStarted) {
+    state.enemySnakes.forEach(enemy => {
       if (enemy.isAlive) drawSnakeSegments(enemy, false);
     });
   }
@@ -196,8 +183,8 @@ function drawSnakeSegments(snake, isPlayer) {
     const snakeElement = createGameElement("div", "snake");
     // Set CSS classes for snake segments
     const immunityStatus = getImmunityStatus(
-      immunityDuration,
-      immunityTimeRemaining
+      state.immunityDuration,
+      state.immunityTimeRemaining
     );
     snakeElement.classList.add(
       ...(isPlayer ? [] : ["enemy"]),
@@ -242,32 +229,37 @@ function getSnakeTargetSize(segments) {
   /* number of target segments increments for each segment added to the snake
       until the number has reached snakeMaxTargetSize */
   const targetSize =
-    segments.length < initialSnakeLength + snakeMaxTargetSize
-      ? segments.length - (initialSnakeLength - 1)
-      : snakeMaxTargetSize;
+    segments.length < state.initialSnakeLength + state.snakeMaxTargetSize
+      ? segments.length - (state.initialSnakeLength - 1)
+      : state.snakeMaxTargetSize;
   return targetSize;
 }
 
 // draw player name
 function drawName() {
-  if (isGameStarted) {
+  if (state.isGameStarted) {
     const nameElement = document.getElementById("player-name");
-    nameElement.innerHTML = `Playing as: <span>${playerName}</span>`;
+    nameElement.innerHTML = `Playing as: <span>${state.playerName}</span>`;
   }
 }
 
 // draw effect timers
 function drawTimers() {
-  if (isGameStarted) {
-    if (playerSnake.isImmune && immunityTimeRemaining > 0) {
+  if (state.isGameStarted) {
+    if (state.playerSnake.isImmune && state.immunityTimeRemaining > 0) {
       immunityTimer.style.display = "block";
-      immunityTimer.textContent = formatTimerText(immunityTimeRemaining);
+      immunityTimer.textContent = formatTimerText(state.immunityTimeRemaining);
     } else {
       resetTimer(immunityTimer);
     }
-    if (playerSnake.speed !== initialSpeed && speedBoostTimeRemaining > 0) {
+    if (
+      state.playerSnake.speed !== state.initialSpeed &&
+      state.speedBoostTimeRemaining > 0
+    ) {
       speedBoostTimer.style.display = "block";
-      speedBoostTimer.textContent = formatTimerText(speedBoostTimeRemaining);
+      speedBoostTimer.textContent = formatTimerText(
+        state.speedBoostTimeRemaining
+      );
     } else {
       resetTimer(speedBoostTimer);
     }
@@ -290,12 +282,12 @@ function handleKeyPress(event) {
   const isSpacebar = key === " ";
 
   // Prevent scrolling during game
-  if ((isArrowKey || isSpacebar) && isGameStarted) {
+  if ((isArrowKey || isSpacebar) && state.isGameStarted) {
     event.preventDefault();
   }
 
   // Handle start game
-  if (!isGameStarted && isSpacebar) {
+  if (!state.isGameStarted && isSpacebar) {
     event.preventDefault();
     startGame();
     return;
@@ -320,12 +312,12 @@ document.addEventListener("keydown", handleKeyPress);
 window.addEventListener("DOMContentLoaded", () => {
   socket.emit(
     "checkNameAvailability",
-    { name: defaultPlayerName, getReservedNames: true },
+    { name: state.defaultPlayerName, getReservedNames: true },
     ({ isAvailable, reservedNames }) => {
       if (!isAvailable) {
-        defaultPlayerName = generatePlayerName(reservedNames);
+        state.defaultPlayerName = generatePlayerName(reservedNames);
       }
-      nameInput.value = defaultPlayerName;
+      nameInput.value = state.defaultPlayerName;
       // Size the input element around the generated text
       const mirror = document.createElement("span");
       mirror.style.visibility = "hidden";
@@ -341,8 +333,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
 // Validate the name input field as the user types
 nameInput.addEventListener("input", () => {
-  clearTimeout(nameInputDebounceTimer);
-  nameInputDebounceTimer = setTimeout(() => {
+  clearTimeout(state.nameInputDebounceTimer);
+  state.nameInputDebounceTimer = setTimeout(() => {
     const name = nameInput.value;
     const isValid = isValidName(name);
     if (!isValid) {
@@ -369,7 +361,7 @@ nameInput.addEventListener("input", () => {
   }, 200);
 });
 window.addEventListener("beforeunload", () =>
-  clearTimeout(nameInputDebounceTimer)
+  clearTimeout(state.nameInputDebounceTimer)
 );
 
 // Pressing enter from the name input starts the game
