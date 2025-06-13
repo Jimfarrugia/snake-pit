@@ -120,6 +120,21 @@ export function getBodySegmentType(
   return isCorner ? cornerType : "body";
 }
 
+// Return the number of target segments a snake should have
+export function getSnakeTargetSize(
+  initialSnakeLength,
+  currentSnakeLength,
+  snakeMaxTargetSize
+) {
+  /* number of target segments increments for each segment added to the snake
+      until the number has reached snakeMaxTargetSize */
+  const targetSize =
+    currentSnakeLength < initialSnakeLength + snakeMaxTargetSize
+      ? currentSnakeLength - (initialSnakeLength - 1)
+      : snakeMaxTargetSize;
+  return targetSize;
+}
+
 // Return a class name for immunity status based on how much time is remaining for the effect
 export function getImmunityStatus(immunityDuration, immunityTimeRemaining) {
   return immunityTimeRemaining < immunityDuration * 0.125
@@ -162,52 +177,4 @@ export function setNameStatusIcon(isValid, isAvailable, element) {
     element.textContent = "✅";
     element.style.color = "green";
   }
-}
-
-// draw the scoreboard
-export function drawScoreboard(players) {
-  document.getElementById("scoreboard").innerHTML = "";
-  // Sort players by the higher of score or kills, then by the lower value as tiebreaker
-  players.sort((a, b) => {
-    const maxA = Math.max(a.score, a.kills);
-    const maxB = Math.max(b.score, b.kills);
-    if (maxA !== maxB) return maxB - maxA;
-    const minA = Math.min(a.score, a.kills);
-    const minB = Math.min(b.score, b.kills);
-    return minB - minA;
-  });
-  // Generate scoreboard elements
-  players.forEach((player, index) => {
-    if (!player.name) return;
-    // Rank and name
-    const nameSpan = document.createElement("span");
-    nameSpan.className = "scoreboard-name";
-    const rankSpan = document.createElement("span");
-    rankSpan.textContent = `${index + 1}. `;
-    nameSpan.appendChild(rankSpan);
-    nameSpan.append(player.name);
-    // Stats
-    const scoresDiv = document.createElement("div");
-    scoresDiv.className = "scores";
-    const scoreSpan = document.createElement("span");
-    scoreSpan.title = "Score";
-    scoreSpan.className = "scoreboard-score";
-    scoreSpan.textContent = player.score;
-    const killsSpan = document.createElement("span");
-    killsSpan.title = "Kills";
-    killsSpan.className = "scoreboard-kills";
-    killsSpan.textContent = player.kills;
-    const deathsSpan = document.createElement("span");
-    deathsSpan.title = "Deaths";
-    deathsSpan.className = "scoreboard-deaths";
-    deathsSpan.textContent = player.deaths;
-    // Build the li element & add it to the DOM
-    const li = document.createElement("li");
-    scoresDiv.appendChild(scoreSpan);
-    scoresDiv.appendChild(killsSpan);
-    scoresDiv.appendChild(deathsSpan);
-    li.appendChild(nameSpan);
-    li.appendChild(scoresDiv);
-    scoreboard.appendChild(li);
-  });
 }
