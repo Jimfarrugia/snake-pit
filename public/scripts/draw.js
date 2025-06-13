@@ -10,11 +10,9 @@ import {
 } from "./helpers.js";
 import { state } from "./state.js";
 
-const startPrompt = document.getElementById("start-prompt");
 const board = document.getElementById("game-board");
 const immunityTimer = document.getElementById("immunity-timer");
 const speedBoostTimer = document.getElementById("speed-boost-timer");
-const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
 
 // draw game elements
 export function drawGame() {
@@ -24,6 +22,18 @@ export function drawGame() {
   drawFood();
   drawSpeedBoost();
   drawImmunity();
+}
+
+// stop the game
+export function stopGame() {
+  const startPrompt = document.getElementById("start-prompt");
+  const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
+  state.isGameStarted = false;
+  startPrompt.style.display = "block";
+  tutorialOpenBtn.style.display = "block";
+  resetTimer(speedBoostTimer);
+  resetTimer(immunityTimer);
+  timers.style.display = "none";
 }
 
 // draw food on the board
@@ -129,6 +139,18 @@ export function drawName() {
   }
 }
 
+// Size the input element around the generated text
+export function drawNameInputMirror(nameInputElement) {
+  const mirror = document.createElement("span");
+  mirror.style.visibility = "hidden";
+  mirror.style.whiteSpace = "pre";
+  mirror.style.font = getComputedStyle(nameInputElement).font;
+  mirror.textContent = nameInputElement.value;
+  document.body.appendChild(mirror);
+  nameInputElement.style.width = `${mirror.offsetWidth + 3}px`;
+  mirror.remove();
+}
+
 // draw effect timers
 export function drawTimers() {
   if (state.isGameStarted) {
@@ -152,14 +174,20 @@ export function drawTimers() {
   }
 }
 
-// stop the game
-export function stopGame() {
-  state.isGameStarted = false;
-  startPrompt.style.display = "block";
-  tutorialOpenBtn.style.display = "block";
-  resetTimer(speedBoostTimer);
-  resetTimer(immunityTimer);
-  timers.style.display = "none";
+export function drawNameWarning(isValidName, isAvailable, fallbackName) {
+  const nameWarning = document.getElementById("name-warning");
+  if (!isValidName || !isAvailable) {
+    nameWarning.style.display = "block";
+    nameWarning.textContent = `The name you chose was ${
+      !isAvailable ? "taken" : "invalid"
+    }.  You will be known as `;
+    const nameSpan = document.createElement("strong");
+    nameSpan.textContent = fallbackName;
+    nameWarning.appendChild(nameSpan);
+    nameWarning.append(` until you change it.`);
+  } else {
+    nameWarning.style.display = "none";
+  }
 }
 
 // draw the scoreboard

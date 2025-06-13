@@ -19,4 +19,5 @@ export const state = {
   enemySnakes: [],
 };
 
+// Connect to socket.io
 export const socket = io();
