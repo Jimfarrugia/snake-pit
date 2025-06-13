@@ -1,5 +1,5 @@
-import { getTimeRemaining } from "./helpers.js";
-import { drawGame, stopGame, drawTimers, drawScoreboard } from "./draw.js";
+import { getTimeRemaining } from "./utils/helpers.js";
+import { drawGame, stopGame, drawTimers, drawScoreboard } from "./ui/draw.js";
 
 export function setupSocketHandlers(socket, state) {
   // Get config values from server

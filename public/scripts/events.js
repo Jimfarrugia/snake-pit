@@ -2,8 +2,8 @@ import {
   generatePlayerName,
   isValidName,
   setNameStatusIcon,
-} from "./helpers.js";
-import { drawName, drawNameInputMirror, drawNameWarning } from "./draw.js";
+} from "./utils/helpers.js";
+import { drawName, drawNameInputMirror, drawNameWarning } from "./ui/draw.js";
 
 const nameStatus = document.getElementById("name-status");
 const nameInput = document.getElementById("name-input");

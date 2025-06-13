@@ -7,8 +7,8 @@ import {
   getImmunityStatus,
   resetTimer,
   formatTimerText,
-} from "./helpers.js";
-import { state } from "./state.js";
+} from "../utils/helpers.js";
+import { state } from "../state.js";
 
 const board = document.getElementById("game-board");
 const immunityTimer = document.getElementById("immunity-timer");

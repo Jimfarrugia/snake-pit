@@ -1,4 +1,4 @@
-import { generatePlayerName } from "./helpers.js";
+import { generatePlayerName } from "./utils/helpers.js";
 
 export const state = {
   nameInputDebounceTimer: null,
