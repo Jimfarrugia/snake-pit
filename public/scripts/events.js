@@ -87,6 +87,13 @@ export function setupEventListeners(socket, state) {
     }
   });
 
+  // General swipe listener
+  document.addEventListener('swiped', function(e) {
+    console.log(e.target); // element that was swiped
+    console.log(e.detail); // see event data below
+    console.log(e.detail.dir); // swipe direction
+  });
+
   // Validate the name input field as the user types
   nameInput.addEventListener("input", () => {
     clearTimeout(state.nameInputDebounceTimer);
