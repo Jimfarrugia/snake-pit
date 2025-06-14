@@ -58,7 +58,6 @@ export function setupEventListeners(socket, state) {
     // Don't do anything if an input element has focus
     const activeElement = document.activeElement;
     if (activeElement.tagName === "INPUT") return;
-
     const { key } = event;
     const isArrowKey = [
       "ArrowUp",
@@ -67,19 +66,16 @@ export function setupEventListeners(socket, state) {
       "ArrowRight",
     ].includes(key);
     const isSpacebar = key === " ";
-
     // Prevent scrolling during game
     if ((isArrowKey || isSpacebar) && state.isGameStarted) {
       event.preventDefault();
     }
-
     // Handle start game
     if (!state.isGameStarted && isSpacebar) {
       event.preventDefault();
       startGame(socket, state);
       return;
     }
-
     // Handle change direction
     if (isArrowKey) {
       const direction = key.replace("Arrow", "").toLowerCase();
@@ -90,36 +86,42 @@ export function setupEventListeners(socket, state) {
   // Swipe detection
   let touchStartX = 0;
   let touchStartY = 0;
-  function handleSwipe(startX, startY, endX, endY) {
-    const deltaX = endX - startX;
-    const deltaY = endY - startY;
-    const absX = Math.abs(deltaX);
-    const absY = Math.abs(deltaY);
-    let direction = "";
-    if (absX > absY && absX > 30) {
-      direction = deltaX > 0 ? "right" : "left";
-    } else if (absY > 30) {
-      direction = deltaY > 0 ? "down" : "up";
-    }
-    if (direction) {
-      socket.emit("changeDirection", direction);
-    }
-  }
-  function onTouchStart(e) {
-    if (!state.isGameStarted) return;
-    e.preventDefault();
-    const touch = e.changedTouches[0];
-    touchStartX = touch.screenX;
-    touchStartY = touch.screenY;
-  }
-  function onTouchEnd(e) {
-    if (!state.isGameStarted) return;
-    e.preventDefault();
-    const touch = e.changedTouches[0];
-    handleSwipe(touchStartX, touchStartY, touch.screenX, touch.screenY);
-  }
-  document.addEventListener("touchstart", onTouchStart, { passive: false });
-  document.addEventListener("touchend", onTouchEnd, { passive: false });
+  let previousDirection = "";
+  let directionSentThisGesture = false;
+  document.addEventListener(
+    "touchstart",
+    e => {
+      if (!state.isGameStarted) return;
+      e.preventDefault();
+      const touch = e.changedTouches[0];
+      touchStartX = touch.screenX;
+      touchStartY = touch.screenY;
+      directionSentThisGesture = false;
+    },
+    { passive: false }
+  );
+  document.addEventListener(
+    "touchmove",
+    e => {
+      if (!state.isGameStarted || directionSentThisGesture) return;
+      e.preventDefault();
+      const touch = e.changedTouches[0];
+      const deltaX = touch.screenX - touchStartX;
+      const deltaY = touch.screenY - touchStartY;
+      const direction = getSwipeDirection(deltaX, deltaY);
+      if (direction && direction !== previousDirection) {
+        socket.emit("changeDirection", direction);
+        previousDirection = direction;
+        directionSentThisGesture = true;
+      }
+    },
+    { passive: false }
+  );
+  document.addEventListener(
+    "touchend",
+    e => (directionSentThisGesture = false),
+    { passive: false }
+  );
 
   // Validate the name input field as the user types
   nameInput.addEventListener("input", () => {
@@ -158,4 +160,15 @@ export function setupEventListeners(socket, state) {
   nameInput.addEventListener("keydown", event => {
     if (event.key === "Enter") startGame(socket, state);
   });
+}
+
+function getSwipeDirection(deltaX, deltaY) {
+  const absX = Math.abs(deltaX);
+  const absY = Math.abs(deltaY);
+  if (absX > absY && absX > 30) {
+    return deltaX > 0 ? "right" : "left";
+  } else if (absY > absX && absY > 30) {
+    return deltaY > 0 ? "down" : "up";
+  }
+  return "";
 }
