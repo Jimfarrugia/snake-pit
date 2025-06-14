@@ -87,12 +87,39 @@ export function setupEventListeners(socket, state) {
     }
   });
 
-  // General swipe listener
-  document.addEventListener('swiped', function(e) {
-    console.log(e.target); // element that was swiped
-    console.log(e.detail); // see event data below
-    console.log(e.detail.dir); // swipe direction
-  });
+  // Swipe detection
+  let touchStartX = 0;
+  let touchStartY = 0;
+  function handleSwipe(startX, startY, endX, endY) {
+    const deltaX = endX - startX;
+    const deltaY = endY - startY;
+    const absX = Math.abs(deltaX);
+    const absY = Math.abs(deltaY);
+    let direction = "";
+    if (absX > absY && absX > 30) {
+      direction = deltaX > 0 ? "right" : "left";
+    } else if (absY > 30) {
+      direction = deltaY > 0 ? "down" : "up";
+    }
+    if (direction) {
+      socket.emit("changeDirection", direction);
+    }
+  }
+  function onTouchStart(e) {
+    if (!state.isGameStarted) return;
+    e.preventDefault();
+    const touch = e.changedTouches[0];
+    touchStartX = touch.screenX;
+    touchStartY = touch.screenY;
+  }
+  function onTouchEnd(e) {
+    if (!state.isGameStarted) return;
+    e.preventDefault();
+    const touch = e.changedTouches[0];
+    handleSwipe(touchStartX, touchStartY, touch.screenX, touch.screenY);
+  }
+  document.addEventListener("touchstart", onTouchStart, { passive: false });
+  document.addEventListener("touchend", onTouchEnd, { passive: false });
 
   // Validate the name input field as the user types
   nameInput.addEventListener("input", () => {
