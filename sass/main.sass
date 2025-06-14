@@ -19,29 +19,12 @@ body
 .flex
   display: flex
 
-#wrapper
-  width: calc(variables.$cell-size * variables.$grid-size + 10px)
-  margin: 0 auto
-
 #title
   font-size: 48px
   margin: 20px 0 15px
   color: variables.$green-light
   text-align: center
   text-transform: uppercase
-
-#gameplay-area
-  position: relative
-
-#game-board
-  border-radius: 5px
-  display: grid
-  grid-template-columns: repeat(variables.$grid-size, variables.$cell-size)
-  grid-template-rows: repeat(variables.$grid-size, variables.$cell-size)
-  margin: 15px auto
-  width: calc(variables.$cell-size * variables.$grid-size)
-  border: 5px solid variables.$green-light
-  background: variables.$white
 
 #name-warning
   display: none
@@ -54,6 +37,51 @@ body
   border: 2px solid variables.$brown-dark
   border-radius: 5px
 
+#gameplay-area
+  position: relative
+
+#wrapper
+  width: variables.$game-board-width + 10px
+  margin: 0 auto
+
+#game-board
+  border-radius: 5px
+  display: grid
+  grid-template-columns: repeat(variables.$grid-size, variables.$cell-size)
+  grid-template-rows: repeat(variables.$grid-size, variables.$cell-size)
+  margin: 15px auto
+  width: variables.$game-board-width
+  border: 5px solid variables.$green-light
+  background: variables.$white
+
 @keyframes blinking-start-prompt
   50%
     background-color: variables.$green-dark
+
+// Small Screens
+@media (max-width: 520px)
+  #wrapper
+    width: variables.$game-board-width-sm + 10px
+  #game-board
+    grid-template-columns: repeat(variables.$grid-size, variables.$cell-size-sm)
+    grid-template-rows: repeat(variables.$grid-size, variables.$cell-size-sm)
+    width: variables.$game-board-width-sm
+  #title
+    font-size: 42px
+    margin: 18px 0 13px
+  #name-warning
+    font-size: 13px
+
+// Extra-small Screens
+@media (max-width: 450px)
+  #wrapper
+    width: variables.$game-board-width-xs + 10px
+  #game-board
+    grid-template-columns: repeat(variables.$grid-size, variables.$cell-size-xs)
+    grid-template-rows: repeat(variables.$grid-size, variables.$cell-size-xs)
+    width: variables.$game-board-width-xs
+  #title
+    font-size: 36px
+    margin: 16px 0 11px
+  #name-warning
+    font-size: 12px
