@@ -1,0 +1,90 @@
+.snake
+  z-index: 1
+
+  &.up
+    transform: rotate(0deg)
+  &.right
+    transform: rotate(90deg)
+  &.down
+    transform: rotate(180deg)
+  &.left
+    transform: rotate(270deg)
+
+  &.enemy
+    z-index: 0
+
+  &.head
+    background-image: url("/images/snake-head-brown.png")
+    &.enemy
+      background-image: url("/images/snake-head-green.png")
+    &.immune
+      background-image: url("/images/snake-head-immune-brown.png")
+      &.half
+        background-image: url("/images/snake-head-immune-half-brown.png")
+      &.quarter
+        background-image: url("/images/snake-head-immune-quarter-brown.png")
+      &.critical
+        background-image: url("/images/snake-head-immune-critical-brown.png")
+      &.enemy
+        background-image: url("/images/snake-head-immune-green.png")
+
+  &.body
+    background-image: url("/images/snake-body-brown.png")
+    &.enemy
+      background-image: url("/images/snake-body-green.png")
+    &.target
+      background-image: url("/images/snake-body-target-brown.png")
+      &.enemy
+        background-image: url("/images/snake-body-target-green.png")
+    &.immune
+      background-image: url("/images/snake-body-immune-brown.png")
+      &.half
+        background-image: url("/images/snake-body-immune-half-brown.png")
+      &.quarter
+        background-image: url("/images/snake-body-immune-quarter-brown.png")
+      &.critical
+        background-image: url("/images/snake-body-immune-critical-brown.png")
+      &.enemy
+        background-image: url("/images/snake-body-immune-green.png")
+
+  &.tail
+    background-image: url("/images/snake-tail-target-brown.png")
+    &.enemy
+      background-image: url("/images/snake-tail-target-green.png")
+    &.immune
+      background-image: url("/images/snake-tail-immune-brown.png")
+      &.half
+        background-image: url("/images/snake-tail-immune-half-brown.png")
+      &.quarter
+        background-image: url("/images/snake-tail-immune-quarter-brown.png")
+      &.critical
+        background-image: url("/images/snake-tail-immune-critical-brown.png")
+      &.enemy
+        background-image: url("/images/snake-tail-immune-green.png")
+
+  &.corner
+    background-image: url("/images/snake-corner-brown.png")
+    &.enemy
+      background-image: url("/images/snake-corner-green.png")
+    &.immune
+      background-image: url("/images/snake-corner-immune-brown.png")
+      &.half
+        background-image: url("/images/snake-corner-immune-half-brown.png")
+      &.quarter
+        background-image: url("/images/snake-corner-immune-quarter-brown.png")
+      &.critical
+        background-image: url("/images/snake-corner-immune-critical-brown.png")
+      &.enemy
+        background-image: url("/images/snake-corner-immune-green.png")
+    &.target
+      background-image: url("/images/snake-corner-target-brown.png")
+      &.enemy
+        background-image: url("/images/snake-corner-target-green.png")
+    &.left-down
+      transform: rotate(0deg)
+    &.left-up
+      transform: rotate(90deg)
+    &.right-up
+      transform: rotate(180deg)
+    &.right-down
+      transform: rotate(270deg)

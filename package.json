@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js",
+    "dev": "concurrently \"npm:dev:server\" \"npm:dev:sass\"",
+    "dev:server": "nodemon server.js",
+    "dev:sass": "sass sass/main.sass public/style.css --no-source-map --style=compressed --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jim Farrugia",
@@ -17,6 +19,8 @@
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "concurrently": "^9.1.2",
+    "nodemon": "^3.1.10",
+    "sass": "^1.89.2"
   }
 }

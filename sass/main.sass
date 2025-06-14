@@ -1,0 +1,59 @@
+@use "tutorial"
+@use "menu"
+@use "start-prompt"
+@use "snake"
+@use "bonus-effects"
+@use "scoreboard"
+@use "variables"
+
+*
+  padding: 0
+  margin: 0
+  list-style: none
+
+html,
+body
+  font-family: "VT323", monospace
+  background: variables.$green-dark
+
+.flex
+  display: flex
+
+#wrapper
+  width: calc(variables.$cell-size * variables.$grid-size + 10px)
+  margin: 0 auto
+
+#title
+  font-size: 48px
+  margin: 20px 0 15px
+  color: variables.$green-light
+  text-align: center
+  text-transform: uppercase
+
+#gameplay-area
+  position: relative
+
+#game-board
+  border-radius: 5px
+  display: grid
+  grid-template-columns: repeat(variables.$grid-size, variables.$cell-size)
+  grid-template-rows: repeat(variables.$grid-size, variables.$cell-size)
+  margin: 15px auto
+  width: calc(variables.$cell-size * variables.$grid-size)
+  border: 5px solid variables.$green-light
+  background: variables.$white
+
+#name-warning
+  display: none
+  font-size: 14px
+  font-family: monospace
+  line-height: 1.35
+  padding: 10px
+  margin: 15px 0
+  background: variables.$brown-light
+  border: 2px solid variables.$brown-dark
+  border-radius: 5px
+
+@keyframes blinking-start-prompt
+  50%
+    background-color: variables.$green-dark

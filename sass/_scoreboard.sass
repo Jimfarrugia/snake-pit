@@ -1,0 +1,37 @@
+@use "variables"
+
+#scoreboard
+  color: variables.$white
+  margin: 5px 0 0
+
+  li
+    display: flex
+    justify-content: space-between
+    align-items: center
+    font-size: 28px
+    padding: 10px 5px
+    border-bottom: 1px solid variables.$green-light
+    list-style: decimal inside none
+    &:first-child
+      padding-top: 0
+
+  .scoreboard-name > span
+    color: variables.$green-light
+
+  .scores
+    .scoreboard-score
+      background: url("/images/mouse-icon.png") no-repeat left center
+      background-size: 32px
+      padding-left: 37px // Background size + 5px
+
+    .scoreboard-kills
+      background: url("/images/snake-icon.png") no-repeat left center
+      background-size: 28px
+      padding-left: 33px // Background size + 5px
+      margin-left: 15px
+
+    .scoreboard-deaths
+      background: url("/images/skull-icon.png") no-repeat left center
+      background-size: 28px
+      padding-left: 33px // Background size + 5px
+      margin-left: 15px

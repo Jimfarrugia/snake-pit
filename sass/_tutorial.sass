@@ -1,0 +1,105 @@
+@use "variables"
+
+#tutorial-open-btn
+  width: 28px
+  height: 28px
+  font-family: "VT323"
+  font-size: 24px
+  border: 2px solid variables.$brown-dark
+  border-radius: 100%
+  background: variables.$green-dark
+  color: variables.$brown-dark
+  cursor: pointer
+  &:hover
+    color: variables.$brown-light
+    border-color: variables.$brown-light
+
+#tutorial-dialog
+  box-sizing: border-box
+  font-size: 16px
+  font-family: monospace
+  background: variables.$green-dark
+  border: 5px solid variables.$green-light
+  border-radius: 5px
+  color: variables.$white
+  padding: 25px
+  width: 480px
+  margin: auto
+  &::backdrop
+    background: #000
+    opacity: 0.5
+
+  button
+    background: variables.$white
+    color: variables.$green-dark
+    border: 2px solid variables.$green-light
+    padding: 7px 10px
+    border-radius: 5px
+    font-family: "VT323"
+    font-size: 28px
+    cursor: pointer
+    &:hover
+      color: variables.$white
+      border-color: variables.$white
+      background-color: variables.$green-light
+
+  #tutorial-close-btn
+    padding: 7px 20px
+
+  h2
+    color: variables.$green-light
+    font-size: 42px
+    font-family: "VT323"
+    margin: 0 0 25px
+    text-align: center
+    text-transform: uppercase
+
+  h3
+    margin-bottom: 10px
+
+  nav
+    display: flex
+    justify-content: space-between
+    .next-step-btn
+      margin-left: auto
+
+  img
+    border-radius: 5px
+
+  p
+    line-height: 1.35
+
+  .modal-step > p
+    margin-bottom: 25px
+
+  .flex
+    margin-bottom: 25px
+    img
+      display: block
+      max-width: calc(50% - 25px)
+      height: 100%
+
+#tutorial-step-1 img,
+#tutorial-step-6 img
+  margin-right: 25px
+
+#tutorial-step-2 img:first-child
+  width: 25%
+  margin: 0
+
+#tutorial-step-2 .flex,
+#tutorial-step-4 .flex
+  justify-content: space-around
+
+#tutorial-step-3 .flex
+  justify-content: space-between
+  img
+    max-width: none
+    width: calc(50% - 12.5px)
+
+#tutorial-step-4 .flex img
+  width: calc((100% / 3) - (100px / 3))
+
+#tutorial-step-5 img
+  width: 100%
+  margin-bottom: 25px
