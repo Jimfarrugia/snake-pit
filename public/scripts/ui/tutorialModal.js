@@ -39,3 +39,17 @@ tutorialDialog.addEventListener("click", event => {
 tutorialCloseBtn.addEventListener("click", () => {
   tutorialDialog.close();
 });
+
+// Close modal when clicking outside of its visible content
+// (works without this in chrome - this is required for the behaviour to work in firefox)
+tutorialDialog.addEventListener("click", e => {
+  const rect = tutorialDialog.getBoundingClientRect();
+  const clickedInside =
+    e.clientX >= rect.left &&
+    e.clientX <= rect.right &&
+    e.clientY >= rect.top &&
+    e.clientY <= rect.bottom;
+  if (!clickedInside) {
+    tutorialDialog.close();
+  }
+});
