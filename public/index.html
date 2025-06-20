@@ -17,6 +17,7 @@
   <body>
     <div id="wrapper">
       <h1 id="title">Snake Pit</h1>
+      <!-- Menu -->
       <div id="menu">
         <p id="player-name"></p>
         <div id="timers">
@@ -25,9 +26,12 @@
         </div>
         <button id="tutorial-open-btn" title="How to play">?</button>
       </div>
+      <!-- Gameplay Area -->
       <div id="gameplay-area">
         <div id="game-board"></div>
+        <!-- Start Prompt -->
         <div id="start-prompt">
+          <!-- Name Form -->
           <div id="name-form">
             <label for="name">Name:</label>
             <div class="input-wrapper">
@@ -42,15 +46,50 @@
               <span id="name-status"></span>
             </div>
           </div>
+          <!-- Join Button -->
           <p>
-            <button id="start-btn" title="Join the game">Join Game</button>
+            <button class="start-btn" title="Join the game">Join Game</button>
           </p>
           <p class="help-text">(or press space)</p>
+          <!-- Practice Mode Button -->
+          <p>
+            <button id="practice-mode-btn" title="Practice Mode">
+              Practice Mode
+            </button>
+          </p>
+        </div>
+        <!-- Practice Prompt -->
+        <div id="practice-prompt">
+          <p>
+            Play a private game either solo or against AI-controlled opponents.
+          </p>
+          <p id="num-of-opponents">
+            <label for="num-of-opponents-select">Opponents:</label>
+            <select id="num-of-opponents-select">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </p>
+          <p>
+            <button class="start-btn" title="Start Practice">
+              Start Practice
+            </button>
+          </p>
+          <p>
+            <button class="back-btn">Go Back</button>
+          </p>
         </div>
       </div>
+      <!-- Invalid/Taken Name Warning -->
       <p id="name-warning"></p>
+      <!-- Scoreboard -->
       <ol id="scoreboard"></ol>
     </div>
+    <!-- Tutorial Dialog Modal -->
     <dialog id="tutorial-dialog" closedby="any">
       <div id="tutorial-step-1" class="modal-step" data-step="1">
         <h2>Tutorial (1/6)</h2>
@@ -69,7 +108,6 @@
           <button class="next-step-btn">Next &gt;</button>
         </nav>
       </div>
-
       <div id="tutorial-step-2" class="modal-step" data-step="2" hidden>
         <h2>Tutorial (2/6)</h2>
         <p>Change direction by swiping or using the arrow keys.</p>
@@ -82,7 +120,6 @@
           <button class="next-step-btn">Next &gt;</button>
         </nav>
       </div>
-
       <div id="tutorial-step-3" class="modal-step" data-step="3" hidden>
         <h2>Tutorial (3/6)</h2>
         <p>It's game over if you run into the boundary or yourself.</p>
@@ -101,7 +138,6 @@
           <button class="next-step-btn">Next &gt;</button>
         </nav>
       </div>
-
       <div id="tutorial-step-4" class="modal-step" data-step="4" hidden>
         <h2>Tutorial (4/6)</h2>
         <p>
@@ -121,7 +157,6 @@
           <button class="next-step-btn">Next &gt;</button>
         </nav>
       </div>
-
       <div id="tutorial-step-5" class="modal-step" data-step="5" hidden>
         <h2>Tutorial (5/6)</h2>
         <p>Earn kills by biting other snakes' tails.</p>
@@ -134,7 +169,6 @@
           <button class="next-step-btn">Next &gt;</button>
         </nav>
       </div>
-
       <div id="tutorial-step-6" class="modal-step" data-step="6" hidden>
         <h2>Tutorial (6/6)</h2>
         <p>Pick up items to gain temporary bonus effects.</p>

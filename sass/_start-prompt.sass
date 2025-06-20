@@ -1,6 +1,6 @@
 @use "variables"
 
-#start-prompt
+#start-prompt, #practice-prompt
   width: 100%
   position: absolute
   top: 50%
@@ -10,24 +10,47 @@
   text-align: center
   button
     font-family: "VT323"
-    font-size: 42px
+    font-size: 32px
+    animation: none
+    margin: 20px 0 0
     text-transform: uppercase
     color: variables.$white
     background-color: variables.$green-light
-    margin: 30px 0 0
     padding: 10px 20px
     border: none
     border-radius: 5px
     cursor: pointer
-    animation: blinking-start-prompt 1s linear infinite
+    &.back-btn
+      background: variables.$green-dark
+    &.start-btn
+      font-size: 42px
+      margin: 30px 0 0
+      animation: blinking-start-prompt 1s linear infinite
+      &:hover
+        animation: none
     &:hover
       color: variables.$white
       background-color: variables.$brown-dark
+    
   .help-text
     font-size: 24px
     font-family: "VT323"
     text-transform: uppercase
     margin: 5px 0 0
+
+#practice-prompt
+  display: none
+  p
+    font-size: 16px
+    font-family: monospace
+    padding: 0 20px 0
+    line-height: 1.35
+  #num-of-opponents
+    font-size: 24px
+    margin-top: 20px
+    select
+        font-size: 20px
+        padding: 5px
 
 #name-form
   label
@@ -61,8 +84,11 @@
 // Small Screens
 @media (max-width: 520px)
   #start-prompt button
-    font-size: 36px
-    margin-top: 25px
+    font-size: 26px
+    margin-top: 15px
+    &.start-btn
+      font-size: 36px
+      margin-top: 20px
   #name-form
     label
       font-size: 24px

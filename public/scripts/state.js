@@ -17,6 +17,10 @@ export const state = {
   isGameStarted: false,
   playerSnake: null,
   enemySnakes: [],
+  practiceMode: {
+    isEnabled: null,
+    opponents: 0,
+  },
 };
 
 // Connect to socket.io

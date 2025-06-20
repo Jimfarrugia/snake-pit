@@ -49,9 +49,44 @@ export function setupEventListeners(socket, state) {
   });
 
   // Start button click listener
-  document
-    .getElementById("start-btn")
-    .addEventListener("click", () => startGame(socket, state));
+  const joinGameBtn = document
+    .getElementById("start-prompt")
+    .getElementsByClassName("start-btn")[0];
+  joinGameBtn.addEventListener("click", () => startGame(socket, state));
+
+  // Practice mode enable button click listener
+  document.getElementById("practice-mode-btn").addEventListener("click", () => {
+    document.getElementById("start-prompt").style.display = "none";
+    document.getElementById("practice-prompt").style.display = "block";
+    state.practiceMode.isEnabled = true;
+  });
+
+  // Practice mode back button click listener
+  const practiceModeBackBtn = document
+    .getElementById("practice-prompt")
+    .getElementsByClassName("back-btn")[0];
+  practiceModeBackBtn.addEventListener("click", () => {
+    document.getElementById("practice-prompt").style.display = "none";
+    document.getElementById("start-prompt").style.display = "block";
+    state.practiceMode.isEnabled = false;
+  });
+
+  // opponents select input change listener
+  const numOfOpponentsSelect = document.getElementById(
+    "num-of-opponents-select"
+  );
+  numOfOpponentsSelect.addEventListener("change", () => {
+    state.practiceMode.opponents = parseInt(numOfOpponentsSelect.value);
+  });
+
+  // Practice mode start button click listener
+  const practiceModeStartBtn = document
+    .getElementById("practice-prompt")
+    .getElementsByClassName("start-btn")[0];
+  practiceModeStartBtn.addEventListener("click", () => {
+    // emit
+    // { state.practiceMode.opponents }
+  });
 
   // General keypress listener
   document.addEventListener("keydown", event => {
