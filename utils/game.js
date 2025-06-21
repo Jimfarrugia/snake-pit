@@ -47,14 +47,29 @@ function mapAllTargetSegments(state, playerSnakeId) {
 }
 
 // Kill a snake and award point to the killer if there is one
-function killSnake(io, victimSnake, killerSnake = null) {
+function killSnake(io, room, state, victimSnake, killerSnake = null) {
   clearSnakeEffects(victimSnake);
   victimSnake.isAlive = false;
   victimSnake.deaths += 1;
-  io.to(victimSnake.id).emit("gameOver");
   if (killerSnake) {
     killerSnake.kills += 1;
     killerSnake.isGrowing = true;
+  }
+  // emit state before player leaves the room to update the scoreboard
+  const { food, speedBoost, immunity, snakes } = state;
+  io.to(victimSnake.id).emit("gameState", {
+    snakes: snakes.map(({ speedBoostTimeout, immunityTimeout, ...s }) => s),
+    food,
+    speedBoost,
+    immunity,
+  });
+  io.to(victimSnake.id).emit("gameOver");
+  // Remove snake from the game state
+  state.snakes = state.snakes.filter(s => s.id !== victimSnake.id);
+  // Remove the player from the room
+  const victimSocket = io.sockets.sockets.get(victimSnake.id);
+  if (victimSocket) {
+    victimSocket.leave(room);
   }
 }
 

@@ -1,4 +1,3 @@
-const state = require("./state");
 const {
   logEvent,
   isSamePosition,
@@ -18,7 +17,7 @@ const {
 const { isDevEnv } = require("./config");
 
 // Move a single snake
-function moveSnake(snake, now, io) {
+function moveSnake(snake, now, io, state, room) {
   if (!snake.isAlive) return;
   if (now - snake.lastMoveTime < snake.speed) return; // not time to move yet
   snake.lastMoveTime = now;
@@ -57,7 +56,7 @@ function moveSnake(snake, now, io) {
     if (snake.isImmune) {
       teleportSnakeHead(snake);
     } else {
-      killSnake(io, snake);
+      killSnake(io, room, state, snake);
       logEvent(
         `'${snake.name}' died by hitting the wall with ${snake.score} points.`,
         snake.id
@@ -68,7 +67,7 @@ function moveSnake(snake, now, io) {
 
   // Handle self collision
   if (!snake.isImmune && isSelfCollision(snake.segments, newHead)) {
-    killSnake(io, snake);
+    killSnake(io, room, state, snake);
     logEvent(
       `'${snake.name}' died by biting itself with ${snake.score} points.`,
       snake.id
@@ -93,7 +92,7 @@ function moveSnake(snake, now, io) {
           isSamePosition(prevHead, position)
       );
       if (isCollision) {
-        killSnake(io, enemySnake, snake);
+        killSnake(io, room, state, enemySnake, snake);
         logEvent(
           `'${enemySnake.name}' was killed by '${snake.name}'.`,
           enemySnake.id
@@ -124,7 +123,7 @@ function moveSnake(snake, now, io) {
 }
 
 // The game loop
-function gameLoop(io) {
+function gameLoop(io, room, state) {
   if (!state.isGameStarted) return;
   const now = Date.now();
   const { food, speedBoost, immunity, snakes } = state;
@@ -134,11 +133,11 @@ function gameLoop(io) {
     if (isDevEnv && snake.id.includes("TestSnake")) {
       setTestSnakeDirection(snake);
     }
-    moveSnake(snake, now, io);
+    moveSnake(snake, now, io, state, room);
   });
 
-  // emit the gamestate to all connections
-  io.emit("gameState", {
+  // emit the gamestate to everyone in the room
+  io.to(room).emit("gameState", {
     // strip timeout values from the snake object during emit
     // becuase they're non-serializable and cause socket.io to crash
     // (we could alternatively, handle timeouts outside of the game state)

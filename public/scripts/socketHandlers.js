@@ -50,5 +50,6 @@ export function setupSocketHandlers(socket, state) {
   // stop the game on gameOver
   socket.on("gameOver", () => {
     stopGame();
+    drawGame();
   });
 }

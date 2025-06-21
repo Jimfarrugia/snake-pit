@@ -6,7 +6,8 @@ const {
   logEvent,
   setSnakeNewDirection,
 } = require("../utils");
-const state = require("../state");
+const { createGameState } = require("../state/stateFactory");
+const { playerSnakes } = require("../state/globalState");
 const {
   isDevEnv,
   numOfTestSnakes,
@@ -17,18 +18,20 @@ const {
   immunityDuration,
 } = require("../config");
 const {
+  startGameLoop,
   handlePlayerConnect,
   handlePlayerDisconnect,
+  stopGameLoop,
 } = require("../gameLoopController");
 
-function registerSocketHandlers(io) {
+function registerSocketHandlers(io, gameStates) {
   io.on("connection", socket => {
     const { id } = socket;
-    handlePlayerConnect(io, id);
-    const snake = generateSnake(id);
-    state.snakes.push(snake);
-    logEvent(`'${id}' snake was created.`, id);
+    // Start the game loop if they're the first player online
+    const mainState = gameStates.get("main-game");
+    handlePlayerConnect(io, id, mainState);
 
+    // Send config values to client
     socket.emit("config", {
       initialSpeed,
       initialSnakeLength,
@@ -38,19 +41,41 @@ function registerSocketHandlers(io) {
     });
 
     socket.on("disconnect", reason => {
-      logEvent(`'${id}' disconnected due to ${reason}.`, id);
-      state.snakes = state.snakes.filter(s => s.id !== id);
-      logEvent(`'${id}' snake was removed.`, id);
-      handlePlayerDisconnect(id);
+      logEvent(`'${id}' disconnected: ${reason}`, id);
+      // Remove the player's snake from the main room and their entry in connectedPLayers
+      // Stop the main game loop if this is the last player to leave
+      handlePlayerDisconnect(id, mainState);
+
+      // Remove the player's practice room, it's game loop and it's state
+      const practiceRoom = `practice-${id}`;
+      if (gameStates.has(practiceRoom)) {
+        const practiceState = gameStates.get(practiceRoom);
+        stopGameLoop(practiceState);
+        gameStates.delete(practiceRoom);
+        logEvent(`Removed practice room for ${id}.`, id);
+      }
     });
 
     socket.on("joinGame", ({ name, fallbackName }, callback) => {
       const { isValidName, isAvailable, finalName, reservedNames } =
-        validateName(state, id, name.trim(), fallbackName.trim());
+        validateName(mainState, id, name.trim(), fallbackName.trim());
       callback({ isValidName, isAvailable, finalName, reservedNames });
 
+      // Add player to main room
+      socket.join("main-game");
+
+      // Create a snake in the main game
+      let snake = playerSnakes.get(id);
+      if (!snake) {
+        snake = generateSnake(socket.id);
+        playerSnakes.set(id, snake);
+        logEvent(`'${id}' snake was created.`, id);
+      }
+
       snake.name = finalName;
-      state.isGameStarted = true;
+      mainState.snakes.push(snake);
+      mainState.isGameStarted = true;
+
       if (snake.deaths) {
         respawnSnake(snake);
         logEvent(`'${snake.name}' respawned.`, snake.id);
@@ -61,11 +86,12 @@ function registerSocketHandlers(io) {
 
       // Create test snakes in development environment
       if (isDevEnv) {
-        setupTestSnakes(state, numOfTestSnakes, 10000);
+        setupTestSnakes(mainState, numOfTestSnakes, 10000);
       }
     });
 
     socket.on("changeDirection", newDirection => {
+      const snake = playerSnakes.get(id);
       if (!snake || !snake.isAlive) return;
       setSnakeNewDirection(snake, newDirection);
     });
@@ -73,9 +99,9 @@ function registerSocketHandlers(io) {
     socket.on(
       "checkNameAvailability",
       ({ name, getReservedNames }, callback) => {
-        const isAvailable = !state.snakes.some(s => s.name === name);
+        const isAvailable = !mainState.snakes.some(s => s.name === name);
         if (getReservedNames) {
-          const reservedNames = state.snakes.map(s => s.name);
+          const reservedNames = mainState.snakes.map(s => s.name);
           callback({ isAvailable, reservedNames });
         } else {
           callback({ isAvailable });

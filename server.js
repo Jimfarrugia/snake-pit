@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const registerSocketHandlers = require("./socket/handlers");
+const { gameStates } = require("./state/globalState");
 
 const app = express();
 app.use(express.static(path.join(__dirname, "public")));
@@ -19,4 +20,4 @@ const io = new Server(server, {
 });
 
 // Socket logic
-registerSocketHandlers(io);
+registerSocketHandlers(io, gameStates);
