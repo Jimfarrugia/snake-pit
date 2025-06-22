@@ -10,6 +10,7 @@ function createGameState() {
     immunity: randomPosition(),
     immunityRespawnTimeout: null,
     isGameStarted: false,
+    isPracticeGame: null,
     spawnTestSnakesInterval: null,
 
     resetGameState() {

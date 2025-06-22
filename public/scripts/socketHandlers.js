@@ -20,20 +20,7 @@ export function setupSocketHandlers(socket, state) {
 
   // update local state when server state changes
   socket.on("gameState", newState => {
-    state.playerSnake = newState.snakes.find(s => s.id === socket.id);
-    state.enemySnakes = newState.snakes.filter(s => s.id !== socket.id);
-    state.food = newState.food;
-    state.immunity = newState.immunity;
-    state.speedBoost = newState.speedBoost;
-    const { immunityTimeStart, speedBoostTimeStart } = state.playerSnake;
-    state.immunityTimeRemaining = getTimeRemaining(
-      state.immunityDuration,
-      immunityTimeStart
-    );
-    state.speedBoostTimeRemaining = getTimeRemaining(
-      state.speedBoostDuration,
-      speedBoostTimeStart
-    );
+    updateClientState(socket, state, newState);
     drawGame();
     drawTimers();
     drawScoreboard(newState.snakes);
@@ -48,8 +35,27 @@ export function setupSocketHandlers(socket, state) {
   });
 
   // stop the game on gameOver
-  socket.on("gameOver", () => {
+  socket.on("gameOver", newState => {
+    updateClientState(socket, state, newState);
     stopGame();
     drawGame();
+    drawScoreboard(newState.snakes);
   });
+}
+
+function updateClientState(socket, state, newState) {
+  state.playerSnake = newState.snakes.find(s => s.id === socket.id);
+  state.enemySnakes = newState.snakes.filter(s => s.id !== socket.id);
+  state.food = newState.food;
+  state.immunity = newState.immunity;
+  state.speedBoost = newState.speedBoost;
+  const { immunityTimeStart, speedBoostTimeStart } = state.playerSnake;
+  state.immunityTimeRemaining = getTimeRemaining(
+    state.immunityDuration,
+    immunityTimeStart
+  );
+  state.speedBoostTimeRemaining = getTimeRemaining(
+    state.speedBoostDuration,
+    speedBoostTimeStart
+  );
 }

@@ -31,6 +31,18 @@ function startGame(socket, state) {
   timers.style.display = "flex";
 }
 
+// start a practice game
+function startPractice(socket, state) {
+  socket.emit("startPractice", {
+    numOfOpponents: state.practiceMode.numOfOpponents,
+  });
+  state.isGameStarted = true;
+  document.getElementById("practice-prompt").style.display = "none";
+  document.getElementById("player-name").textContent = "Practice Mode";
+  tutorialOpenBtn.style.display = "none";
+  timers.style.display = "flex";
+}
+
 // Setup event listeners
 export function setupEventListeners(socket, state) {
   // Generate a default name for the player when the page loads
@@ -69,6 +81,7 @@ export function setupEventListeners(socket, state) {
     document.getElementById("practice-prompt").style.display = "none";
     document.getElementById("start-prompt").style.display = "block";
     state.practiceMode.isEnabled = false;
+    socket.emit("endPractice");
   });
 
   // opponents select input change listener
@@ -83,10 +96,9 @@ export function setupEventListeners(socket, state) {
   const practiceModeStartBtn = document
     .getElementById("practice-prompt")
     .getElementsByClassName("start-btn")[0];
-  practiceModeStartBtn.addEventListener("click", () => {
-    // emit
-    // { state.practiceMode.opponents }
-  });
+  practiceModeStartBtn.addEventListener("click", () =>
+    startPractice(socket, state)
+  );
 
   // General keypress listener
   document.addEventListener("keydown", event => {
@@ -108,7 +120,9 @@ export function setupEventListeners(socket, state) {
     // Handle start game
     if (!state.isGameStarted && isSpacebar) {
       event.preventDefault();
-      startGame(socket, state);
+      state.practiceMode.isEnabled
+        ? startPractice(socket, state)
+        : startGame(socket, state);
       return;
     }
     // Handle change direction

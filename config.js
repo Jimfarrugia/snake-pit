@@ -14,4 +14,5 @@ module.exports = {
   numOfTestSnakes: 3, // Number of test snakes to spawn in dev environment
   isDevEnv: env === "development",
   env,
+  mainRoom: "main-game",
 };

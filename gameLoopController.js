@@ -1,6 +1,6 @@
-const { connectedPlayers } = require("./state/globalState");
+const { connectedPlayers, playerSnakes } = require("./state/globalState");
 const gameLoop = require("./gameLoop");
-const { tickRate } = require("./config");
+const { tickRate, mainRoom } = require("./config");
 const { logEvent } = require("./utils");
 
 // Set the interval for the game loop in state
@@ -28,7 +28,7 @@ function handlePlayerConnect(io, socketId, mainState) {
   connectedPlayers.add(socketId);
   logEvent(`Player connected: ${socketId} (${connectedPlayers.size} total)`);
   if (connectedPlayers.size === 1) {
-    startGameLoop(io, "main-game", mainState);
+    startGameLoop(io, mainRoom, mainState);
   }
 }
 
@@ -39,8 +39,9 @@ function handlePlayerDisconnect(socketId, mainState) {
     `Player disconnected: ${socketId} (${connectedPlayers.size} remaining)`
   );
   connectedPlayers.delete(socketId);
+  playerSnakes.delete(socketId);
   if (connectedPlayers.size === 0) {
-    stopGameLoop("main-game", mainState);
+    stopGameLoop(mainRoom, mainState);
     mainState.resetGameState();
   }
 }

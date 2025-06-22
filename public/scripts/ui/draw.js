@@ -27,7 +27,13 @@ export function drawGame() {
 // stop the game
 export function stopGame() {
   state.isGameStarted = false;
-  document.getElementById("start-prompt").style.display = "block";
+  if (state.practiceMode.isEnabled) {
+    document.getElementById("player-name").textContent = "";
+    document.getElementById("start-prompt").style.display = "none";
+    document.getElementById("practice-prompt").style.display = "block";
+  } else {
+    document.getElementById("start-prompt").style.display = "block";
+  }
   document.getElementById("tutorial-open-btn").style.display = "block";
   resetTimer(speedBoostTimer);
   resetTimer(immunityTimer);

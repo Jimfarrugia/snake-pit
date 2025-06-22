@@ -10,6 +10,42 @@ const {
 const { randomPosition } = require("./helpers");
 const { logEvent } = require("./logger");
 
+// Create a snake in the set for a new player or get an existing one.
+// Return the snake.
+function getOrCreatePlayerSnake(playerSnakes, id) {
+  if (!playerSnakes.has(id)) {
+    const snake = generateSnake(id);
+    playerSnakes.set(id, snake);
+    logEvent(`'${id}' snake was created.`, id);
+  }
+  return playerSnakes.get(id);
+}
+
+// Create a player's snake in the practice room's state or get it if it already exists.
+// Return the snake.
+function getOrCreatePracticeSnake(id, practiceState) {
+  let snake = practiceState.snakes.find(s => s.id === id);
+  if (!snake) {
+    snake = generateSnake(id);
+    snake.name = "Practice Snake";
+    practiceState.snakes.push(snake);
+    logEvent(`Practice snake created for ${id}.`, id);
+  }
+  return snake;
+}
+
+// Return a player's practice snake if it's active,
+// otherwise return their main-game snake.
+function getActiveSnake(playerSnakes, id, gameStates) {
+  const practiceRoom = `practice-${id}`;
+  if (gameStates.has(practiceRoom)) {
+    const practiceState = gameStates.get(practiceRoom);
+    const snake = practiceState.snakes.find(s => s.id === id);
+    if (snake) return snake;
+  }
+  return playerSnakes.get(id); // multiplayer snake
+}
+
 // Generate a random orientation for a snake
 function randomOrientation() {
   return Math.random() < 0.5 ? "horizontal" : "vertical";
@@ -88,8 +124,8 @@ function respawnSnake(snake) {
     initialSnakeSegments[0],
     initialOrientation
   );
-  snake.score = 0;
-  snake.kills = 0;
+  // snake.score = 0;
+  // snake.kills = 0;
   snake.isAlive = true;
 }
 
@@ -182,6 +218,9 @@ function teleportSnakeHead(snake) {
 }
 
 module.exports = {
+  getOrCreatePlayerSnake,
+  getOrCreatePracticeSnake,
+  getActiveSnake,
   randomOrientation,
   generateSnake,
   respawnSnake,

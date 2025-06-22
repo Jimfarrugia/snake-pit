@@ -1,5 +1,7 @@
 const {
-  generateSnake,
+  getOrCreatePlayerSnake,
+  getOrCreatePracticeSnake,
+  getActiveSnake,
   respawnSnake,
   setupTestSnakes,
   validateName,
@@ -16,6 +18,7 @@ const {
   snakeMaxTargetSize,
   speedBoostDuration,
   immunityDuration,
+  mainRoom,
 } = require("../config");
 const {
   startGameLoop,
@@ -28,7 +31,7 @@ function registerSocketHandlers(io, gameStates) {
   io.on("connection", socket => {
     const { id } = socket;
     // Start the game loop if they're the first player online
-    const mainState = gameStates.get("main-game");
+    const mainState = gameStates.get(mainRoom);
     handlePlayerConnect(io, id, mainState);
 
     // Send config values to client
@@ -45,37 +48,24 @@ function registerSocketHandlers(io, gameStates) {
       // Remove the player's snake from the main room and their entry in connectedPLayers
       // Stop the main game loop if this is the last player to leave
       handlePlayerDisconnect(id, mainState);
-
       // Remove the player's practice room, it's game loop and it's state
-      const practiceRoom = `practice-${id}`;
-      if (gameStates.has(practiceRoom)) {
-        const practiceState = gameStates.get(practiceRoom);
-        stopGameLoop(practiceState);
-        gameStates.delete(practiceRoom);
-        logEvent(`Removed practice room for ${id}.`, id);
-      }
+      cleanupPracticeRoom(id, gameStates);
     });
 
     socket.on("joinGame", ({ name, fallbackName }, callback) => {
       const { isValidName, isAvailable, finalName, reservedNames } =
         validateName(mainState, id, name.trim(), fallbackName.trim());
       callback({ isValidName, isAvailable, finalName, reservedNames });
-
       // Add player to main room
-      socket.join("main-game");
-
-      // Create a snake in the main game
-      let snake = playerSnakes.get(id);
-      if (!snake) {
-        snake = generateSnake(socket.id);
-        playerSnakes.set(id, snake);
-        logEvent(`'${id}' snake was created.`, id);
-      }
-
+      socket.join(mainRoom);
+      // Get or create the player's snake
+      const snake = getOrCreatePlayerSnake(playerSnakes, id);
       snake.name = finalName;
-      mainState.snakes.push(snake);
+      // Add snake to the main game's state
+      if (!mainState.snakes.some(s => s.id === snake.id)) {
+        mainState.snakes.push(snake);
+      }
       mainState.isGameStarted = true;
-
       if (snake.deaths) {
         respawnSnake(snake);
         logEvent(`'${snake.name}' respawned.`, snake.id);
@@ -83,15 +73,53 @@ function registerSocketHandlers(io, gameStates) {
         snake.isAlive = true;
         logEvent(`'${snake.name}' joined the game.`, snake.id);
       }
-
       // Create test snakes in development environment
       if (isDevEnv) {
         setupTestSnakes(mainState, numOfTestSnakes, 10000);
       }
     });
 
+    // Setup a practice room & start a practice game
+    socket.on("startPractice", ({ numOfOpponents }) => {
+      const practiceRoom = `practice-${id}`;
+      socket.leave(mainRoom);
+      socket.join(practiceRoom);
+      // Setup practice room state
+      let practiceState;
+      if (!gameStates.has(practiceRoom)) {
+        practiceState = createGameState();
+        practiceState.isPracticeGame = true;
+        gameStates.set(practiceRoom, practiceState);
+      } else {
+        practiceState = gameStates.get(practiceRoom);
+      }
+      // Generate a new practice snake if one doesn't exist
+      const snake = getOrCreatePracticeSnake(id, practiceState);
+      // Spawn or respawn the snake into the game
+      if (snake.deaths) {
+        respawnSnake(snake);
+        logEvent(`'${snake.name}' respawned in practice room.`, snake.id);
+      } else {
+        snake.isAlive = true;
+        logEvent(`'${snake.name}' started practicing.`, snake.id);
+      }
+      // TODO setup opponent snakes
+      // Start the game loop
+      practiceState.isGameStarted = true;
+      startGameLoop(io, practiceRoom, practiceState);
+      logEvent(`Started practice game for ${id}`, id);
+    });
+
+    // Cleanup practice room
+    socket.on("endPractice", () => {
+      const practiceRoom = `practice-${id}`;
+      socket.leave(practiceRoom);
+      socket.join(mainRoom);
+      cleanupPracticeRoom(id, gameStates);
+    });
+
     socket.on("changeDirection", newDirection => {
-      const snake = playerSnakes.get(id);
+      const snake = getActiveSnake(playerSnakes, id, gameStates);
       if (!snake || !snake.isAlive) return;
       setSnakeNewDirection(snake, newDirection);
     });
@@ -109,6 +137,17 @@ function registerSocketHandlers(io, gameStates) {
       }
     );
   });
+}
+
+// Remove the player's practice room, it's game loop and it's state
+function cleanupPracticeRoom(id, gameStates) {
+  const practiceRoom = `practice-${id}`;
+  if (gameStates.has(practiceRoom)) {
+    const practiceState = gameStates.get(practiceRoom);
+    stopGameLoop(practiceRoom, practiceState);
+    gameStates.delete(practiceRoom);
+    logEvent(`Removed practice room for ${id}.`, id);
+  }
 }
 
 module.exports = registerSocketHandlers;

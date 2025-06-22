@@ -135,7 +135,6 @@ function gameLoop(io, room, state) {
     }
     moveSnake(snake, now, io, state, room);
   });
-
   // emit the gamestate to everyone in the room
   io.to(room).emit("gameState", {
     // strip timeout values from the snake object during emit
