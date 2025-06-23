@@ -8,6 +8,9 @@ import { drawName, drawNameInputMirror, drawNameWarning } from "./ui/draw.js";
 const nameStatus = document.getElementById("name-status");
 const nameInput = document.getElementById("name-input");
 const tutorialOpenBtn = document.getElementById("tutorial-open-btn");
+const numOfOpponentsSelect = document.getElementById("num-of-opponents-select");
+const startPrompt = document.getElementById("start-prompt");
+const practicePrompt = document.getElementById("practice-prompt");
 
 // start the game
 function startGame(socket, state) {
@@ -26,7 +29,7 @@ function startGame(socket, state) {
     }
   );
   state.isGameStarted = true;
-  document.getElementById("start-prompt").style.display = "none";
+  startPrompt.style.display = "none";
   tutorialOpenBtn.style.display = "none";
   timers.style.display = "flex";
 }
@@ -37,7 +40,7 @@ function startPractice(socket, state) {
     numOfOpponents: state.practiceMode.numOfOpponents,
   });
   state.isGameStarted = true;
-  document.getElementById("practice-prompt").style.display = "none";
+  practicePrompt.style.display = "none";
   document.getElementById("player-name").textContent = "Practice Mode";
   tutorialOpenBtn.style.display = "none";
   timers.style.display = "flex";
@@ -61,41 +64,35 @@ export function setupEventListeners(socket, state) {
   });
 
   // Start button click listener
-  const joinGameBtn = document
-    .getElementById("start-prompt")
-    .getElementsByClassName("start-btn")[0];
+  const joinGameBtn = startPrompt.getElementsByClassName("start-btn")[0];
   joinGameBtn.addEventListener("click", () => startGame(socket, state));
 
   // Practice mode enable button click listener
   document.getElementById("practice-mode-btn").addEventListener("click", () => {
-    document.getElementById("start-prompt").style.display = "none";
-    document.getElementById("practice-prompt").style.display = "block";
+    startPrompt.style.display = "none";
+    practicePrompt.style.display = "block";
     state.practiceMode.isEnabled = true;
+    state.practiceMode.numOfOpponents = parseInt(numOfOpponentsSelect.value);
   });
 
   // Practice mode back button click listener
-  const practiceModeBackBtn = document
-    .getElementById("practice-prompt")
-    .getElementsByClassName("back-btn")[0];
+  const practiceModeBackBtn =
+    practicePrompt.getElementsByClassName("back-btn")[0];
   practiceModeBackBtn.addEventListener("click", () => {
-    document.getElementById("practice-prompt").style.display = "none";
-    document.getElementById("start-prompt").style.display = "block";
+    practicePrompt.style.display = "none";
+    startPrompt.style.display = "block";
     state.practiceMode.isEnabled = false;
     socket.emit("endPractice");
   });
 
   // opponents select input change listener
-  const numOfOpponentsSelect = document.getElementById(
-    "num-of-opponents-select"
-  );
   numOfOpponentsSelect.addEventListener("change", () => {
-    state.practiceMode.opponents = parseInt(numOfOpponentsSelect.value);
+    state.practiceMode.numOfOpponents = parseInt(numOfOpponentsSelect.value);
   });
 
   // Practice mode start button click listener
-  const practiceModeStartBtn = document
-    .getElementById("practice-prompt")
-    .getElementsByClassName("start-btn")[0];
+  const practiceModeStartBtn =
+    practicePrompt.getElementsByClassName("start-btn")[0];
   practiceModeStartBtn.addEventListener("click", () =>
     startPractice(socket, state)
   );

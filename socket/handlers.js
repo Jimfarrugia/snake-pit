@@ -3,7 +3,7 @@ const {
   getOrCreatePracticeSnake,
   getActiveSnake,
   respawnSnake,
-  setupTestSnakes,
+  setupNpcSnakes,
   validateName,
   logEvent,
   setSnakeNewDirection,
@@ -66,6 +66,7 @@ function registerSocketHandlers(io, gameStates) {
         mainState.snakes.push(snake);
       }
       mainState.isGameStarted = true;
+      // Spawn or respawn the player's snake
       if (snake.deaths) {
         respawnSnake(snake);
         logEvent(`'${snake.name}' respawned.`, snake.id);
@@ -75,7 +76,7 @@ function registerSocketHandlers(io, gameStates) {
       }
       // Create test snakes in development environment
       if (isDevEnv) {
-        setupTestSnakes(mainState, numOfTestSnakes, 10000);
+        setupNpcSnakes(numOfTestSnakes, "TestSnake", 10000, mainState);
       }
     });
 
@@ -103,10 +104,13 @@ function registerSocketHandlers(io, gameStates) {
         snake.isAlive = true;
         logEvent(`'${snake.name}' started practicing.`, snake.id);
       }
-      // TODO setup opponent snakes
       // Start the game loop
       practiceState.isGameStarted = true;
       startGameLoop(io, practiceRoom, practiceState);
+      // Add NPC opponents
+      if (numOfOpponents > 0) {
+        setupNpcSnakes(numOfOpponents, "PracticeSnake", 10000, practiceState);
+      }
       logEvent(`Started practice game for ${id}`, id);
     });
 

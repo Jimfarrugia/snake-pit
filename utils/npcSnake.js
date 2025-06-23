@@ -2,19 +2,21 @@ const { generateSnake, respawnSnake } = require("./snake");
 const { gridSize } = require("../config");
 const { logEvent } = require("./logger");
 
-// Generate a test snake
-function generateTestSnake() {
-  const id = `TestSnake${Math.round(Math.random().toFixed(6) * 1000000)}`;
-  const testSnake = generateSnake(id);
-  testSnake.name = id;
-  testSnake.isAlive = true;
-  testSnake.lastMoveTime = Date.now();
-  testSnake.isClockwise = Math.round(Math.random());
-  return testSnake;
+// Generate a NPC snake
+// Name should be consistant with the snake's purpose (ie. "TestSnake" or "Practice Opponent")
+function generateNpcSnake(name) {
+  const id = `${name}${Math.round(Math.random().toFixed(6) * 1000000)}`;
+  const snake = generateSnake(id);
+  snake.name = id;
+  snake.isAlive = true;
+  snake.lastMoveTime = Date.now();
+  snake.isClockwise = Math.round(Math.random());
+  snake.isNpc = true;
+  return snake;
 }
 
-// Move a test snake without letting it run into the boundary or itself
-function setTestSnakeDirection(snake) {
+// Move a NPC snake without letting it run into the boundary or itself
+function setNpcSnakeDirection(snake) {
   if (!snake.isAlive) return;
   const clockwise = {
     up: ["up", "right", "down", "left"],
@@ -72,39 +74,37 @@ function setTestSnakeDirection(snake) {
   logEvent(`${snake.id} is stuck and has died.`);
 }
 
-// Setup test snakes at the start of the game
-function setupTestSnakes(state, numOfTestSnakes, respawnInterval) {
-  destroyTestSnakes(state);
-  addTestSnakes(numOfTestSnakes, state);
-  // Revive test snakes every 10 seconds.
-  state.spawnTestSnakesInterval = setInterval(() => {
-    const testSnakes = state.snakes.filter(
-      snake => snake.id.includes("TestSnake") && snake.isAlive
-    );
-    if (testSnakes.length < numOfTestSnakes) {
-      respawnTestSnakes(state);
+// Setup NPC snakes at the start of the game
+function setupNpcSnakes(n, name, respawnInterval, state) {
+  destroyNpcSnakes(state);
+  addNpcSnakes(n, name, state);
+  // Revive NPC snakes every tick
+  state.spawnNpcSnakesInterval = setInterval(() => {
+    const snakes = state.snakes.filter(snake => snake.isNpc && snake.isAlive);
+    if (snakes.length < n) {
+      respawnNpcSnakes(state);
     }
   }, respawnInterval);
 }
 
-// Remove all test snakes
-function destroyTestSnakes(state) {
-  state.snakes = state.snakes.filter(s => !s.id.includes("TestSnake"));
-  logEvent("All test snakes were removed.");
+// Remove all NPC snakes
+function destroyNpcSnakes(state) {
+  state.snakes = state.snakes.filter(s => !s.isNpc);
+  logEvent("All NPC snakes were removed.");
 }
 
-// Add test snakes to the game (n: number of test snakes to add)
-function addTestSnakes(n, state) {
+// Add NPC snakes to the game (n: number of snakes to add)
+function addNpcSnakes(n, name, state) {
   for (let i = 0; i < n; i++) {
-    state.snakes.push(generateTestSnake());
+    state.snakes.push(generateNpcSnake(name));
   }
-  logEvent(`Added ${n} test snakes.`);
+  logEvent(`Added ${n} (${name}) NPC snakes.`);
 }
 
 // Revive test snakes
-function respawnTestSnakes(state) {
+function respawnNpcSnakes(state) {
   state.snakes.forEach(snake => {
-    if (snake.id.includes("TestSnake") && !snake.isAlive) {
+    if (snake.isNpc && !snake.isAlive) {
       respawnSnake(snake);
       logEvent(`${snake.id} respawned.`, snake.id);
     }
@@ -112,10 +112,10 @@ function respawnTestSnakes(state) {
 }
 
 module.exports = {
-  generateTestSnake,
-  setTestSnakeDirection,
-  setupTestSnakes,
-  addTestSnakes,
-  destroyTestSnakes,
-  respawnTestSnakes,
+  generateNpcSnake,
+  setNpcSnakeDirection,
+  setupNpcSnakes,
+  addNpcSnakes,
+  destroyNpcSnakes,
+  respawnNpcSnakes,
 };

@@ -2,7 +2,7 @@ const helpers = require("./helpers");
 const logger = require("./logger");
 const game = require("./game");
 const snake = require("./snake");
-const testSnake = require("./testSnake");
+const npcSnake = require("./npcSnake");
 const validation = require("./validation");
 
 module.exports = {
@@ -10,6 +10,6 @@ module.exports = {
   ...logger,
   ...game,
   ...snake,
-  ...testSnake,
+  ...npcSnake,
   ...validation,
 };

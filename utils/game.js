@@ -4,7 +4,7 @@ const {
   clearSnakeEffects,
 } = require("./snake");
 const { isSamePosition, randomPosition } = require("./helpers");
-const { destroyTestSnakes } = require("./testSnake");
+const { destroyNpcSnakes } = require("./npcSnake");
 const { logEvent } = require("./logger");
 const { isDevEnv, gridSize, immunityRespawnCooldown } = require("../config");
 
@@ -18,8 +18,8 @@ function stopGameIfEmpty(state) {
       state.snakes.forEach(snake => {
         if (snake.id.includes("TestSnake")) clearSnakeEffects(snake);
       });
-      clearInterval(state.spawnTestSnakesInterval);
-      destroyTestSnakes(state);
+      clearInterval(state.spawnNpcSnakesInterval);
+      destroyNpcSnakes(state);
     }
     state.isGameStarted = false;
     logEvent("Game stopped. No snakes alive.");
@@ -64,8 +64,8 @@ function killSnake(io, room, state, victimSnake, killerSnake = null) {
     speedBoost,
     immunity,
   });
-  // Remove snake from the game state
-  if (!state.isPracticeGame) {
+  // Remove snake from the game state if it's a player in the main game
+  if (!victimSnake.isNpc && !state.isPracticeGame) {
     state.snakes = state.snakes.filter(s => s.id !== victimSnake.id);
   }
   // Remove the player from the room

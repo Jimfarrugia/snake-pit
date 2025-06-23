@@ -11,7 +11,7 @@ function createGameState() {
     immunityRespawnTimeout: null,
     isGameStarted: false,
     isPracticeGame: null,
-    spawnTestSnakesInterval: null,
+    spawnNpcSnakesInterval: null,
 
     resetGameState() {
       this.snakes = [];
@@ -25,9 +25,9 @@ function createGameState() {
         this.immunityRespawnTimeout = null;
       }
 
-      if (this.spawnTestSnakesInterval) {
-        clearInterval(this.spawnTestSnakesInterval);
-        this.spawnTestSnakesInterval = null;
+      if (this.spawnNpcSnakesInterval) {
+        clearInterval(this.spawnNpcSnakesInterval);
+        this.spawnNpcSnakesInterval = null;
       }
     },
   };

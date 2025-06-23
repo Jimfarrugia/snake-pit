@@ -19,7 +19,7 @@ export const state = {
   enemySnakes: [],
   practiceMode: {
     isEnabled: null,
-    opponents: 0,
+    numOfOpponents: 0,
   },
 };
 

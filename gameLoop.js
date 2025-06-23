@@ -10,7 +10,7 @@ const {
   applyImmunity,
   teleportSnakeHead,
   isBoundaryCollision,
-  setTestSnakeDirection,
+  setNpcSnakeDirection,
   stopGameIfEmpty,
   isSelfCollision,
 } = require("./utils");
@@ -130,8 +130,8 @@ function gameLoop(io, room, state) {
 
   // Move snakes
   snakes.forEach(snake => {
-    if (isDevEnv && snake.id.includes("TestSnake")) {
-      setTestSnakeDirection(snake);
+    if ((isDevEnv || state.isPracticeGame) && snake.isNpc) {
+      setNpcSnakeDirection(snake);
     }
     moveSnake(snake, now, io, state, room);
   });
