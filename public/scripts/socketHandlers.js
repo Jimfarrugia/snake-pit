@@ -28,9 +28,13 @@ export function setupSocketHandlers(socket, state) {
 
   // disconnect gracefully
   socket.on("disconnect", () => {
-    document.getElementById("start-prompt");
     state.isGameStarted = false;
     document.getElementById("start-prompt").style.display = "block";
+    document.getElementById("practice-prompt").style.display = "none";
+    state.practiceMode.isEnabled = false;
+    drawGame();
+    drawTimers();
+    drawScoreboard([]);
     alert("Disconnected from server.");
   });
 
