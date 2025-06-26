@@ -214,7 +214,8 @@ export function drawScoreboard(players) {
     nameSpan.className = "scoreboard-name";
     const rankSpan = document.createElement("span");
     rankSpan.textContent = `${index + 1}. `;
-    nameSpan.appendChild(rankSpan);
+    // Omit rank in practice mode
+    if (!state.practiceMode.isEnabled) nameSpan.appendChild(rankSpan);
     nameSpan.append(player.name);
     // Stats
     const scoresDiv = document.createElement("div");
