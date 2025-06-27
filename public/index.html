@@ -15,9 +15,20 @@
     <script type="module" src="/scripts/index.js" defer></script>
   </head>
   <body>
+    <!-- Background trees -->
+    <div id="bg-overlay" class="base"></div>
+    <div class="bg-tree left rear"></div>
+    <div id="bg-overlay" class="rear"></div>
+    <div class="bg-tree right rear"></div>
+    <div id="bg-overlay" class="front"></div>
+    <div class="bg-tree left front"></div>
+    <div class="bg-tree right front"></div>
     <div id="wrapper">
-      <h1 id="title">Snake Pit</h1>
+      <!-- Background snakes -->
+      <div class="bg-snake left"></div>
+      <div class="bg-snake right"></div>
       <!-- Menu -->
+      <h1 id="title">Snake Pit</h1>
       <div id="menu">
         <p id="player-name"></p>
         <div id="timers">

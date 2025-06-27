@@ -1,4 +1,5 @@
 @use "tutorial"
+@use "background"
 @use "menu"
 @use "start-prompt"
 @use "snake"
@@ -14,14 +15,13 @@
 html,
 body
   font-family: "VT323", monospace
-  background: variables.$green-dark
 
 .flex
   display: flex
 
 #title
   font-size: 48px
-  margin: 20px 0 15px
+  padding: 0 0 15px
   color: variables.$green-light
   text-align: center
   text-transform: uppercase
@@ -43,6 +43,10 @@ body
 #wrapper
   width: variables.$game-board-width + 10px
   margin: 0 auto
+  padding: 20px
+  background-color: rgba(40, 54, 26, 0.6)
+  position: relative
+  z-index: 1
 
 #game-board
   border-radius: 5px
@@ -59,7 +63,7 @@ body
     background-color: variables.$green-dark
 
 // Small Screens
-@media (max-width: 520px)
+@media (max-width: 550px)
   #wrapper
     width: variables.$game-board-width-sm + 10px
   #game-board
@@ -68,12 +72,12 @@ body
     width: variables.$game-board-width-sm
   #title
     font-size: 42px
-    margin: 18px 0 13px
+    padding: 0 0 13px
   #name-warning
     font-size: 13px
 
 // Extra-small Screens
-@media (max-width: 450px)
+@media (max-width: 475px)
   #wrapper
     width: variables.$game-board-width-xs + 10px
   #game-board
@@ -82,6 +86,6 @@ body
     width: variables.$game-board-width-xs
   #title
     font-size: 36px
-    margin: 16px 0 11px
+    padding: 0 0 11px
   #name-warning
     font-size: 12px
