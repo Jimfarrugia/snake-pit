@@ -89,10 +89,7 @@ function drawSnakeSegments(snake, isPlayer) {
   segments.forEach((segment, i) => {
     const snakeElement = createGameElement("div", "snake");
     // Set CSS classes for snake segments
-    const immunityStatus = getImmunityStatus(
-      state.immunityDuration,
-      state.immunityTimeRemaining
-    );
+    const immunityStatus = getImmunityStatus(state.immunityTimeRemaining);
     snakeElement.classList.add(
       ...(isPlayer ? [] : ["enemy"]),
       ...(isImmune ? ["immune", immunityStatus] : [])

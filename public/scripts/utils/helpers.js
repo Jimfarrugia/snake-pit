@@ -136,13 +136,11 @@ export function getSnakeTargetSize(
 }
 
 // Return a class name for immunity status based on how much time is remaining for the effect
-export function getImmunityStatus(immunityDuration, immunityTimeRemaining) {
-  return immunityTimeRemaining < immunityDuration * 0.125
+export function getImmunityStatus(immunityTimeRemaining) {
+  return immunityTimeRemaining < 2000
     ? "critical"
-    : immunityTimeRemaining < immunityDuration / 4
-    ? "quarter"
-    : immunityTimeRemaining < immunityDuration / 2
-    ? "half"
+    : immunityTimeRemaining < 5000
+    ? "warning"
     : "full";
 }
 
