@@ -15,6 +15,7 @@ export const state = {
   immunityTimeRemaining: 0,
   immunityDuration: null,
   isGameStarted: false,
+  isGameOver: null,
   playerSnake: null,
   enemySnakes: [],
   practiceMode: {

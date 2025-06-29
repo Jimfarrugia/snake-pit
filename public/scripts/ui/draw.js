@@ -27,6 +27,7 @@ export function drawGame() {
 // stop the game
 export function stopGame() {
   state.isGameStarted = false;
+  state.isGameOver = true;
   const gameOverScreen = document.getElementById("game-over-screen-wrapper");
   const gameOverScreenDuration = 1000; // (ms) delay before radial wipe animation
 
@@ -61,6 +62,7 @@ export function stopGame() {
         gameOverScreen.style.animation = "none";
         gameOverScreen.style.background = "none";
         gameOverScreen.style.display = "none";
+        state.isGameOver = false;
       }
     },
     { once: true }

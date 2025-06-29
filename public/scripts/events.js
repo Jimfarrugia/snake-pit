@@ -115,7 +115,7 @@ export function setupEventListeners(socket, state) {
       event.preventDefault();
     }
     // Handle start game
-    if (!state.isGameStarted && isSpacebar) {
+    if (!state.isGameStarted && !state.isGameOver && isSpacebar) {
       event.preventDefault();
       state.practiceMode.isEnabled
         ? startPractice(socket, state)
