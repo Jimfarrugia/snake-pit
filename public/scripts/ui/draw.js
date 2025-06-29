@@ -27,34 +27,48 @@ export function drawGame() {
 // stop the game
 export function stopGame() {
   state.isGameStarted = false;
-  if (state.practiceMode.isEnabled) {
-    document.getElementById("player-name").textContent = "";
-    document.getElementById("start-prompt").style.display = "none";
-    document.getElementById("practice-prompt").style.display = "block";
-  } else {
-    document.getElementById("start-prompt").style.display = "block";
-  }
-  document.getElementById("tutorial-open-btn").style.display = "block";
-  resetTimer(speedBoostTimer);
-  resetTimer(immunityTimer);
-  timers.style.display = "none";
-  drawGameOverScreen();
-}
+  const gameOverScreen = document.getElementById("game-over-screen-wrapper");
+  const gameOverScreenDuration = 1000; // (ms) delay before radial wipe animation
 
-function drawGameOverScreen() {
-  const gameOverScreen = document.getElementById("game-over-screen");
-  const endAnimationHandler = e => {
-    if (e.animationName === "radialWipe") {
-      gameOverScreen.style.display = "none";
+  // Delay the radial wipe animation manually with a timeout
+  // (browser bugs prevent using native css animation delay with 'animationstart' listener on
+  //    on an element with display: none)
+  setTimeout(() => {
+    gameOverScreen.style.animation = "radialWipe 1s ease forwards";
+    gameOverScreen.style.background = "#0e1308";
+    // draw start/practice prompt
+    if (state.practiceMode.isEnabled) {
+      document.getElementById("player-name").textContent = "";
+      document.getElementById("start-prompt").style.display = "none";
+      document.getElementById("practice-prompt").style.display = "block";
+    } else {
+      document.getElementById("start-prompt").style.display = "block";
     }
-  };
-  gameOverScreen.addEventListener("animationend", endAnimationHandler, {
-    once: true,
-  });
-  // Reset animation
+    document.getElementById("tutorial-open-btn").style.display = "block";
+    // reset timers
+    resetTimer(speedBoostTimer);
+    resetTimer(immunityTimer);
+    timers.style.display = "none";
+    // re-draw game (remove prev gamestate from view)
+    drawGame();
+  }, gameOverScreenDuration);
+
+  gameOverScreen.addEventListener(
+    "animationend",
+    e => {
+      if (e.animationName === "radialWipe") {
+        // reset game over screen styles
+        gameOverScreen.style.animation = "none";
+        gameOverScreen.style.background = "none";
+        gameOverScreen.style.display = "none";
+      }
+    },
+    { once: true }
+  );
+
+  // Trigger game over animation
   gameOverScreen.style.animation = "none";
-  gameOverScreen.offsetHeight; // force reflow
-  gameOverScreen.style.animation = "";
+  gameOverScreen.offsetHeight; // force reflow to flush animation reset
   gameOverScreen.style.display = "flex";
 }
 

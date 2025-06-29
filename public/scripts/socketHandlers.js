@@ -42,7 +42,6 @@ export function setupSocketHandlers(socket, state) {
   socket.on("gameOver", newState => {
     updateClientState(socket, state, newState);
     stopGame();
-    drawGame();
     drawScoreboard(newState.snakes);
   });
 }
