@@ -15,6 +15,7 @@
 html,
 body
   font-family: "VT323", monospace
+  color: variables.$black
 
 .flex
   display: flex
@@ -58,34 +59,63 @@ body
   border: 5px solid variables.$green-light
   background: variables.$white
 
-@keyframes blinking-start-prompt
+@keyframes blinking-background
   50%
     background-color: variables.$green-dark
 
+#game-over-screen
+  display: none
+  align-items: center
+  justify-content: center
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  z-index: 9999
+  background: variables.$black
+  animation: radialWipe 1s ease forwards 1s, blinking-background 0.25s linear infinite 0s
+  color: variables.$green-light
+  border-radius: 5px
+  span
+    display: block
+    font-size: 96px
+    text-transform: uppercase
+
+@keyframes radialWipe
+  from
+    clip-path: circle(100% at 50% 50%)
+  to
+    clip-path: circle(0% at 50% 50%)
+
 // Small Screens
 @media (max-width: 550px)
+  #title
+    font-size: 42px
+    padding: 0 0 13px
+  #name-warning
+    font-size: 13px
   #wrapper
     width: variables.$game-board-width-sm + 10px
   #game-board
     grid-template-columns: repeat(variables.$grid-size, variables.$cell-size-sm)
     grid-template-rows: repeat(variables.$grid-size, variables.$cell-size-sm)
     width: variables.$game-board-width-sm
-  #title
-    font-size: 42px
-    padding: 0 0 13px
-  #name-warning
-    font-size: 13px
+  #game-over-screen span
+    font-size: 84px
 
 // Extra-small Screens
 @media (max-width: 475px)
+  #title
+    font-size: 36px
+    padding: 0 0 11px
+  #name-warning
+    font-size: 12px
   #wrapper
     width: variables.$game-board-width-xs + 10px
   #game-board
     grid-template-columns: repeat(variables.$grid-size, variables.$cell-size-xs)
     grid-template-rows: repeat(variables.$grid-size, variables.$cell-size-xs)
     width: variables.$game-board-width-xs
-  #title
-    font-size: 36px
-    padding: 0 0 11px
-  #name-warning
-    font-size: 12px
+  #game-over-screen span
+    font-size: 72px

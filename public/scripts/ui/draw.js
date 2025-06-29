@@ -38,6 +38,24 @@ export function stopGame() {
   resetTimer(speedBoostTimer);
   resetTimer(immunityTimer);
   timers.style.display = "none";
+  drawGameOverScreen();
+}
+
+function drawGameOverScreen() {
+  const gameOverScreen = document.getElementById("game-over-screen");
+  const endAnimationHandler = e => {
+    if (e.animationName === "radialWipe") {
+      gameOverScreen.style.display = "none";
+    }
+  };
+  gameOverScreen.addEventListener("animationend", endAnimationHandler, {
+    once: true,
+  });
+  // Reset animation
+  gameOverScreen.style.animation = "none";
+  gameOverScreen.offsetHeight; // force reflow
+  gameOverScreen.style.animation = "";
+  gameOverScreen.style.display = "flex";
 }
 
 // draw food on the board
